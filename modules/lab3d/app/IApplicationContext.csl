@@ -1,6 +1,10 @@
+import lab3d.core.scene.IScene;
+import lab3d.app.manipulator.IManipulatorManager;
+
 interface IApplicationContext
 {
 	// Creates a whole new context.
 	void blank();
-	readonly lab3d.core.scene.IScene currentScene;
+	readonly IScene currentScene;
+	readonly IManipulatorManager manipulatorManager;
 };

@@ -1,0 +1,11 @@
+import lab3d.core.domain.INavigator;
+
+interface IManipulator extends qt.IInputListener
+{
+	void activate();
+	void deactivate();
+
+	readonly string name;
+	
+	INavigator navigator;
+};

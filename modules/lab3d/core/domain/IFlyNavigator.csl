@@ -1,0 +1,33 @@
+import glm.Vec3;
+
+interface IFlyNavigator extends INavigator
+{
+	/*! 
+		Sets pitch angle offset (rotation around up vector, positive towards right, starting from view's front direction).
+		An offset angle is gradually applied after each evolve step. The total time to apply the offset and achieve the final orientation
+		depends on the intertialFactor. \see intertialFactor.
+	 */
+	void addPitchOffset( in double radians );
+
+	//! Yaw angle: rotation around view's right direction vector, follows right hand rule and starts from view's front direction.
+	void addYawOffset( in double radians );
+
+	/*! 
+		Sets a translation vector to move the view without inertia. The vector is within view's local coordinate system (using right-hand 
+		rule and assuming x-dir to the right and -z dir to the front). To move the camera through world in any direction just use 
+		local coordinate directions. Example: {0,0,-1} keeps the view moving forward. Diferently from yaw and pitch offsets, this vector 
+		is kept constant after any evolve() interaction, until its altered explicitly through a call to setTranslationVector().
+	 */
+	void setTranslationVector( in Vec3 vector );
+
+	/*! 
+		Controls rotation intertia. The intertial factor controls how fast Yaw and Pitch offsets take effect after being set. In other 
+		words, it controls how fast the view will get to final desired orientation. If intertialFactor is zero, any offset will take 
+		effect instantaneously (no inertial). If it is 1 it will take an infinity time due to infinit inertia.
+		Default inertialFactor is 0.2.
+     */
+	double intertialFactor;
+	
+	//! Translation velocity in units/second.
+	double translationVelocity;
+};

@@ -1,0 +1,40 @@
+import glm.Vec3;
+
+interface IExamineNavigator extends INavigator
+{
+	/*! 
+		Begins a new drag rotation preview using given nx and ny normalized
+		coordinates. The given coordinates compose the 2d start point used to
+		perform the rotation on screen. It modifies current view rotation 
+		but it can be undone any time by using abortDrag(). Coordinates are 
+		normalized from -1 to 1 interval.
+	 */
+	void beginRotation( in double nx, in double ny );
+	
+	//! Updates current drag rotation preview.
+	//	Coordinates are normalized from -1 to 1 interval.
+	void updateRotation( in double nx, in double ny );
+	
+	//! Finalizes the drag and sets the drag rotation as current views 
+	//! rotation.
+	void endRotation();
+	
+	//! Aborts current drag rotation and sets it to original state (before 
+	//! beginDrag).
+	void abortRotation();
+	
+	/*! 
+		Changes the view position by making it closer or farther to/from 
+		current centerPoint by the given factor. A factor of 1 will approach
+		the view by 100% and make it stay very close to center point. The center
+		point, though, is never reached since a minimum distance from it is
+		required to keep navigation consistent. If factor is -1, then the
+		distance will double. 
+	 */
+	void zoom( in double factor );
+	
+	//! Retrieves total distance from currenet navigator's view position and
+	//! current rotation center point.
+	double getDistanceToCenter();
+	Vec3 rotationCenter;
+};

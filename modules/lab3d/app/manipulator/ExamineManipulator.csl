@@ -1,0 +1,5 @@
+@lua.Scripted( "lab3d.app.manipulator.ExamineManipulator" ) 
+component ExamineManipulator
+{
+	provides IManipulator manipulator;
+};

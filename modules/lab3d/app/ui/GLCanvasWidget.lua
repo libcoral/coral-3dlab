@@ -2,7 +2,7 @@ local qt = require "qt"
 
 local L = {}
 
-return function( canvasPainter )
+return function( canvasPainter, canvasInputListener )
 	if not L.widgetInstance then
 		-- create a gl canvas for displaying the graphics
 		local glWidgetComponent = co.new "qt.GLWidget"
@@ -17,7 +17,7 @@ return function( canvasPainter )
 		-- accesses IPainter service and sets it into canvas
 		glWidgetComponent.painter = canvasPainter
 		
-		--glWidgetComponent.inputListener = canvasInputListener
+		glWidgetComponent.inputListener = canvasInputListener
 	
 		L.widgetInstance = glWidget
 		L.graphicsContext = glWidgetComponent.context

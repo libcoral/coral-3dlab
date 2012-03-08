@@ -51,10 +51,16 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_AddModel"/>
+   <addaction name="actionAbout"/>
   </widget>
   <action name="action_AddModel">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/add.png</normaloff>resources/add.png</iconset>
+   </property>
    <property name="text">
-    <string>Load Model...</string>
+    <string>Add Model...</string>
    </property>
   </action>
   <action name="actionExit">
@@ -63,6 +69,10 @@
    </property>
   </action>
   <action name="actionAbout">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/about.png</normaloff>resources/about.png</iconset>
+   </property>
    <property name="text">
     <string>About...</string>
    </property>

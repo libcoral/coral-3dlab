@@ -1,0 +1,9 @@
+interface INavigator
+{
+	void evolve( in double dt );
+
+	/*! 
+		Evolves navigation timeline by \a dt. After a call to evolve, the view will be closer to (or at) the final desired position and orientation.
+	 */
+	IView view;
+};

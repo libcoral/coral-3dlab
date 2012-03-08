@@ -1,0 +1,5 @@
+@lua.Scripted( "siv.world.FlyNavigator" ) 
+component FlyNavigator
+{
+	provides siv.world.IFlyNavigator navigator;
+};

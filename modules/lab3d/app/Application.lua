@@ -27,7 +27,12 @@ function Application:initialize()
 	local sceneObj = co.new "lab3d.core.scene.Scene"
 	self.currentScene = sceneObj.scene
 	
-	local canvasWidget, graphicsContext = GLCanvas( sceneObj.painter )
+		-- create manipulator manager
+	 local manipulatorManagerObj = co.new "lab3d.app.manipulator.ManipulatorManager"
+	self.manipulatorManager = manipulatorManagerObj.manager
+	
+	-- set input listener facet of manipulator manager into canvas
+	local canvasWidget, graphicsContext = GLCanvas( sceneObj.painter, manipulatorManagerObj.input )
 	sceneObj.graphicsContext = graphicsContext
 	
 	-- setup camera
@@ -36,11 +41,18 @@ function Application:initialize()
 	
 	self.mainWindow = MainWindow( "Coral 3d Lab" )
 	self.mainWindow:setCentralWidget( canvasWidget )
+	
+	-- export main window instance into a global access point
+	qt.mainWindow = self.mainWindow
 end
 
 function Application:exec()
 	self.mainWindow.visible = true
 	qt.exec()
+end
+
+function Application:getManipulatorManager()
+	return self.manipulatorManager
 end
 
 function Application:getContext()
