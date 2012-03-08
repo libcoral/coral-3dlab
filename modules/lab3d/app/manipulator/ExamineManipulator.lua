@@ -11,7 +11,7 @@
 local qt = require "qt"
 local glm = require "glm"
 
-local ExamineManipulator =  co.Component( "lab3d.app.manipulator.ExamineManipulator )
+local ExamineManipulator =  co.Component( "lab3d.app.manipulator.ExamineManipulator" )
 
 -- local functions table
 local locals = {}
@@ -29,12 +29,15 @@ end
 -------------------------------------------------------------------------------
 -- TODO: set rotation center whenever an object is double clicked
 function ExamineManipulator:__init()
-	if not self.navigator then
-		error( "a IExamineNavigator instance must be provided in order to implement examine manipulators or devices." )
-	end
+	local navigatorObj = co.new "lab3d.core.domain.ExamineNavigator"
+	self.navigator = navigatorObj.navigator
+	
+	local application = co.system.services:getService( co.Type["lab3d.app.IApplication"] )
+	self.navigator.view = application.context.currentScene.camera.view
 	
 	locals.reset( self )
-	self.name = self.name or ""
+	self.name = self.name or "Examine Manipulator"
+	self.canvas = qt.mainWindow:getCentralWidget()
 end
 
 function ExamineManipulator:getName() 
@@ -47,15 +50,30 @@ end
 
 function ExamineManipulator:activate()
 	locals.reset( self )
-	self.canvas:setCursor( qt.OpenHandCursor )
 end
 
 function ExamineManipulator:deactivate()
-	self.canvas:unsetCursor()
+	-- empty
 end
 
 function ExamineManipulator:getNavigator()
 	return self.navigator
+end
+
+function ExamineManipulator:getDescription()
+	return "Examine Manipulator"
+end
+
+function ExamineManipulator:getResourceIcon()
+	return "lab3d:/ui/resources/examine.png"
+end
+
+function ExamineManipulator:getNormalCursor()
+	return qt.OpenHandCursor
+end
+
+function ExamineManipulator:getDragCursor()
+	return qt.ClosedHandCursor
 end
 
 function ExamineManipulator:setNavigator( navigator )
@@ -63,12 +81,6 @@ function ExamineManipulator:setNavigator( navigator )
 end
 
 function ExamineManipulator:mousePressed( x, y, button, modifiers )
-	-- pauses navigation on user interaction
-	self.navigationTask:pause()
-	
-	-- changes cursor
-	self.canvas:setCursor( qt.ClosedHandCursor )
-
 	-- calculates screen center
 	-- since lua handles all number as double, we need to round center to integer
 	local width = self.canvas.width
@@ -87,25 +99,19 @@ function ExamineManipulator:mouseMoved( x, y, button, modifiers )
 end
 
 function ExamineManipulator:mouseDoubleClicked( x, y, button, modifiers ) 
-	local intersectionPoint = locals.pickPoint( self, x, y )
-	if not intersectionPoint then
-		return
-	end
-
-	locals.postNavigationTask( self, intersectionPoint )
-	self.navigator.rotationCenter = intersectionPoint
+	--local intersectionPoint = locals.pickPoint( self, x, y )
+--	if not intersectionPoint then
+--		return
+--	end
+--
+--	self.navigator.rotationCenter = intersectionPoint
 end
 
 function ExamineManipulator:mouseReleased( x, y, button, modifiers )
-	-- changes the current cursor
-	self.canvas:setCursor( qt.OpenHandCursor )
 	self.navigator:endRotation()
 end
 
 function ExamineManipulator:mouseWheel( x, y, delta, modifiers )
-	-- pauses navigation on user interaction
-	self.navigationTask:pause()
-	
 	self.navigator:zoom( delta * 0.0083 )
 end
 

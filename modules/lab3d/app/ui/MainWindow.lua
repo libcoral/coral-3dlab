@@ -5,15 +5,6 @@
 
 local qt = require "qt"
 
---[[---------------------------------------------------------------------------
-	Sets qt resource search path to the given module path. It allows any qt
-	resource to be accessed relatively to the module path on disk, using the
-	set alias.
-	Ex: qt.setSearchPaths( "myAlias", "myModule.core" ) will expand "myAlias:/"
-		to the path on disk of module "myModule.core".		
---]]---------------------------------------------------------------------------
-qt.setSearchPaths( "lab3d", "lab3d.app" )
-
 -- local variables table
 local L = {}
 
@@ -31,8 +22,7 @@ function L.on_action_AddModel_triggered( sender )
 		
 		local actorFactory = co.system.services:getService( co.Type["lab3d.core.scene.IActorFactory"] )
 		local actor = actorFactory:getOrCreate( entity )
-		print( ">>>>", actor )
-		
+
 		-- access application main entry point (IApplication service)
 		local application = co.system.services:getService( co.Type["lab3d.app.IApplication"] )
 		application.context.currentScene:addActor( actor )

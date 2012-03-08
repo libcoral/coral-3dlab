@@ -1,5 +1,5 @@
 @lua.Scripted( "lab3d.core.domain.ExamineNavigator" ) 
 component ExamineNavigator
 {
-	provides siv.world.IExamineNavigator navigator;
+	provides IExamineNavigator navigator;
 };

@@ -104,4 +104,8 @@ function ExamineNavigator:getRotationCenter()
 	return self.rotationCenter
 end
 
+function ExamineNavigator:evolve( dt )
+	-- empty
+end
+
 return ExamineNavigator
