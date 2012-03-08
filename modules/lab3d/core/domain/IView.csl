@@ -1,0 +1,41 @@
+import glm.Vec3;
+import glm.Quat;
+
+interface IView
+{	
+	/*
+		Calculates a pose that is aligned (forward) with the vector formed by
+		this view position and the given \a point. The resulting pose position
+		is at a 2/3 of the lenght of that vector in the vector forward
+		direction.
+	 */
+	void calculateNavigationToPoint( in Vec3 point, out Pose result );
+
+	/*
+		Calculates a pose that is aligned with the given objects bounds center
+		and is at a distance that allows the visualization of the whole object 
+		bounds.
+	 */
+	void calculateNavigationToObject( in IEntity object, out Pose result );
+
+	/*! 
+		ZeroRollOrientation is same as view original orientation but without a
+		roll angle (up vector inclination). The zero roll orientation has its 
+		right dir vector contained within ground plane (XZ plane for a 
+		Y-upwards system).
+	 */	
+	readonly Quat zeroRollOrientation;
+
+	//! Sets current position orientation from the given pose.
+	void setPose( in Pose pose );
+
+	//! Gets current position and orientation as a pose.
+	void getPose( out Pose pose );
+	
+	Vec3 position;
+	Quat orientation;
+	readonly Vec3 up;
+	readonly Vec3 right;
+	readonly Vec3 direction;
+};
+

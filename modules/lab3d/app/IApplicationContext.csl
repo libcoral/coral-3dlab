@@ -1,0 +1,6 @@
+interface IApplicationContext
+{
+	// Creates a whole new context.
+	void blank();
+	readonly lab3d.core.scene.IScene currentScene;
+};

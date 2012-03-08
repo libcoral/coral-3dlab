@@ -1,0 +1,19 @@
+import glm.Vec3;
+import glm.Quat;
+
+/*! 
+	\brief Interface for domain object.
+	IEntity interface contains common domain attributes
+	such as position and orientation.
+ */
+interface IEntity
+{
+	string name;
+
+	Vec3 scale;
+	Vec3 position;
+	Quat orientation;
+	BoundingBox bounds;
+	
+	string filename;
+};

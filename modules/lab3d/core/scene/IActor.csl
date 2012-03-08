@@ -1,0 +1,10 @@
+import coOsg.NodePtr;
+
+/*!
+	This component is the actual graphical entity that the Scene will receive.
+*/
+interface IActor
+{	
+	coOsg.NodePtr getNode();
+};
+

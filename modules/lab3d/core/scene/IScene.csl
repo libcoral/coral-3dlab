@@ -1,0 +1,21 @@
+// Graphical scene service.
+interface IScene
+{
+	//! never add an actor directly to the list, always use addActor
+	readonly IActor[] actors;
+
+	//! Adds a new Actor to the scene.
+	void addActor( in IActor actor );
+	
+	//! Removes an Actor from the scene
+	void removeActor( in IActor actor );
+	
+	//! Updates all scene state and redraws all objects.
+	void update();
+	
+	//! clear all actors from the scene
+	void clear();
+	
+	//! The camera used to render the scene
+	ICamera camera;
+};

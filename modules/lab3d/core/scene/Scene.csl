@@ -1,0 +1,6 @@
+component Scene
+{
+	provides IScene scene;
+	provides qt.IPainter painter;
+	receives qt.IGLContext graphicsContext;
+};

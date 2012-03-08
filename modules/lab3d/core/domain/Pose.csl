@@ -1,0 +1,9 @@
+import glm.Vec3;
+import glm.Quat;
+
+struct Pose
+{
+	//! View Attributes
+	Vec3 position;
+	Quat orientation;
+};

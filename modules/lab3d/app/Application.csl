@@ -1,0 +1,6 @@
+@lua.Scripted( "lab3d.app.Application" ) 
+component Application
+{
+	provides IApplication app;
+	provides IApplicationContext context;
+};
