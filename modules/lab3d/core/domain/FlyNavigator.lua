@@ -82,7 +82,7 @@ end
 --[[---------------------------------------------------------------------------
 	Component declaration/definition
 --]]---------------------------------------------------------------------------
-local FlyNavigator =  co.Component( "siv.world.FlyNavigator" )
+local FlyNavigator =  co.Component( "lab3d.core.domain.FlyNavigator" )
 
 
 function FlyNavigator:__init()
