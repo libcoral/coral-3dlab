@@ -37,7 +37,6 @@ function L.askForSaveCurrentProject( sender )
 	if projectDirty then
 		L.confirmationDlg.text = "The project contain unsaved changes. Save before close?"
 		L.confirmationDlg:invoke( "exec()" )
-		print( "CODE =" , L.confirmationDlgReturnCode )
 		if L.confirmationDlgReturnCode == qt.MessageBox.Cancel then
 			return false
 		end
