@@ -21,7 +21,7 @@ local function addManipulatorToUI( manager, manipulator )
 	action.text = manipulator.name
 	action.icon = qt.Icon( manipulator.resourceIcon )
 	action.checkable = true
-	qt.mainWindow.toolBar:insertAction( 2, action )
+	qt.mainWindow.toolBar:insertAction( 4, action )
 	manager.actionGroup:addActionIntoGroup( action )
 	
 	-- save manipulator action
@@ -51,7 +51,7 @@ function ManipulatorManager:__init()
 end
 
 function ManipulatorManager:timeUpdate( dt )
-	if not self.currentManipulator then
+	if not self.currentManipulator or not self.currentManipulator.navigator then
 		return
 	end
 	-- evolve current manipulator navigator
@@ -84,6 +84,7 @@ function ManipulatorManager:setCurrent( name )
 	if cursor > 0 then
 		qt.mainWindow:getCentralWidget():setCursor( cursor )
 	end
+	self.manipulators[name].action.checked = true
 end
 
 function ManipulatorManager:onProjectOpened( newProject )

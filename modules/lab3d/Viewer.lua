@@ -88,6 +88,8 @@ function M:initialize()
 	qt.mainWindow = self.mainWindow
 	
 	loadManipulators( self, "lab3d.manipulator" )
+	
+	self.manipulatorManager:setCurrent( "Selection Manipulator" )
 
 	co.system.services:getService( co.Type["lab3d.IApplication"] ):newBlankProject()
 end

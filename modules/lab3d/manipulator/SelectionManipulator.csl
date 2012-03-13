@@ -1,0 +1,5 @@
+@lua.Scripted( "lab3d.manipulator.SelectionManipulator" ) 
+component SelectionManipulator
+{
+	provides IManipulator manipulator;
+};

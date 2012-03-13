@@ -52,6 +52,11 @@ end
 local function openProject( self, projectObj )
 	if self.space and self.currentProject then
 		observeFields:removeFieldObserver( self.space, self.currentProject, self )
+		-- to track all changes (track whether the project is dirty - has unsaved changes)
+		self.space:removeServiceObserver( self.currentProject, self.object.app )
+		
+		self.dirtyProjects[self.currentProject] = nil
+		self.projectFiles[self.currentProject] = nil
 	end
 	
 	notifyProjectClosed( self )
@@ -62,6 +67,9 @@ local function openProject( self, projectObj )
 	self.currentProject = self.projectObj.project
 	self.space:setRootObject( self.projectObj )
 	observeFields:addFieldObserver( self.space, self.currentProject, self )
+	self.space:addServiceObserver( self.currentProject, self.object.app )
+	
+	self.dirtyProjects[self.currentProject] = false
 	
 	notifyProjectOpened( self )
 end
@@ -76,16 +84,29 @@ function Application:__init()
 	self.archiveObj = co.new "ca.LuaArchive"
 	self.archiveObj.model = self.model
 	self.projectObservers = {}
+	self.dirtyProjects = {}
+	self.projectFiles = {}
 end
 
 function Application:saveProject( project, filename )
 	self.archiveObj.file.name = filename
 	self.archiveObj.archive:save( self.projectObj )
+	
+	self.dirtyProjects[project] = false
+	self.projectFiles[project] = filename
 end
 
 function Application:openProject( filename )
 	self.archiveObj.file.name = filename
 	openProject( self, self.archiveObj.archive:restore() )
+end
+
+function Application:projectHasChanges( project )
+	return self.dirtyProjects[project]
+end
+
+function Application:getProjectFilename( project )
+	return self.projectFiles[project] or ""
 end
 
 function Application:newBlankProject()
@@ -129,4 +150,10 @@ end
 function Application:onSelectedEntityChanged( service, previous, current )
 	notifyEntitySelectionChanged( self, previous, current )
 end
+
+function Application:onServiceChanged( changes )
+	local service = changes.service
+	self.dirtyProjects[service] = true
+end
+
 

@@ -94,22 +94,6 @@ function FlyManipulator:__init()
 	self.animationOnCourse = false
 end
 
-function FlyManipulator:taskStarted( task )
-	-- empty
-end
-
-function FlyManipulator:taskFinished( task )
-	-- empty
-end
-
-function FlyManipulator:taskPaused( task )
-	self.animationOnCourse = false
-end
-
-function FlyManipulator:taskReset( task )
-	-- empty
-end
-
 function FlyManipulator:getName() 
 	return self.name
 end
@@ -121,6 +105,9 @@ end
 function FlyManipulator:activate()
 	locals.reset( self )
 	self.canvas.mouseTracking = true
+	
+	-- fix up
+	self.navigator.view.orientation = self.navigator.view.zeroRollOrientation
 end
 
 function FlyManipulator:deactivate()
@@ -259,7 +246,7 @@ function FlyManipulator:mouseWheel( x, y, delta, modifiers )
 	local numDegrees = delta / 8
     local numSteps = numDegrees / 15
 	
-	self.translationVelocity = math.max( 0.5, self.translationVelocity * ( 1 + numSteps ) )
+	self.translationVelocity = math.min( 10000, math.max( 0.5, self.translationVelocity * ( 1 + numSteps ) ) )
 	self.navigator.translationVelocity = self.translationVelocity
 end
 
