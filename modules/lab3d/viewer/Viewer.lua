@@ -5,12 +5,13 @@
 
 local qt = require "qt"
 local glm = require "glm"
-local Camera = require "lab3d.core.scene.Camera"
 
 -- User Interface Modules
 local MainWindow = require "lab3d.viewer.ui.MainWindow"
 local GLCanvas = require "lab3d.viewer.ui.GLCanvasWidget"
 
+local Camera = require "lab3d.core.scene.Camera"
+local SceneManager = require "lab3d.viewer.SceneManager"
 
 local M = {}
 
@@ -64,6 +65,8 @@ end
 function M:initialize()
 	local sceneObj = co.new "lab3d.core.scene.Scene"
 	self.currentScene = sceneObj.scene
+	
+	self.sceneManager = SceneManager( self.currentScene )
 	
 	-- create manipulator manager
 	local manipulatorManagerObj = co.new "lab3d.viewer.manipulator.ManipulatorManager"

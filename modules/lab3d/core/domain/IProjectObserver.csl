@@ -2,7 +2,7 @@ interface IProjectObserver
 {
 	void onProjectOpened( in IProject newProject );
 	void onProjectClosed( in IProject project );
-	void onEntityAdded( in IProject project, in IEntity entity );
-	void onEntityRemoved( in IProject project, in IEntity entity );
-	void onEntitySelectionChanged( in IProject project, in IEntity entity, in bool selected );
+	void onEntitiesAdded( in IProject project, in IEntity[] entities );
+	void onEntitiesRemoved( in IProject project, in IEntity[] entities );
+	void onEntitySelectionChanged( in IProject project, in IEntity previous, in IEntity current );
 };

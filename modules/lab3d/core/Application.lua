@@ -22,50 +22,48 @@ local function notifyProjectOpened( self )
 end
 
 local function notifyProjectClosed( self )
-	local obs = self.openWorldObservers
+	local obs = self.projectObservers
 	for i = 1, #obs do
 		obs[i]:onProjectClosed( self.currentProject )
 	end
 end
 
-local function notifyEntityAdded( self, entity )
+local function notifyEntityAdded( self, entities )
 	local obs = self.projectObservers
 	for i = 1, #obs do
-		obs[i]:onEntityAdded( self.currentProject, entity )
+		obs[i]:onEntitiesAdded( self.currentProject, entities )
 	end
 end
 
-local function notifyEntityRemoved( self, entity )
+local function notifyEntityRemoved( self, entities )
 	local obs = self.projectObservers
 	for i = 1, #obs do
-		obs[i]:onEntityRemoved( self.currentProject, entity )
+		obs[i]:onEntitiesRemoved( self.currentProject, entities )
 	end
 end
 
-local function notifyEntitySelectionChanged( self, entity, value )
+local function notifyEntitySelectionChanged( self, previous, current )
 	local obs = self.projectObservers
 	for i = 1, #obs do
-		obs[i]:onEntitySelectionChanged( self.currentProject, entity, value )
+		obs[i]:onEntitySelectionChanged( self.currentProject, previous, current )
 	end
 end
 
 local function openProject( self, projectObj )
 	if self.space and self.currentProject then
-		observeFields:removeFieldObserver( self.space, self.currentProject, L )
+		observeFields:removeFieldObserver( self.space, self.currentProject, self )
 	end
+	
+	notifyProjectClosed( self )
 	
 	self.space = helper:setupCaSpace( self.model )
 
 	self.projectObj = projectObj
 	self.currentProject = self.projectObj.project
 	self.space:setRootObject( self.projectObj )
-	observeFields:addFieldObserver( self.space, self.currentProject, L )
+	observeFields:addFieldObserver( self.space, self.currentProject, self )
 	
 	notifyProjectOpened( self )
-end
-
-function L:onSelectedEntityChanged( self, previous, current )
-	print( "CHANGED", self, previous, current )
 end
 
 --[[---------------------------------------------------------------------------
@@ -86,19 +84,11 @@ function Application:saveProject( project, filename )
 end
 
 function Application:openProject( filename )
-	if self.space and self.currentProject then
-		self.space:removeServiceObserver( self.currentProject, self.object.app )
-	end
-	
 	self.archiveObj.file.name = fileName
 	openProject( self, self.archiveObj.archive:restore() )
 end
 
 function Application:newBlankProject()
-	if self.space and self.currentProject then
-		self.space:removeServiceObserver( self.currentProject, self.object.app )
-	end
-	
 	openProject( self, co.new( "lab3d.core.domain.Project" ) )
 end
 
@@ -127,3 +117,16 @@ end
 function Application:getSpace()
 	return self.space
 end
+
+function Application:onEntitiesAdded( service, addedObjects )
+	notifyEntityAdded( self, addedObjects )
+end
+
+function Application:onEntitiesRemoved( service, removedObjects )
+	notifyEntityRemoved( self, removedObjects )
+end
+
+function Application:onSelectedEntityChanged( service, previous, current )
+	notifyEntitySelectionChanged( self, previous, current )
+end
+

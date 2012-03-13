@@ -140,7 +140,7 @@ function GenericObserver:onServiceChanged( changes )
 		for i = 1, obsTablesArrayCount do
 			forwardArrayEvents( self, service, obsTablesArray[i], changedRVFs, numChangedFs )
 		end
-	end	
+	end
 end
 
 -- Add a new lua table to observe a service in the space

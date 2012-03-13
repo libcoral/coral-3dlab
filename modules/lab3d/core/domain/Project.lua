@@ -21,6 +21,7 @@ end
 
 function Project:addEntity( entity )
 	self.entities[#self.entities+1] = entity
+	print( "adding change",  self.object.project )
 	self.application.space:addChange( self.object.project )
 	self.application.space:notifyChanges()
 end

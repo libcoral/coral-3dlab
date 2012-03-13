@@ -20,12 +20,8 @@ function L.on_action_AddModel_triggered( sender )
 		local entity = co.new( "lab3d.core.domain.Entity" ).entity
 		entity.filename = files[i]
 		
-		local actorFactory = co.system.services:getService( co.Type["lab3d.core.scene.IActorFactory"] )
-		local actor = actorFactory:getOrCreate( entity )
-
-		-- access application main entry point (IApplication service)
 		local application = co.system.services:getService( co.Type["lab3d.core.IApplication"] )
-		--application.context.currentScene:addActor( actor )
+		application.currentProject:addEntity( entity )
 	end
 
 end
