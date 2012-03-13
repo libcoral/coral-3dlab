@@ -8,4 +8,5 @@ co.system.services:addServiceProvider( co.Type["lab3d.core.scene.IActorFactory"]
 co.system.services:addServiceProvider( co.Type["lab3d.core.scene.IModelLoader"], "lab3d.core.scene.ModelLoader" )
 
 -- Registers main application entry point
-co.system.services:addServiceProvider( co.Type["lab3d.app.IApplication"], "lab3d.app.Application" )
+co.system.services:addServiceProvider( co.Type["lab3d.core.IApplication"], "lab3d.core.Application" )
+	

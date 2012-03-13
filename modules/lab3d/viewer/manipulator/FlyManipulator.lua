@@ -7,7 +7,7 @@
 local qt = require "qt"
 local glm = require "glm"
 
-local FlyManipulator =  co.Component( "lab3d.app.manipulator.FlyManipulator" )
+local FlyManipulator =  co.Component( "lab3d.viewer.manipulator.FlyManipulator" )
 
 local locals = {}
 
@@ -77,9 +77,8 @@ end
 function FlyManipulator:__init()
 	local navigatorObj = co.new "lab3d.core.domain.FlyNavigator"
 	self.navigator = navigatorObj.navigator
-	
-	local application = co.system.services:getService( co.Type["lab3d.app.IApplication"] )
-	self.navigator.view = application.context.currentScene.camera.view
+
+	self.navigator.view = self.view
 	
 	self.canvas = qt.mainWindow:getCentralWidget()
 	

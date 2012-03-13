@@ -1,4 +1,4 @@
-@lua.Scripted( "lab3d.app.manipulator.ManipulatorManager" ) 
+@lua.Scripted( "lab3d.viewer.manipulator.ManipulatorManager" ) 
 component ManipulatorManager
 {
 	provides qt.IInputListener input;

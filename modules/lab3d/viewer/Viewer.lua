@@ -1,7 +1,6 @@
 --[[---------------------------------------------------------------------------
-	Application Component.
-	Provides the main entry point for all application level services and
-	instances sucha as IScene through IApplicationContext service.
+	Viewer application instance. This lua module builds and configures
+	an aplication for 3d model visualization using coral3d lab core framework.
 --]]---------------------------------------------------------------------------
 
 local qt = require "qt"
@@ -9,8 +8,11 @@ local glm = require "glm"
 local Camera = require "lab3d.core.scene.Camera"
 
 -- User Interface Modules
-local MainWindow = require "lab3d.app.ui.MainWindow"
-local GLCanvas = require "lab3d.app.ui.GLCanvasWidget"
+local MainWindow = require "lab3d.viewer.ui.MainWindow"
+local GLCanvas = require "lab3d.viewer.ui.GLCanvasWidget"
+
+
+local M = {}
 
 --[[---------------------------------------------------------------------------
 	Sets qt resource search path to the given module path. It allows any qt
@@ -19,7 +21,7 @@ local GLCanvas = require "lab3d.app.ui.GLCanvasWidget"
 	Ex: qt.setSearchPaths( "myAlias", "myModule.core" ) will expand "myAlias:/"
 		to the path on disk of module "myModule.core".		
 --]]---------------------------------------------------------------------------
-qt.setSearchPaths( "lab3d", "lab3d.app" )
+qt.setSearchPaths( "lab3d", "lab3d.viewer" )
 
 --[[---------------------------------------------------------------------------
 	Local utility functions
@@ -45,7 +47,7 @@ local function loadManipulators( appInstance, manipulatorModule )
 	
 	local childTypes = ns.types
 	
-	local manipulatorManager = appInstance:getManipulatorManager()
+	local manipulatorManager = appInstance.manipulatorManager
 	local imanipulatorType = co.Type[manipulatorModule .. ".IManipulator"]
 	if childTypes then
 		for i, v in ipairs( childTypes ) do
@@ -59,24 +61,13 @@ local function loadManipulators( appInstance, manipulatorModule )
 	end
 end
 
---[[---------------------------------------------------------------------------
-	Component declaration
---]]---------------------------------------------------------------------------
-local Application =  co.Component( "lab3d.app.Application" )
-
-function Application:__init()
-	-- empty
-end
-
-function Application:initialize()
-	assert( not self.initialized, "application already initialized, it cannot be initialized twice" )
-
+function M:initialize()
 	local sceneObj = co.new "lab3d.core.scene.Scene"
 	self.currentScene = sceneObj.scene
 	
-		-- create manipulator manager
-	 local manipulatorManagerObj = co.new "lab3d.app.manipulator.ManipulatorManager"
-	self.manipulatorManager = manipulatorManagerObj.manager
+	-- create manipulator manager
+	local manipulatorManagerObj = co.new "lab3d.viewer.manipulator.ManipulatorManager"
+	self.manipulatorManager =  manipulatorManagerObj.manager
 	
 	-- set input listener facet of manipulator manager into canvas
 	local canvasWidget, graphicsContext = GLCanvas( sceneObj.painter, manipulatorManagerObj.input )
@@ -92,26 +83,18 @@ function Application:initialize()
 	-- export main window instance into a global access point
 	qt.mainWindow = self.mainWindow
 	
-	loadManipulators( self, "lab3d.app.manipulator" )
+	loadManipulators( self, "lab3d.viewer.manipulator" )
+
+	co.system.services:getService( co.Type["lab3d.core.IApplication"] ):newBlankProject()
 end
 
-function Application:exec()
+function M:exec()
 	self.mainWindow.visible = true
-	qt.exec()
+	return qt.exec()
 end
 
-function Application:getManipulatorManager()
-	return self.manipulatorManager
+return function()
+	-- creates a new table with metatable set to M (creates a new Viewer instance)
+	return setmetatable( {}, { __index = M } )
 end
 
-function Application:getContext()
-	return self.object.context
-end
-
-function Application:blank()
-	self.currentScene:clear()
-end
-
-function Application:getCurrentScene()
-	return self.currentScene
-end

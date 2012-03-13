@@ -33,7 +33,7 @@ local function addManipulatorToUI( manager, manipulator )
 	action:connect( "toggled(bool)", slot )
 end
 
-local ManipulatorManager =  co.Component( "lab3d.app.manipulator.ManipulatorManager" )
+local ManipulatorManager =  co.Component( "lab3d.viewer.manipulator.ManipulatorManager" )
 
 function ManipulatorManager:__init()
 	-- this allows a manipulator list to be previously passed at construction time
@@ -44,7 +44,7 @@ function ManipulatorManager:__init()
 	self.timerCookie = 	system:addTimer( self.object.timer )
 	system:startTimer( self.timerCookie, 1000.0/60.0 )
 	
-	local application = co.system.services:getService( co.Type["lab3d.app.IApplication"] )
+	local application = co.system.services:getService( co.Type["lab3d.core.IApplication"] )
 	self.application = application
 end
 

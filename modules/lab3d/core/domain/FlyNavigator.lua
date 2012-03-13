@@ -84,7 +84,6 @@ end
 --]]---------------------------------------------------------------------------
 local FlyNavigator =  co.Component( "lab3d.core.domain.FlyNavigator" )
 
-
 function FlyNavigator:__init()
 	self.inertialFactor = self.inertialFactor or 0.3
 	self.translationVector = glm.Vec3( 0, 0, 0 )

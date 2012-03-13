@@ -1,4 +1,4 @@
-import lab3d.app.manipulator.IManipulator;
+import lab3d.viewer.manipulator.IManipulator;
 
 interface IManipulatorManager
 {

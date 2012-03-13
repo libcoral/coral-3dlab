@@ -1,0 +1,8 @@
+interface IProjectObserver
+{
+	void onProjectOpened( in IProject newProject );
+	void onProjectClosed( in IProject project );
+	void onEntityAdded( in IProject project, in IEntity entity );
+	void onEntityRemoved( in IProject project, in IEntity entity );
+	void onEntitySelectionChanged( in IProject project, in IEntity entity, in bool selected );
+};

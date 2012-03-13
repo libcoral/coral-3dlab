@@ -24,8 +24,8 @@ function L.on_action_AddModel_triggered( sender )
 		local actor = actorFactory:getOrCreate( entity )
 
 		-- access application main entry point (IApplication service)
-		local application = co.system.services:getService( co.Type["lab3d.app.IApplication"] )
-		application.context.currentScene:addActor( actor )
+		local application = co.system.services:getService( co.Type["lab3d.core.IApplication"] )
+		--application.context.currentScene:addActor( actor )
 	end
 
 end
@@ -37,6 +37,8 @@ return function( windowTitle )
 	
 	-- connects slots of mainWindow to lua closures defined in local table L
 	qt.connectSlotsByName( mainWindow, L )
+	
+	local application = co.system.services:getService( co.Type["lab3d.core.IApplication"] )
 	
 	return mainWindow
 end

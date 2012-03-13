@@ -1,6 +1,0 @@
-interface IApplication
-{
-	IApplicationContext context;
-	void initialize();
-	void exec();
-};

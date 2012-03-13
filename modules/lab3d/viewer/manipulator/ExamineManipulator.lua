@@ -11,7 +11,7 @@
 local qt = require "qt"
 local glm = require "glm"
 
-local ExamineManipulator =  co.Component( "lab3d.app.manipulator.ExamineManipulator" )
+local ExamineManipulator =  co.Component( "lab3d.viewer.manipulator.ExamineManipulator" )
 
 -- local functions table
 local locals = {}
@@ -32,8 +32,7 @@ function ExamineManipulator:__init()
 	local navigatorObj = co.new "lab3d.core.domain.ExamineNavigator"
 	self.navigator = navigatorObj.navigator
 	
-	local application = co.system.services:getService( co.Type["lab3d.app.IApplication"] )
-	self.navigator.view = application.context.currentScene.camera.view
+	self.navigator.view = self.view
 	
 	locals.reset( self )
 	self.name = self.name or "Examine Manipulator"

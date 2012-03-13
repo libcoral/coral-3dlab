@@ -1,0 +1,5 @@
+@lua.Scripted( "ca.ServiceObserver" ) 
+component ServiceObserver
+{
+	provides ca.IServiceObserver observer;
+};

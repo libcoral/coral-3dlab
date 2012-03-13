@@ -1,0 +1,13 @@
+interface IProject
+{
+	string name;
+	IEntity[] entities;
+	readonly IEntity selectedEntity;
+	
+	void setEntitySelected( in IEntity entity );
+	
+	void addEntity( in IEntity entity );
+	bool removeEntity( in IEntity entity );
+	
+	IEntity findEntity( in string entityName );
+};

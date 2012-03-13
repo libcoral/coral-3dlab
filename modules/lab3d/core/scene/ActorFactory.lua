@@ -21,4 +21,8 @@ function ActorFactory:getOrCreate( entity )
 	return actor.actor
 end
 
+function ActorFactory:clear()
+	M.actors = {}
+end
+
 return ActorFactory

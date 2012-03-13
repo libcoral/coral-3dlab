@@ -5,5 +5,5 @@ FILE( TO_CMAKE_PATH "$ENV{CORAL_PATH}" ENV_CORAL_PATH )
 # Subdirectories
 ################################################################################
 
-ADD_SUBDIRECTORY( app )
 ADD_SUBDIRECTORY( core )
+ADD_SUBDIRECTORY( viewer )
