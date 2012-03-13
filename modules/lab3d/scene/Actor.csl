@@ -1,0 +1,6 @@
+@lua.Scripted( "lab3d.scene.Actor" ) 
+component Actor
+{
+	provides IActor actor;
+	receives lab3d.dom.IEntity entity;
+};

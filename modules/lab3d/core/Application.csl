@@ -1,5 +1,0 @@
-@lua.Scripted( "lab3d.core.Application" ) 
-component Application
-{
-	provides IApplication app;
-};

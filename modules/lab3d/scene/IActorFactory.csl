@@ -1,0 +1,7 @@
+import lab3d.dom.IEntity;
+
+interface IActorFactory
+{
+	IActor getOrCreate( in IEntity domainData );
+	void clear();
+};

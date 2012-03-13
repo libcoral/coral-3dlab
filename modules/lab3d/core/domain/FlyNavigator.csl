@@ -1,5 +1,0 @@
-@lua.Scripted( "lab3d.core.domain.FlyNavigator" ) 
-component FlyNavigator
-{
-	provides IFlyNavigator navigator;
-};

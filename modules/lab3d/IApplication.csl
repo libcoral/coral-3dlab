@@ -1,0 +1,19 @@
+import lab3d.dom.IProject;
+import lab3d.dom.IProjectObserver;
+
+interface IApplication
+{
+	void saveProject( in IProject project, in string filename );
+	void openProject( in string filename );
+	
+	void newBlankProject();
+	void addProjectObserver( in IProjectObserver observer );
+	void removeProjectObserver( in IProjectObserver observer );
+	
+	readonly IProject currentProject;
+	
+	// internal use only
+	readonly ca.ISpace space;
+	
+	readonly scene.IScene currentScene;
+};

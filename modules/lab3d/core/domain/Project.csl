@@ -1,5 +1,0 @@
-@lua.Scripted( "lab3d.core.domain.Project" ) 
-component Project
-{
-	provides IProject project;
-};

@@ -1,0 +1,5 @@
+@lua.Scripted( "lab3d.scene.ActorFactory" ) 
+component ActorFactory
+{
+	provides IActorFactory factory;
+};

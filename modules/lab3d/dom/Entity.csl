@@ -1,0 +1,5 @@
+@lua.Scripted( "lab3d.dom.Entity" ) 
+component Entity
+{
+	provides IEntity entity;
+};

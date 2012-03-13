@@ -1,5 +1,0 @@
-@lua.Scripted( "lab3d.viewer.manipulator.FlyManipulator" ) 
-component FlyManipulator
-{
-	provides IManipulator manipulator;
-};

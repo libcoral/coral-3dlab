@@ -1,0 +1,19 @@
+import glm.Vec3;
+import glm.Quat;
+import lab3d.dom.IView;
+
+/*!
+	\brief An interface exposing the generic camera functionalities.
+ */
+interface ICamera
+{
+	IView view;
+
+	//! Camera projection attributes
+	double fovy;
+	double aspect;
+	double zNear;
+	double zFar;
+	int32 viewportWidth;
+	int32 viewportHeight;
+};

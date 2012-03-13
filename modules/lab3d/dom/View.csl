@@ -1,0 +1,5 @@
+@lua.Scripted( "lab3d.dom.View" ) 
+component View
+{
+	provides IView view;
+};

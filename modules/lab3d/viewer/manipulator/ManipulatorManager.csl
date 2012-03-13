@@ -1,7 +1,0 @@
-@lua.Scripted( "lab3d.viewer.manipulator.ManipulatorManager" ) 
-component ManipulatorManager
-{
-	provides qt.IInputListener input;
-	provides IManipulatorManager manager;
-	provides qt.ITimerCallback timer;
-};
