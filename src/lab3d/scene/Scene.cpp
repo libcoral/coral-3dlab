@@ -167,6 +167,9 @@ void Scene::update()
 
 void Scene::clear()
 {
+    if( !_rootNode.get() || _rootNode->getNumChildren() == 0 )
+        return;
+    
 	_rootNode->removeChildren( 0, _rootNode->getNumChildren() );
 	_actors.clear();
     update();

@@ -40,7 +40,7 @@ end
 
 -- This lua closure search all components that provides "IManipulator" service
 -- within manipulator module and loads it, adding it to the UI.
-local function loadManipulators( appInstance, manipulatorModule )
+local function loadManipulators( self, manipulatorModule )
 	local ns = co.system.types.rootNS
     for w in string.gmatch( manipulatorModule, "%.?(%w+)%.?" ) do
 		ns = ns:getChildNamespace( w )
@@ -48,15 +48,16 @@ local function loadManipulators( appInstance, manipulatorModule )
 	
 	local childTypes = ns.types
 	
-	local manipulatorManager = appInstance.manipulatorManager
+	local manipulatorManager = self.manipulatorManager
 	local imanipulatorType = co.Type[manipulatorModule .. ".IManipulator"]
 	if childTypes then
 		for i, v in ipairs( childTypes ) do
 			local implementsFacet, facetName = implementsFacet( v, imanipulatorType )
 			if implementsFacet then
 				local manipulatorObj = co.new( v.fullName )
+				local manipulator = manipulatorObj[facetName]
 				-- the given type is a manipulator component
-				manipulatorManager:addManipulator( manipulatorObj[facetName] )
+				manipulatorManager:addManipulator( manipulator )
 			end
 		end
 	end
@@ -65,6 +66,10 @@ end
 function M:initialize()
 	local sceneObj = co.new "lab3d.scene.Scene"
 	self.currentScene = sceneObj.scene
+	
+	-- setup camera
+	local cameraObj = Camera()
+	self.currentScene.camera = cameraObj.camera
 	
 	SceneManager:initialize( self.currentScene )
 	
@@ -75,10 +80,6 @@ function M:initialize()
 	-- set input listener facet of manipulator manager into canvas
 	local canvasWidget, graphicsContext = GLCanvas( sceneObj.painter, manipulatorManagerObj.input )
 	sceneObj.graphicsContext = graphicsContext
-	
-	-- setup camera
-	local cameraObj = Camera()
-	self.currentScene.camera = cameraObj.camera
 	
 	self.mainWindow = MainWindow( "Coral 3d Lab" )
 	self.mainWindow:setCentralWidget( canvasWidget )

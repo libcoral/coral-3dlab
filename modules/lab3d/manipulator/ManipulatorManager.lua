@@ -1,6 +1,7 @@
 local qt = require "qt"
 
-local SceneManager = require "lab3d.SceneManager"
+local UpdateNotifier = require "lab3d.dom.UpdateNotifier"
+local ProjectObserver = require "lab3d.dom.ProjectObserver"
 
 -- A global service for managing manipulators
 local function checkManipulatorExists( manipulators, name )
@@ -42,9 +43,8 @@ function ManipulatorManager:__init()
 	self.manipulators = self.manipulators or {}
 	
 	-- creates a timer using qt system
-	local system = co.getService( "qt.ISystem" )
-	self.timerCookie = 	system:addTimer( self.object.timer )
-	system:startTimer( self.timerCookie, 1000.0/60.0 )
+	UpdateNotifier:addObserver( self )
+	ProjectObserver:addObserver( self )
 	
 	local application = co.system.services:getService( co.Type["lab3d.IApplication"] )
 	self.application = application
@@ -56,7 +56,6 @@ function ManipulatorManager:timeUpdate( dt )
 	end
 	-- evolve current manipulator navigator
 	self.currentManipulator.navigator:evolve( dt )
-	SceneManager.scene:update()
 end
 
 function ManipulatorManager:getManipulatorByName( name )
@@ -86,6 +85,19 @@ function ManipulatorManager:setCurrent( name )
 		qt.mainWindow:getCentralWidget():setCursor( cursor )
 	end
 end
+
+function ManipulatorManager:onProjectOpened( newProject )
+	for k, v in pairs( self.manipulators ) do
+		if v.instance.navigator then
+			v.instance.navigator.view = newProject.currentView
+		end
+	end
+end
+
+function ManipulatorManager:onProjectClosed( project )
+
+end
+
 
 function ManipulatorManager:mousePressed( x, y, button, modifiers )
 	if not self.currentManipulator then return end

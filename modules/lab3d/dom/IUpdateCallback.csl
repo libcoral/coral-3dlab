@@ -1,0 +1,4 @@
+interface IUpdateCallback
+{
+	void timeUpdate( in double dt );
+};

@@ -1,3 +1,5 @@
+local glm = require "glm"
+local View = require "lab3d.dom.View"
 local helper = require "siv.helper.CalciumHelper"
 
 local Project =  co.Component( "lab3d.dom.Project" )
@@ -6,13 +8,21 @@ function Project:__init()
 	self.entities = {}
 	self.name = self.name or ""
 	self.application = co.system.services:getService( co.Type["lab3d.IApplication"] )
+	
+	local viewObj = View{ position = glm.Vec3( 0, -100, 0 ) }
+	self.currentView = viewObj.view; -- default camera view
 end
 
-function Project:save( filename )
+function Project:setName( name )
+	self.name = name
 end
 
 function Project:getName()
 	return self.name
+end
+
+function Project:setEntities( entities )
+	self.entities = entities
 end
 
 function Project:getEntities()
@@ -27,6 +37,14 @@ end
 
 function Project:getSelectedEntity()
 	return self.selectedEntity
+end
+
+function Project:setCurrentView( view )
+	self.currentView = view
+end
+
+function Project:getCurrentView()
+	return self.currentView
 end
 
 function Project:setEntitySelected( entity )

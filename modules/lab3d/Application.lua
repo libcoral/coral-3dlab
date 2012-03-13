@@ -79,12 +79,12 @@ function Application:__init()
 end
 
 function Application:saveProject( project, filename )
-	self.archiveObj.file.name = fileName
+	self.archiveObj.file.name = filename
 	self.archiveObj.archive:save( self.projectObj )
 end
 
 function Application:openProject( filename )
-	self.archiveObj.file.name = fileName
+	self.archiveObj.file.name = filename
 	openProject( self, self.archiveObj.archive:restore() )
 end
 

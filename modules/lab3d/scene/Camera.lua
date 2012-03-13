@@ -4,7 +4,6 @@
 --]]---------------------------------------------------------------------------
 
 local glm = require "glm"
-local View = require "lab3d.dom.View"
 
 -------------------------------------------------------------------------------
 -- Component declaration
@@ -19,8 +18,6 @@ function Camera:__init()
 	self.aspect = self.aspect or 1
 	self.viewportWidth = self.viewportW or 800
 	self.viewportHeight = self.viewportH or 600
-	local viewObj = View{ position = glm.Vec3( 0, -100, 0 ) }
-	self.view = viewObj.view; -- default camera view
 end
 
 function Camera:setView( view )

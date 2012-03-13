@@ -2,7 +2,7 @@
 # Build the Module
 ################################################################################
 
-CORAL_GENERATE_MODULE( _MODULE_SOURCES lab3d.dom )
+CORAL_GENERATE_MODULE( _MODULE_SOURCES lab3d.dom qt.ISystem qt.ITimerCallback )
 
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} ${OPENSCENEGRAPH_INCLUDE_DIRS} ${CORAL_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/generated )
 

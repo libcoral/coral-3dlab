@@ -33,9 +33,7 @@ end
 function ExamineManipulator:__init()
 	local navigatorObj = co.new "lab3d.dom.ExamineNavigator"
 	self.navigator = navigatorObj.navigator
-	
-	self.navigator.view = SceneManager.scene.camera.view
-	
+
 	locals.reset( self )
 	self.name = self.name or "Examine Manipulator"
 	self.canvas = qt.mainWindow:getCentralWidget()

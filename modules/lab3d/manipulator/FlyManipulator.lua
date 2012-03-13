@@ -79,8 +79,6 @@ end
 function FlyManipulator:__init()
 	local navigatorObj = co.new "lab3d.dom.FlyNavigator"
 	self.navigator = navigatorObj.navigator
-
-	self.navigator.view = SceneManager.scene.camera.view
 	
 	self.canvas = qt.mainWindow:getCentralWidget()
 	

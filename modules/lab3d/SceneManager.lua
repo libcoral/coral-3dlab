@@ -1,13 +1,15 @@
+local UpdateNotifier = require "lab3d.dom.UpdateNotifier"
 local ProjectObserver = require "lab3d.dom.ProjectObserver"
 
 local M = {}
 
 function M:onProjectOpened( newProject )
-
+	self:onEntitiesAdded( newProject, newProject.entities )
+	self.scene.camera.view = newProject.currentView
 end
 
 function M:onProjectClosed( project )
-
+	self.scene:clear()
 end
 
 function M:onEntitiesAdded( project, entities )
@@ -31,6 +33,7 @@ end
 function M:initialize( scene )
 	self.scene = scene
 	ProjectObserver:addObserver( self )
+	UpdateNotifier:addObserver( self )
 	
 	self.actorFactory = co.system.services:getService( co.Type["lab3d.scene.IActorFactory"] )
 	
@@ -38,6 +41,10 @@ function M:initialize( scene )
 	self.application = co.system.services:getService( co.Type["lab3d.IApplication"] )
 	
 	return self
+end
+
+function M:timeUpdate( dt )
+	self.scene:update()
 end
 
 return M

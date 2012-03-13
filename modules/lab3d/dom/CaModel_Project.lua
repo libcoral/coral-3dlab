@@ -49,6 +49,7 @@ Type "lab3d.dom.View"
 
 Type "lab3d.dom.IProject"
 {
+	currentView = "lab3d.dom.IView",
 	entities = "lab3d.dom.IEntity[]",
 	name = "string"
 }
