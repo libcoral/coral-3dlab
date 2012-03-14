@@ -74,17 +74,4 @@ function Entity:setBounds( bounds )
 	self.bounds = bounds
 end
 
-function Entity:getSelected()
-	return self.selected
-end
-
-function Entity:setSelected( value )
-	self.selected = value
-end
-
--- IActorProvider method
-function Entity:getOrCreateActor( filename )
-	
-end
-
 return Entity

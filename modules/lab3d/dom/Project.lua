@@ -39,6 +39,10 @@ function Project:getSelectedEntity()
 	return self.selectedEntity
 end
 
+function Project:setSelectedEntity( entity )
+	self.selectedEntity = entity
+end
+
 function Project:setCurrentView( view )
 	self.currentView = view
 end
@@ -49,7 +53,6 @@ end
 
 function Project:setEntitySelected( entity )
 	if self.selectedEntity == entity then return end
-	
 	self.selectedEntity = entity
 	self.application.space:addChange( self.object.project )
 	self.application.space:notifyChanges()

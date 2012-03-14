@@ -21,7 +21,7 @@ local function addManipulatorToUI( manager, manipulator )
 	action.text = manipulator.name
 	action.icon = qt.Icon( manipulator.resourceIcon )
 	action.checkable = true
-	qt.mainWindow.toolBar:insertAction( 4, action )
+	qt.mainWindow.manipulatorToolbar:addAction( action )
 	manager.actionGroup:addActionIntoGroup( action )
 	
 	-- save manipulator action
@@ -51,9 +51,17 @@ function ManipulatorManager:__init()
 end
 
 function ManipulatorManager:timeUpdate( dt )
+	-- enable or disable user interface based on current manipulator state
+	for k, v in pairs( self.manipulators ) do
+		if v.action.enabled ~= v.instance.enabled then
+			v.action.enabled = v.instance.enabled
+		end
+	end
+	
 	if not self.currentManipulator or not self.currentManipulator.navigator then
 		return
 	end
+	
 	-- evolve current manipulator navigator
 	self.currentManipulator.navigator:evolve( dt )
 end
@@ -96,9 +104,8 @@ function ManipulatorManager:onProjectOpened( newProject )
 end
 
 function ManipulatorManager:onProjectClosed( project )
-
+	-- empty
 end
-
 
 function ManipulatorManager:mousePressed( x, y, button, modifiers )
 	if not self.currentManipulator then return end

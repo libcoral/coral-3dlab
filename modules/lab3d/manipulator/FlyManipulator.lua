@@ -138,6 +138,14 @@ function FlyManipulator:setNavigator( navigator )
 	self.navigator = navigator
 end
 
+function FlyManipulator:getEnabled()
+	return true
+end
+
+function FlyManipulator:setEnabled( value )
+	-- empty (always enabled)
+end
+
 function FlyManipulator:keyPressed( key )
 	if key == "Key_Escape" then
 		locals.setPaused( self, true )

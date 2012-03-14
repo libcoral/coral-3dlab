@@ -3,6 +3,8 @@ local SelectionManipulator =  co.Component( "lab3d.manipulator.SelectionManipula
 
 function SelectionManipulator:__init()
 	self.name = self.name or "Selection Manipulator"
+	-- access pick intersection service
+	self.pickIntersector = co.system.services:getService( co.Type["lab3d.scene.IPickIntersector"] )
 end
 
 function SelectionManipulator:getName() 
@@ -36,26 +38,33 @@ end
 function SelectionManipulator:setNavigator( navigator )
 	self.navigator = navigator
 end
+
+function SelectionManipulator:getEnabled()
+	return true
+end
+
+function SelectionManipulator:setEnabled( value )
+	-- empty (always enabled)
+end
+
 -------------------------------------------------------------------------------
 -- Component implementation
 -------------------------------------------------------------------------------
 function SelectionManipulator:mousePressed( x, y, buttons, modifiers )
 
---	local intersector = self.pickIntersector
---	local intersections = intersector:intersect( x, y )
---	local pickedObject = nil
---	if #intersections > 0 then
---		pickedObject = intersections[1].object
---	end
---
---	local worldManager = co.system.services:getService( co.Type["siv.world.IWorldManager"] )
---	local user = worldManager.world.user
---	if user.selectedEntity == pickedObject then return end
---	
---	worldManager.undo:beginChange( "Selecionar Objeto(s)" )
---	user.selectedEntity = pickedObject
---	worldManager.space:addChange( user )
---	worldManager.undo:endChange()
+	local intersector = self.pickIntersector
+	if not intersector then return end
+	
+	local intersections = intersector:intersect( x, y )
+	local pickedObject = nil
+	if #intersections > 0 then
+		pickedObject = intersections[1].object
+	end
+	
+	local application = co.system.services:getService( co.Type["lab3d.IApplication"] )
+	local currentProject = application.currentProject
+
+	currentProject:setEntitySelected( pickedObject )
 end
 -------------------------------------------------------------------------------
 -- Unused IInputlistener methods

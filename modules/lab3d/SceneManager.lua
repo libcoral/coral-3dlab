@@ -32,7 +32,9 @@ end
 
 function M:initialize( scene )
 	self.scene = scene
+	-- registers self table as project observer, using lua api
 	ProjectObserver:addObserver( self )
+	-- registers self table as update notifier observer, using lua api
 	UpdateNotifier:addObserver( self )
 	
 	self.actorFactory = co.system.services:getService( co.Type["lab3d.scene.IActorFactory"] )

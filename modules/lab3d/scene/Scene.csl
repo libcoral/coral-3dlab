@@ -2,5 +2,6 @@ component Scene
 {
 	provides IScene scene;
 	provides qt.IPainter painter;
+	provides IPickIntersector intersector;
 	receives qt.IGLContext graphicsContext;
 };

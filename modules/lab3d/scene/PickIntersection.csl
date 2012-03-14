@@ -1,0 +1,9 @@
+import glm.Vec3;
+import lab3d.dom.IEntity;
+
+struct PickIntersection
+{
+	Vec3 point;
+	Vec3 normal;
+	IEntity object;
+};

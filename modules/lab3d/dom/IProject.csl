@@ -2,12 +2,13 @@ interface IProject
 {
 	string name;
 	IEntity[] entities;
-	readonly IEntity selectedEntity;
+	IEntity selectedEntity;
 	
 	// Current view point being used in the project. This is the main access point for changing current view-point.
 	// A new project must always start with a new default view (e.g: zero rotation at default position).
 	IView currentView;
 	
+	// Sets the selected entity and notifies all project observers.
 	void setEntitySelected( in IEntity entity );
 	
 	void addEntity( in IEntity entity );

@@ -6,5 +6,6 @@ import coOsg.NodePtr;
 interface IActor
 {	
 	coOsg.NodePtr getNode();
+	lab3d.dom.IEntity associatedEntity;
 };
 

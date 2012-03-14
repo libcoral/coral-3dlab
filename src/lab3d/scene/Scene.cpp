@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "OSGUserData.h"
 
 #include "glmOsgConvert.h"
 #include "GraphicsContext.h"
@@ -6,6 +7,7 @@
 #include <lab3d/dom/IView.h>
 #include <lab3d/scene/IActor.h>
 #include <lab3d/scene/ICamera.h>
+#include <lab3d/scene/PickIntersection.h>
 
 #include <qt/IGLContext.h>
 
@@ -35,6 +37,10 @@
 #include <string.h>
 #include <glm/glm.hpp>
 
+#include <co/Coral.h>
+#include <co/ISystem.h>
+#include <co/IServiceManager.h>
+
 namespace
 {
     const osg::Vec4 DEFAULT_CLEAR_COLOR = osg::Vec4( 0, 0, 0.4, 1 );
@@ -59,6 +65,9 @@ Scene::Scene() : _autoCalculateNearFar( true )
 	_graphicsContext = new GraphicsContext();
     
 	_activeCamera = 0;
+    
+    // register pick intersector service
+    co::getSystem()->getServices()->addService( co::typeOf<lab3d::scene::IPickIntersector>::get(), this->getService<lab3d::scene::IPickIntersector>() );
 }
 
 Scene::~Scene()
@@ -120,6 +129,49 @@ void Scene::clear( float r, float g, float b, float a )
     _osgCamera->setClearColor( osg::Vec4( r, g, b, a ) );
 }
     
+void Scene::intersect( double x, double y, std::vector<lab3d::scene::PickIntersection>& intersections )
+{
+    float local_x, local_y = 0.0;
+    const osg::Camera* osgCamera = getCameraContainingPosition( x, y, local_x, local_y );
+    if( !osgCamera ) return;
+    
+    osgUtil::LineSegmentIntersector::CoordinateFrame cf = 
+    osgCamera->getViewport() ? osgUtil::Intersector::WINDOW : osgUtil::Intersector::PROJECTION;
+    
+    osg::ref_ptr< osgUtil::LineSegmentIntersector > picker = new osgUtil::LineSegmentIntersector(cf, local_x, local_y);
+    osgUtil::IntersectionVisitor iv( picker.get() );
+    const_cast<osg::Camera*>( osgCamera )->accept( iv );
+    
+    if( !picker->containsIntersections() )
+    {
+        intersections.clear();
+        return;
+    }
+    
+    osgUtil::LineSegmentIntersector::Intersections ints = picker->getIntersections();
+    for( osgUtil::LineSegmentIntersector::Intersections::iterator it = ints.begin(); it != ints.end(); ++it )
+    {
+        // runs over all nodes within node path
+        const osg::NodePath& np = it->nodePath;
+        for( size_t i = 0; i < np.size(); ++i )
+        {
+            osg::Node* node = np[i];
+            osg::Referenced* osgUserData = node->getUserData();
+            if( !osgUserData )
+                continue;
+            
+            OSGUserData* userData = dynamic_cast<OSGUserData*>( osgUserData );
+            lab3d::scene::PickIntersection intersection;
+            intersection.object = userData->getEntity();
+            
+            intersection.point = vecConvert( it->getWorldIntersectPoint() );
+            intersection.normal = vecConvert( it->getWorldIntersectNormal() );
+            
+            intersections.push_back( intersection );
+        }
+    }
+}
+    
 void Scene::draw()
 {
     frame();
@@ -137,6 +189,8 @@ void Scene::addActor( lab3d::scene::IActor* actor )
 
 	osg::ref_ptr<osg::Node> node = actor->getNode();
 	_rootNode->addChild( node );
+    
+    node->setUserData( new OSGUserData( actor->getAssociatedEntity() ) );
 
 	update();
 }

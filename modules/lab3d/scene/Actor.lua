@@ -13,11 +13,11 @@ function Actor:__init()
 	-- empty
 end
 
-function Actor:setEntityService( entity )
+function Actor:setAssociatedEntity( entity )
 	self.entity = entity
 end
 
-function Actor:getEntityService( entity )
+function Actor:getAssociatedEntity( entity )
 	return self.entity
 end
 

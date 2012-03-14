@@ -72,6 +72,9 @@ local function openProject( self, projectObj )
 	self.dirtyProjects[self.currentProject] = false
 	
 	notifyProjectOpened( self )
+
+	-- force a selection notification
+	notifyEntitySelectionChanged( self, nil, self.currentProject.selectedEntity )
 end
 
 --[[---------------------------------------------------------------------------
@@ -99,6 +102,7 @@ end
 function Application:openProject( filename )
 	self.archiveObj.file.name = filename
 	openProject( self, self.archiveObj.archive:restore() )
+	self.projectFiles[self.currentProject] = filename
 end
 
 function Application:projectHasChanges( project )
@@ -155,5 +159,3 @@ function Application:onServiceChanged( changes )
 	local service = changes.service
 	self.dirtyProjects[service] = true
 end
-
-

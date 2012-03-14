@@ -9,16 +9,20 @@ local M = { actors = {} }
 
 function ActorFactory:getOrCreate( entity )
 	local actor = M.actors[entity]
+	
 	-- if an actor has already been build for the given entity, retrieve it...
 	if actor then
+		assert( actor.associatedEntity == entity )
 		return actor
 	end
 	
-	actor = co.new "lab3d.scene.Actor"
-	actor.entity = entity
+	local actorObj = co.new "lab3d.scene.Actor"
 	
-	M.actors[entity] = actor.actor
-	return actor.actor
+	local actor = actorObj.actor
+	actor.associatedEntity = entity
+	
+	M.actors[entity] = actor
+	return actor
 end
 
 function ActorFactory:clear()

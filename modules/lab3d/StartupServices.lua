@@ -9,4 +9,3 @@ co.system.services:addServiceProvider( co.Type["lab3d.scene.IModelLoader"], "lab
 
 -- Registers main application entry point
 co.system.services:addServiceProvider( co.Type["lab3d.IApplication"], "lab3d.Application" )
-	

@@ -12,6 +12,7 @@ local qt = require "qt"
 local glm = require "glm"
 
 local SceneManager = require "lab3d.SceneManager"
+local ProjectObserver = require "lab3d.dom.ProjectObserver"
 
 local ExamineManipulator =  co.Component( "lab3d.manipulator.ExamineManipulator" )
 
@@ -34,9 +35,14 @@ function ExamineManipulator:__init()
 	local navigatorObj = co.new "lab3d.dom.ExamineNavigator"
 	self.navigator = navigatorObj.navigator
 
+	self.enabled = false
+	
 	locals.reset( self )
 	self.name = self.name or "Examine Manipulator"
 	self.canvas = qt.mainWindow:getCentralWidget()
+	
+	-- registers self table as project observer, using lua api
+	ProjectObserver:addObserver( self )
 end
 
 function ExamineManipulator:getName() 
@@ -77,6 +83,14 @@ end
 
 function ExamineManipulator:setNavigator( navigator )
 	self.navigator = navigator
+end
+
+function ExamineManipulator:getEnabled()
+	return self.enabled
+end
+
+function ExamineManipulator:setEnabled( value )
+	self.enabled = value
 end
 
 function ExamineManipulator:mousePressed( x, y, button, modifiers )
@@ -124,6 +138,11 @@ function ExamineManipulator:keyPressed( key )
 end
 
 function ExamineManipulator:keyReleased( key ) end
+
+
+function ExamineManipulator:onEntitySelectionChanged( project, previous, current )
+	self.enabled = (current ~= nil)
+end
 
 return ExamineManipulator
 

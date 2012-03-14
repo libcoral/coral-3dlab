@@ -45,6 +45,9 @@ public:
     void draw();
     void setViewport( co::int32 x, co::int32 y, co::int32 width, co::int32 height );
 	void clear( float r, float g, float b, float a );
+    
+    // IPickIntersector methods:
+	void intersect( double x, double y, std::vector<lab3d::scene::PickIntersection>& intersections );
 
 	// graphics.IScene methods:
 	virtual co::Range<lab3d::scene::IActor* const> getActors();
