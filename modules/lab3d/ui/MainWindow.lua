@@ -59,13 +59,9 @@ function L.on_action_AddModel_triggered( sender )
 		local model = co.new( "lab3d.scene.Model" ).model
 		model.filename = files[i]
 		local entity = co.new( "lab3d.dom.Entity" ).entity
+		entity.name = model.filename
 		entity:addDecorator( model )
 		L.application.currentProject:addEntity( entity )
-
-		
-		entity.position = glm.Vec3( 1000, 0, 0 )
-		entity.scale = glm.Vec3( 1.5, 1.5, 1.0 )
-		entity.orientation = entity.orientation
 	end
 end
 

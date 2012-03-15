@@ -1,0 +1,6 @@
+@lua.Scripted( "lab3d.scene.HighlightModel" ) 
+component HighlightModel
+{
+	provides IModel model;
+	receives lab3d.dom.IEntity entity;
+};
