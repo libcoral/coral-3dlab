@@ -68,10 +68,10 @@ function Project:removeEntity( entity )
 			
 			self.application.space:addChange( self.object.project )
 			self.application.space:notifyChanges()
-			return
+			return true
 		end
 	end
-	error( "no such entity" )
+	return false
 end
 
 function Project:findEntity( entityName )

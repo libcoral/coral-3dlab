@@ -61,24 +61,9 @@ function ExamineManipulator:activate()
 	local selectedEntity = application.currentProject.selectedEntity
 	assert( selectedEntity )
 	
-	local objBounds = selectedEntity.bounds
-	local center = objBounds.center
-	local boundRadius = glm.length( center - objBounds.max ) 
-	
-	-- set the rotation center to the selected object and place view in a position
-	-- that the whole object can bee seen
-	local position = selectedEntity.position
 	local view = self.navigator.view
-	local viewPosition = view.position
-	local translationVector = position - self.navigator.view.position
-	local distance = glm.length( translationVector )
-	glm.normalize( translationVector, translationVector )
-	glm.mulVecScalar( translationVector, distance - boundRadius, translationVector )
-
-	local finalOrientation = glm.fromMat4( glm.lookAt( viewPosition, position, glm.Vec3( 0, 0, 1 ) ) )
-	
-	view.position = ( viewPosition + translationVector )
-	view.orientation = finalOrientation
+	view:setPose( view:calculateNavigationToObject( selectedEntity ) )
+	self.navigator.rotationCenter = selectedEntity.bounds.center
 end
 
 function ExamineManipulator:deactivate()
@@ -166,6 +151,8 @@ function ExamineManipulator:keyReleased( key ) end
 
 function ExamineManipulator:onEntitySelectionChanged( project, previous, current )
 	self.enabled = (current ~= nil)
+	if not current or not self.navigator then return end
+	self.navigator.rotationCenter = current.bounds.center
 end
 
 return ExamineManipulator

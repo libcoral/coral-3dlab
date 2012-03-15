@@ -59,7 +59,10 @@ function L.on_action_AddModel_triggered( sender )
 		local model = co.new( "lab3d.scene.Model" ).model
 		model.filename = files[i]
 		local entity = co.new( "lab3d.dom.Entity" ).entity
-		entity.name = model.filename
+		
+		-- create a simple default name from file
+		local nameFromFile = string.match( model.filename, "[%w_%.-_\\/]*[\\/]([%w@#-_+%.]*)$" )
+		entity.name = nameFromFile .. "_" .. (#L.application.currentProject.entities + 1)
 		entity:addDecorator( model )
 		L.application.currentProject:addEntity( entity )
 	end
@@ -88,6 +91,14 @@ function L.on_action_SaveProject_triggered( sender )
 
 	L.save( project, projectFile )
 	return true
+end
+
+function L.on_actionExcludeSelected_triggered()
+	local selectedEntity = L.application.currentProject.selectedEntity
+	if not selectedEntity then return end
+	
+	L.application.currentProject:removeEntity( selectedEntity )
+	L.application.currentProject:setEntitySelected( nil )
 end
 
 -- MainWindow constructor

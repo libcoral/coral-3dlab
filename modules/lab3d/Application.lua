@@ -51,6 +51,7 @@ end
 
 local function openProject( self, projectObj )
 	if self.space and self.currentProject then
+		notifyProjectClosed( self )
 		ObserveFields:removeFieldObserver( self.space, self.currentProject, self )
 		-- to track all changes (track whether the project is dirty - has unsaved changes)
 		self.space:removeServiceObserver( self.currentProject, self.object.app )
@@ -58,8 +59,6 @@ local function openProject( self, projectObj )
 		self.dirtyProjects[self.currentProject] = nil
 		self.projectFiles[self.currentProject] = nil
 	end
-	
-	notifyProjectClosed( self )
 	
 	self.space = helper:setupCaSpace( self.model )
 

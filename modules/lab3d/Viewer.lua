@@ -9,6 +9,7 @@ local glm = require "glm"
 -- User Interface Modules
 local MainWindow = require "lab3d.ui.MainWindow"
 local GLCanvas = require "lab3d.ui.GLCanvasWidget"
+local ObjectTreeWidget = require "lab3d.ui.ObjectTreeWidget"
 
 local Camera = require "lab3d.scene.Camera"
 local SceneManager = require "lab3d.SceneManager"
@@ -83,6 +84,9 @@ function M:initialize()
 	
 	self.mainWindow = MainWindow( "Coral 3d Lab" )
 	self.mainWindow:setCentralWidget( canvasWidget )
+	
+	local dockTreeWidget = ObjectTreeWidget( self.mainWindow  )
+	self.mainWindow:addDockWidget( qt.LeftDockWidgetArea, dockTreeWidget )
 	
 	-- export main window instance into a global access point
 	qt.mainWindow = self.mainWindow
