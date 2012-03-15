@@ -5,12 +5,13 @@ CORAL 3D LAB DEVELOPER GUIDE
 
 # Introdução
 
-Este guia apresentará primeiramente uma visão geral sobre a hierarquia de módulos, introduzindo o conceito de arquitetura em camadas. Em seguida uma apresenta-se uma introdução à camada de negócios e como utilizá-la. Esta seção mostra como adicionar e manipular entidades de domínio (lab3d.dom.IEntity) e como escutar mudanças em seu estado. Nela também é introduzido o conceito de projeto (lab3d.dom.IProject) e como criá-los, carregá-los, salvá-los, e como escutar seus eventos.
-Após introduzir a camada de domínio e como manipulá-la, este guia apresenta a camada gráfica e como estendê-la. Nesta seção apresentamos também alguns módulos chave do framework, responsáveis por escutar por mudanças na camada de domínio e fornecer um mecanismo automático de sincronização entre esta camada e a camada gráfica (lab3d.scene.SceneManager). Isso permite, como será visto, que toda a modelagem seja feita com o foco apenas na camada de negócios, tornando a cena apenas um reflexo ou visão desse modelo.
+Este guia apresentará primeiramente uma visão geral sobre a hierarquia de módulos, introduzindo o conceito de arquitetura em camadas. Em seguida uma apresenta-se uma introdução à camada de negócios e como utilizá-la. Esta seção também mostra como adicionar e manipular entidades de domínio (lab3d.dom.IEntity) e como escutar mudanças em seu estado. Nela também é introduzido o conceito de projeto (lab3d.dom.IProject), bem como criá-los, carregá-los, salvá-los e como escutar seus eventos.
 
-Por fim, são apresentados alguns componentes auxiliares (módulos lab3d.helper), uma visão geral do funcionamento do visualizador (lab3d.Viewer) e o que são e como criar novos manipuladores (lab3d.manipulator.IManipulator).
+Após introduzir a camada de domínio e como manipulá-la, este guia apresenta a camada gráfica e como estendê-la. Nesta seção apresentamos também alguns módulos chave do framework, responsáveis por escutar mudanças na camada de domínio e fornecer um mecanismo automático de sincronização entre esta camada e a camada gráfica (lab3d.scene.SceneManager). Isso permite, como será visto, que toda a modelagem seja feita com o foco apenas na camada de negócios, tornando a cena apenas um reflexo ou visão configuravel desse modelo.
 
-#[Entendendo a hierarquia de módulos do Coral 3D lab](!hierarquia):
+Por fim, são apresentados alguns módulos auxiliares (módulos lab3d.helper), uma visão geral do funcionamento do visualizador (lab3d.Viewer) e o que são e como criar novos manipuladores (lab3d.manipulator.IManipulator).
+
+#1. [Entendendo a hierarquia de módulos do Coral 3D lab](!hierarquia):
 
 ## Namespace raiz 'lab3d':
 
