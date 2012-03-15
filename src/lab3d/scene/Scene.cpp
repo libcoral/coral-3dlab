@@ -217,6 +217,9 @@ void Scene::removeModel( lab3d::scene::IModel* model )
 
 void Scene::update()
 {
+    if( !_osgCamera.get() ) // scene not yet initialized
+        return;
+    
     paint();
     _graphicsContext->update();
 }

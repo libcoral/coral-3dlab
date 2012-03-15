@@ -15,6 +15,11 @@ local L = {}
 
 local M = {}
 
+function M:updateHighlightModel( entity )
+	if entity ~= self.application.currentProject.selectedEntity then return end
+	self.highlightModel.entity = entity
+end
+
 function M:onDecoratorAdded( entity, decorator )
 	local group = self.entityTransforms[entity]
 	if not group then return end
@@ -44,12 +49,14 @@ function M:onPoseChanged( entity, position, orientation )
 	if not group then return end
 	group:setTranslation( position )
 	group:setOrientation( orientation )
+	updateHighlightModel( entity )
 end
 
 function M:onScaleChanged( entity, scale )
 	local group = self.entityTransforms[entity]
 	if not group then return end
 	group:setScale( scale )
+	updateHighlightModel( entity )
 end
 
 function M:onProjectOpened( newProject )
@@ -98,11 +105,19 @@ function M:onEntitiesRemoved( project, entities )
 end
 
 function M:onEntitySelectionChanged( project, previous, current )
-
+	if current then
+		self.highlightModelObj.entity = current
+		self.scene:addModel( self.highlightModelObj.model )
+	else
+		self.scene:removeModel( self.highlightModelObj.model )
+	end
 end
 
 function M:initialize( scene )
 	self.scene = scene
+	
+	-- highlight box model for mark selected node in the scene
+	self.highlightModelObj = co.new "lab3d.scene.HighlightModel"
 	
 	-- save entity transforms to update its position/scale/orientation when a Entity change
 	self.entityTransforms = {}
