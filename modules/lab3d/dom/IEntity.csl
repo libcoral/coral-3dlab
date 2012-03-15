@@ -12,6 +12,18 @@ interface IEntity
 	void removeDecorator( in co.IService decorator );
 	void getDecoratorsForType( in co.IType type, out co.IService[] decorators );
 	
+	<c++
+		template<typename T> inline void getDecorators( co::RefVector<T>& decorators )
+		{
+			co::RefVector<IService> serviceDecos;
+			getDecoratorsForType( co::typeOf<T>::get(), serviceDecos );
+			for( co::RefVector<IService>::iterator it = serviceDecos.begin(); it != serviceDecos.end(); ++it )
+			{
+				decorators.push_back( static_cast<T*>( (*it).get() ) );
+			}
+		}
+	c++>
+	
 	void addObserver( in IEntityObserver observer );
 	void removeObserver( in IEntityObserver observer );
 	
