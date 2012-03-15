@@ -12,7 +12,7 @@ local qt = require "qt"
 local glm = require "glm"
 
 local SceneManager = require "lab3d.SceneManager"
-local ProjectObserver = require "lab3d.dom.ProjectObserver"
+local ProjectObserver = require "lab3d.helper.ProjectObserver"
 
 local ExamineManipulator =  co.Component( "lab3d.manipulator.ExamineManipulator" )
 
@@ -55,6 +55,30 @@ end
 
 function ExamineManipulator:activate()
 	locals.reset( self )
+	
+	local application = co.system.services:getService( co.Type["lab3d.IApplication"] )
+	
+	local selectedEntity = application.currentProject.selectedEntity
+	assert( selectedEntity )
+	
+	local objBounds = selectedEntity.bounds
+	local center = objBounds.center
+	local boundRadius = glm.length( center - objBounds.max ) 
+	
+	-- set the rotation center to the selected object and place view in a position
+	-- that the whole object can bee seen
+	local position = selectedEntity.position
+	local view = self.navigator.view
+	local viewPosition = view.position
+	local translationVector = position - self.navigator.view.position
+	local distance = glm.length( translationVector )
+	glm.normalize( translationVector, translationVector )
+	glm.mulVecScalar( translationVector, distance - boundRadius, translationVector )
+
+	local finalOrientation = glm.fromMat4( glm.lookAt( viewPosition, position, glm.Vec3( 0, 0, 1 ) ) )
+	
+	view.position = ( viewPosition + translationVector )
+	view.orientation = finalOrientation
 end
 
 function ExamineManipulator:deactivate()

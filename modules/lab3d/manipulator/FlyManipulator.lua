@@ -202,12 +202,6 @@ function FlyManipulator:mouseDoubleClicked( x, y, button, modifiers )
 		return
 	end
 
-	local intersector = self.pickIntersector
-	local intersections = intersector:intersect( x, y )
-	if #intersections == 0 then
-		return
-	end
-
 	-- sets picked object the examined object and navigate to it
 	--TODO: perform navigation task using IViewAnimation
 end

@@ -1,5 +1,0 @@
-@lua.Scripted( "lab3d.scene.Actor" ) 
-component Actor
-{
-	provides IActor actor;
-};

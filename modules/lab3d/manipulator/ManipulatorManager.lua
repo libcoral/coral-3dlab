@@ -1,7 +1,7 @@
 local qt = require "qt"
 
-local UpdateNotifier = require "lab3d.dom.UpdateNotifier"
-local ProjectObserver = require "lab3d.dom.ProjectObserver"
+local UpdateNotifier = require "lab3d.helper.UpdateNotifier"
+local ProjectObserver = require "lab3d.helper.ProjectObserver"
 
 -- A global service for managing manipulators
 local function checkManipulatorExists( manipulators, name )

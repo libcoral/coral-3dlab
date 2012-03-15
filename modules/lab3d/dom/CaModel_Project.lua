@@ -21,14 +21,28 @@ Type "lab3d.dom.BoundingBox"
 	center = "glm.Vec3"	
 }
 
+Type "co.IService"
+{
+}
+
+Type "lab3d.scene.IModel"
+{
+	filename = "string"
+}
+
+Type "lab3d.scene.Model"
+{
+	model = "lab3d.scene.IModel"
+}
+
 Type "lab3d.dom.IEntity"
 {
 	name = "string",
 	scale = "glm.Vec3",
 	position = "glm.Vec3",
 	orientation = "glm.Quat",
-	bounds = "lab3d.dom.BoundingBox",	
-	filename = "string"
+	bounds = "lab3d.dom.BoundingBox",
+	decorators = "co.IService[]"
 }
 
 Type "lab3d.dom.Entity"

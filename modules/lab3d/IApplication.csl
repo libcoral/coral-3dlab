@@ -19,9 +19,7 @@ interface IApplication extends ca.IServiceObserver
 	void removeProjectObserver( in IProjectObserver observer );
 	
 	readonly IProject currentProject;
-	
+		
 	// internal use only
 	readonly ca.ISpace space;
-	
-	readonly scene.IScene currentScene;
 };

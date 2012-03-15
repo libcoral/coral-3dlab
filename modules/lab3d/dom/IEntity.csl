@@ -8,12 +8,19 @@ import glm.Quat;
  */
 interface IEntity
 {
+	void addDecorator( in co.IService decorator );
+	void removeDecorator( in co.IService decorator );
+	void getDecoratorsForType( in co.IType type, out co.IService[] decorators );
+	
+	void addObserver( in IEntityObserver observer );
+	void removeObserver( in IEntityObserver observer );
+	
+	co.IService[] decorators;
+	
 	string name;
 
 	Vec3 scale;
 	Vec3 position;
 	Quat orientation;
 	BoundingBox bounds;
-	
-	string filename;
 };

@@ -5,7 +5,7 @@
 --]]---------------------------------------------------------------------------
 
 local helper = require "lab3d.helper.CalciumHelper"
-local observeFields = require "lab3d.helper.ObserveFields"
+local ObserveFields = require "lab3d.helper.ObserveFields"
 
 --[[---------------------------------------------------------------------------
 	Local utility functions
@@ -51,7 +51,7 @@ end
 
 local function openProject( self, projectObj )
 	if self.space and self.currentProject then
-		observeFields:removeFieldObserver( self.space, self.currentProject, self )
+		ObserveFields:removeFieldObserver( self.space, self.currentProject, self )
 		-- to track all changes (track whether the project is dirty - has unsaved changes)
 		self.space:removeServiceObserver( self.currentProject, self.object.app )
 		
@@ -66,7 +66,7 @@ local function openProject( self, projectObj )
 	self.projectObj = projectObj
 	self.currentProject = self.projectObj.project
 	self.space:setRootObject( self.projectObj )
-	observeFields:addFieldObserver( self.space, self.currentProject, self )
+	ObserveFields:addFieldObserver( self.space, self.currentProject, self )
 	self.space:addServiceObserver( self.currentProject, self.object.app )
 	
 	self.dirtyProjects[self.currentProject] = false
@@ -141,6 +141,10 @@ end
 
 function Application:getSpace()
 	return self.space
+end
+
+function Application:getEntitySpace()
+	return self.entitySpace
 end
 
 function Application:onEntitiesAdded( service, addedObjects )

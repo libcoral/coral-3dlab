@@ -1,6 +1,6 @@
 // Global project observer to support project observing from lua (e.g: using simple lua closures)
-@lua.Scripted( "lab3d.dom.ProjectObserver" ) 
+@lua.Scripted( "lab3d.helper.ProjectObserver" ) 
 component ProjectObserver
 {
-	provides IProjectObserver observer;
+	provides lab3d.dom.IProjectObserver observer;
 };

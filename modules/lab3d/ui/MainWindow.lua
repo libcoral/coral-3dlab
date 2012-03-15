@@ -4,6 +4,7 @@
 --]]---------------------------------------------------------------------------
 
 local qt = require "qt"
+local glm = require "glm"
 
 -- local variables table
 local L = {}
@@ -55,10 +56,16 @@ function L.on_action_AddModel_triggered( sender )
 	if #files == 0 then return end
 
 	for i = 1, #files do
+		local model = co.new( "lab3d.scene.Model" ).model
+		model.filename = files[i]
 		local entity = co.new( "lab3d.dom.Entity" ).entity
-		entity.filename = files[i]
-
+		entity:addDecorator( model )
 		L.application.currentProject:addEntity( entity )
+
+		
+		entity.position = glm.Vec3( 1000, 0, 0 )
+		entity.scale = glm.Vec3( 1.5, 1.5, 1.0 )
+		entity.orientation = entity.orientation
 	end
 end
 

@@ -6,7 +6,7 @@
 	user time between two consecutive update calls.
 	
 	E.x:
-		local UpdateNotifier = require "lab3d.dom.UpdateNotifier"
+		local UpdateNotifier = require "lab3d.helper.UpdateNotifier"
 		
 		local M = {}
 		M.timeUpdate = function( dt )
@@ -15,7 +15,7 @@
 		
 		UpdateNotifier:addObserver( M )
 --]]---------------------------------------------------------------------------
-local UpdateNotifier =  co.Component( "lab3d.dom.UpdateNotifier" )
+local UpdateNotifier =  co.Component( "lab3d.helper.UpdateNotifier" )
 
 function UpdateNotifier:__init()	
 	self.updateManager = co.new( "lab3d.dom.UpdateManager" ).updateManager

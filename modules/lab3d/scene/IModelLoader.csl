@@ -1,6 +1,0 @@
-import coOsg.NodePtr;
-
-interface IModelLoader
-{
-	void load( in string filename, out coOsg.NodePtr model );
-};

@@ -50,9 +50,9 @@ public:
 	void intersect( double x, double y, std::vector<lab3d::scene::PickIntersection>& intersections );
 
 	// graphics.IScene methods:
-	virtual co::Range<lab3d::scene::IActor* const> getActors();
-	virtual void addActor( lab3d::scene::IActor* actor );
-	virtual void removeActor( lab3d::scene::IActor* actor );
+	virtual co::Range<lab3d::scene::IModel* const> getModels();
+	virtual void addModel( lab3d::scene::IModel* model );
+	virtual void removeModel( lab3d::scene::IModel* model );
     virtual void update();
     virtual void clear();
 
@@ -75,8 +75,8 @@ private:
 	void copyCameraStateToOSG( lab3d::scene::ICamera* from, osg::Camera* to );
 
 private:
-    typedef co::RefVector<lab3d::scene::IActor> ActorList;
-	ActorList _actors;
+    typedef co::RefVector<lab3d::scene::IModel> ModelList;
+	ModelList _models;
     
     bool _autoCalculateNearFar;
     osg::ref_ptr<osg::Group> _rootNode;

@@ -1,0 +1,5 @@
+component TransformModel
+{
+	provides ITransformModel model;
+	receives lab3d.dom.IEntity entity;
+};

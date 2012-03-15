@@ -1,4 +1,0 @@
-component ModelLoader
-{
-	provides IModelLoader loader;
-};

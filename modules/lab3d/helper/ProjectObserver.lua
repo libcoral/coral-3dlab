@@ -1,13 +1,13 @@
 --[[---------------------------------------------------------------------------
 	Observes the project and notify changes through lua closures 
 --]]---------------------------------------------------------------------------
-local ProjectObserver = co.Component( "lab3d.dom.ProjectObserver" )
+local ProjectObserver = co.Component( "lab3d.helper.ProjectObserver" )
 
 function ProjectObserver:__init()
 end
 
 function ProjectObserver:onProjectOpened( newProject )
-	for k,v in pairs( self.observers ) do
+	for k, v in pairs( self.observers ) do
 		if v and type( v.onProjectOpened ) == "function" then
 			v:onProjectOpened( newProject )
 		end
@@ -15,7 +15,7 @@ function ProjectObserver:onProjectOpened( newProject )
 end
 
 function ProjectObserver:onProjectClosed( project )
-	for k,v in pairs( self.observers ) do
+	for k, v in pairs( self.observers ) do
 		if v and type( v.onProjectClosed ) == "function" then
 			v:onProjectClosed( project )
 		end
@@ -23,7 +23,7 @@ function ProjectObserver:onProjectClosed( project )
 end
 
 function ProjectObserver:onEntitiesAdded( project, entities )
-	for k,v in pairs( self.observers ) do
+	for k, v in pairs( self.observers ) do
 		if v and type( v.onEntitiesAdded ) == "function" then
 			v:onEntitiesAdded( project, entities )
 		end
@@ -31,7 +31,7 @@ function ProjectObserver:onEntitiesAdded( project, entities )
 end
 
 function ProjectObserver:onEntitiesRemoved( project, entities )
-	for k,v in pairs( self.observers ) do
+	for k, v in pairs( self.observers ) do
 		if v and type( v.onEntitiesRemoved ) == "function" then
 			v:onEntitiesRemoved( project, entities )
 		end
@@ -39,7 +39,7 @@ function ProjectObserver:onEntitiesRemoved( project, entities )
 end
 
 function ProjectObserver:onEntitySelectionChanged( project, previous, current )
-	for k,v in pairs( self.observers ) do
+	for k, v in pairs( self.observers ) do
 		if v and type( v.onEntitySelectionChanged ) == "function" then
 			v:onEntitySelectionChanged( project, previous, current )
 		end

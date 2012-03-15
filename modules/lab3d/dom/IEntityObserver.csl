@@ -1,0 +1,8 @@
+interface IEntityObserver
+{
+	void onNameChanged( in IEntity entity, in string name );
+	void onDecoratorAdded( in IEntity entity, in co.IService decorator );
+	void onDecoratorRemoved( in IEntity entity, in co.IService decorator );
+	void onPoseChanged( in IEntity entity, in glm.Vec3 position, in glm.Quat orientation );
+	void onScaleChanged( in IEntity entity, in glm.Vec3 scale );
+};

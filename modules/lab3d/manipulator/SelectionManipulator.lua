@@ -58,7 +58,7 @@ function SelectionManipulator:mousePressed( x, y, buttons, modifiers )
 	local intersections = intersector:intersect( x, y )
 	local pickedObject = nil
 	if #intersections > 0 then
-		pickedObject = intersections[1].object
+		pickedObject = intersections[1].entity
 	end
 	
 	local application = co.system.services:getService( co.Type["lab3d.IApplication"] )

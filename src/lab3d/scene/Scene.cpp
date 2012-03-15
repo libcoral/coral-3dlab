@@ -5,7 +5,7 @@
 #include "GraphicsContext.h"
 
 #include <lab3d/dom/IView.h>
-#include <lab3d/scene/IActor.h>
+#include <lab3d/scene/IModel.h>
 #include <lab3d/scene/ICamera.h>
 #include <lab3d/scene/PickIntersection.h>
 
@@ -161,8 +161,9 @@ void Scene::intersect( double x, double y, std::vector<lab3d::scene::PickInterse
                 continue;
             
             OSGUserData* userData = dynamic_cast<OSGUserData*>( osgUserData );
+            
             lab3d::scene::PickIntersection intersection;
-            intersection.object = userData->getEntity();
+            intersection.entity = userData->getEntity();
             
             intersection.point = vecConvert( it->getWorldIntersectPoint() );
             intersection.normal = vecConvert( it->getWorldIntersectNormal() );
@@ -177,35 +178,36 @@ void Scene::draw()
     frame();
 }
     
-co::Range<lab3d::scene::IActor* const> Scene::getActors()
+co::Range<lab3d::scene::IModel* const> Scene::getModels()
 {
 	// TODO: implement this method.
-	return _actors;
+	return _models;
 }
 
-void Scene::addActor( lab3d::scene::IActor* actor )
+void Scene::addModel( lab3d::scene::IModel* model )
 {
-	_actors.push_back( actor );
+	_models.push_back( model );
 
-	osg::ref_ptr<osg::Node> node = actor->getNode();
+	osg::ref_ptr<osg::Node> node = model->getNode();
 	_rootNode->addChild( node );
-    
-    node->setUserData( new OSGUserData( actor->getAssociatedEntity() ) );
 
 	update();
 }
 
-void Scene::removeActor( lab3d::scene::IActor* actor )
+void Scene::removeModel( lab3d::scene::IModel* model )
 {
-	for( ActorList::iterator it = _actors.begin(); it != _actors.end(); ) 
+	for( ModelList::iterator it = _models.begin(); it != _models.end(); ) 
 	{
-        lab3d::scene::IActor* current = (*it).get();
-		if( current == actor )
+        lab3d::scene::IModel* current = (*it).get();
+		if( current == model )
 		{            
             osg::ref_ptr<osg::Node> node = current->getNode();
+            
+            // remove the reference for the user data set on addModel
+            node->setUserData( 0 );
             _rootNode->removeChild( node );
             
-			it = _actors.erase( it );
+			it = _models.erase( it );
             continue;
 		}
         ++it;
@@ -225,7 +227,7 @@ void Scene::clear()
         return;
     
 	_rootNode->removeChildren( 0, _rootNode->getNumChildren() );
-	_actors.clear();
+	_models.clear();
     update();
     
     // setup light
