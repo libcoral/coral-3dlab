@@ -11,16 +11,39 @@ local L = {}
 --[[---------------------------------------------------------------------------
 	Module functions
 --]]---------------------------------------------------------------------------
+local SceneManager = co.Component( "lab3d.scene.SceneManager" )
 
+function SceneManager:__init()
+	-- highlight box model for mark selected node in the scene
+	self.highlightModelObj = co.new "lab3d.scene.HighlightModel"
+	
+	-- save entity transforms to update its position/scale/orientation when a Entity change
+	self.entityTransforms = {}
+	
+	-- registers self table as project observer, using lua api
+	ProjectObserver:addObserver( self )
+	
+	-- registers self table as update notifier observer, using lua api
+	UpdateNotifier:addObserver( self )
+	
+	-- access application main entry point (IApplication service)
+	self.application = co.system.services:getService( co.Type["lab3d.IApplication"] )
+end
 
-local M = {}
+function SceneManager:setSceneService( scene )
+	self.scene = scene
+end
 
-function M:updateHighlightModel( entity )
+function SceneManager:getSceneService()
+	return self.scene
+end
+
+function SceneManager:updateHighlightModel( entity )
 	if entity ~= self.application.currentProject.selectedEntity then return end
 	self.highlightModel.entity = entity
 end
 
-function M:onDecoratorAdded( entity, decorator )
+function SceneManager:onDecoratorAdded( entity, decorator )
 	local group = self.entityTransforms[entity]
 	if not group then return end
 	
@@ -30,7 +53,7 @@ function M:onDecoratorAdded( entity, decorator )
 	end
 end
 
-function M:onDecoratorRemoved( entity,  decorator )
+function SceneManager:onDecoratorRemoved( entity,  decorator )
 	local group = self.entityTransforms[entity]
 	if not group then return end
 	
@@ -44,7 +67,7 @@ function M:onDecoratorRemoved( entity,  decorator )
 	end
 end
 
-function M:onPoseChanged( entity, position, orientation )
+function SceneManager:onPoseChanged( entity, position, orientation )
 	local group = self.entityTransforms[entity]
 	if not group then return end
 	group:setTranslation( position )
@@ -52,23 +75,23 @@ function M:onPoseChanged( entity, position, orientation )
 	updateHighlightModel( entity )
 end
 
-function M:onScaleChanged( entity, scale )
+function SceneManager:onScaleChanged( entity, scale )
 	local group = self.entityTransforms[entity]
 	if not group then return end
 	group:setScale( scale )
 	updateHighlightModel( entity )
 end
 
-function M:onProjectOpened( newProject )
+function SceneManager:onProjectOpened( newProject )
 	self:onEntitiesAdded( newProject, newProject.entities )
 	self.scene.camera.view = newProject.currentView
 end
 
-function M:onProjectClosed( project )
+function SceneManager:onProjectClosed( project )
 	self.scene:clear()
 end
 
-function M:onEntitiesAdded( project, entities )
+function SceneManager:onEntitiesAdded( project, entities )
 	for i, entity in ipairs( entities ) do
 		-- create a transform model
 		local groupObj = co.new "lab3d.scene.TransformModel"
@@ -93,7 +116,7 @@ function M:onEntitiesAdded( project, entities )
 	end
 end
 
-function M:onEntitiesRemoved( project, entities )
+function SceneManager:onEntitiesRemoved( project, entities )
 	for i, entity in ipairs( entities ) do
 		local entityTransformModel = self.entityTransforms[entity]
 		if entityTransformModel then
@@ -104,7 +127,7 @@ function M:onEntitiesRemoved( project, entities )
 	end
 end
 
-function M:onEntitySelectionChanged( project, previous, current )
+function SceneManager:onEntitySelectionChanged( project, previous, current )
 	if current then
 		self.highlightModelObj.entity = current
 		self.scene:addModel( self.highlightModelObj.model )
@@ -113,29 +136,17 @@ function M:onEntitySelectionChanged( project, previous, current )
 	end
 end
 
-function M:initialize( scene )
-	self.scene = scene
-	
-	-- highlight box model for mark selected node in the scene
-	self.highlightModelObj = co.new "lab3d.scene.HighlightModel"
-	
-	-- save entity transforms to update its position/scale/orientation when a Entity change
-	self.entityTransforms = {}
-	
-	-- registers self table as project observer, using lua api
-	ProjectObserver:addObserver( self )
-	
-	-- registers self table as update notifier observer, using lua api
-	UpdateNotifier:addObserver( self )
-	
-	-- access application main entry point (IApplication service)
-	self.application = co.system.services:getService( co.Type["lab3d.IApplication"] )
-	
-	return self
+function SceneManager:timeUpdate( dt )
+	self.scene:update()
 end
 
-function M:timeUpdate( dt )
-	self.scene:update()
+local M = {}
+
+function M:initialize( scene )
+	
+	self.scene = scene
+	local instance = SceneManager( self ) 
+	return self
 end
 
 return M

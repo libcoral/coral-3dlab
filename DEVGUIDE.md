@@ -1,36 +1,8 @@
 CORAL 3D LAB DEVELOPER GUIDE
 ====================================
 
-#Índice:
-
-# Introdução
-
-Este guia apresentará primeiramente uma visão geral sobre a hierarquia de módulos, introduzindo o conceito de arquitetura em camadas. Em seguida uma apresenta-se uma introdução à camada de negócios e como utilizá-la. Esta seção também mostra como adicionar e manipular entidades de domínio (lab3d.dom.IEntity) e como escutar mudanças em seu estado. Nela também é introduzido o conceito de projeto (lab3d.dom.IProject), bem como criá-los, carregá-los, salvá-los e como escutar seus eventos.
-
-Após introduzir a camada de domínio e como manipulá-la, este guia apresenta a camada gráfica e como estendê-la. Nesta seção apresentamos também alguns módulos chave do framework, responsáveis por escutar mudanças na camada de domínio e fornecer um mecanismo automático de sincronização entre esta camada e a camada gráfica (lab3d.scene.SceneManager). Isso permite, como será visto, que toda a modelagem seja feita com o foco apenas na camada de negócios, tornando a cena apenas um reflexo ou visão configuravel desse modelo.
-
-Por fim, são apresentados alguns módulos auxiliares (módulos lab3d.helper), uma visão geral do funcionamento do visualizador (lab3d.Viewer) e o que são e como criar novos manipuladores (lab3d.manipulator.IManipulator).
-
-#1. [Entendendo a hierarquia de módulos do Coral 3D lab](!hierarquia):
-
-## Namespace raiz 'lab3d':
-
-O namespace raiz é 'lab3d' e contém dois outros principais namespaces 'dom' e 'scene'.
-
-O framerwork coral 3d lab diferencia principalmente duas camadas: a cama de domínio (ou de negócio) e a camada gráfica.
-Essa distinção existe para que seja simples alterar a forma como os objetos de negócio são visualizados. Os objetos de domínio (serviço lab3d.dom.IEntity) contém todos os dados abstratos, comuns a qualquer tipo de objeto, como posição, orientação, direção, escala e nome. 
-
-O módulo lab3d.dom contém todos os serviços e componentes da camara de dominio do framework, tais como entidades, algoritmos de navegação, algoritmos de modelagem de camera (IView). Já o módulo lab3d.scene contém os módulos da camáda gráfica.
-
-Embora seja possível utilizar apenas a camada gráfica (como será visto), <b>a camada gráfica nunca deve ser manipulada diretamente de forma desassociada da camada de domínio</b>. 
-O framework provê mecanismos para que seja possível manipular <b>apenas a camada de négocio</b> (e.x: entidades), de tal forma que as mudanças nessa camada reflitam automaticamentea camada gráfica. Isso permite enxergar e modelar melhor a camada de negócios e flexibilizar de maneira simples a forma como ela é representada graficamente.
-
 # Manipulando a camada de domínio
 
-## Entidades
-
- Intro...
- 
 ### Decorando entidades
 
 Os objetos de negócio lab3d.dom.IEntity possuem suporte a decoração genérica. Isso significa que é possível decorá-los com
@@ -42,7 +14,7 @@ qualquer tipo de serviço e, a qualquer momento, recuperar tal decorator. Por exe
 	
 	local mySpecialService = co.new( "myModule.SpecialServiceComponent" ).service
 	
-	-- Adiciona um decorador na entidade
+	-- Adiciona um decorador à entidade
 	myEntityService:addDecorator( mySpecialService )
 	
 	...
@@ -59,7 +31,7 @@ qualquer tipo de serviço e, a qualquer momento, recuperar tal decorator. Por exe
 	
 	myModule::ISpecialService* mySpecialService = co.newInstance( "myModule.SpecialServiceComponent" )->getService<myModule::ISpecialService>();
 	
-	// Adiciona um decorador na entidade
+	// Adiciona um decorador à entidade
 	myEntityService->addDecorator( mySpecialService );
 	
 	...
@@ -73,22 +45,140 @@ qualquer tipo de serviço e, a qualquer momento, recuperar tal decorator. Por exe
 	}
 	
 	
-### Ouvindo mudanças
- IEntityObserver, EntityObserver (lua closures)
- 
+### Ouvindo mudanças na Entity
+
+A notificação de mudança é feita através do serviço lab3d.dom.IEntityObserver. Contudo, existe um componente que prove um mecanismo de notificação por closures lua: lab3d.helper.EntityObserver.
+
+#### Implementando um entity observer em Coral:
+
+	component Observer
+	{
+		provides lab3d.dom.IEntityObserver;
+	};
+	
+#### Implementando um entity observer em lua:
+	
+	local t = {}
+	
+	function t:onNameChanged( entity, name )
+	
+	end
+
+	function t:onDecoratorAdded( entity, decorator )
+	end
+
+	function t:onDecoratorRemoved( entity,  decorator )
+	
+	end
+
+	... 
+	
+	-- registra a tabela t para um entidade especifica
+	local EntityObserver = require "lab3d.helper.EntityObserver"
+	EntityObserver:addObserver( someEntity, t )
+	
+No caso da implementação em Lua a definição dos closures é opcional, permitindo a implementação apenas dos closures na qual se deseja ouvir.
+
 ## Trabalhando com Projetos
 
-
 ##O <i>entrypoint</i> da Applicação
+	
+Acessado globalmente utilizando o sistema de serviços do coral:
+
+		local application = co.system.services:getService( co.Type["lab3d.IApplication"] )
+		
+Serve como entrypoint principal para a manipulação de projetos e entities.
 
 ### Adicionando ou removendo entidades
+	
+	local application = co.system.services:getService( co.Type["lab3d.IApplication"] )
+	application:newBlankProject()
+	
+	local entityObject = co.new "lab3d.dom.Entity"
+	local entity = entityObject.entity
+	
+	application.currentProject:addEntity( entity )
+	
+
+Ao adicionar uma entidade em um projeto, ela será automaticamente tratada pelo componente lab3d.scene.SceneManager, que ira procurar por decoradores gráficos (lab3d.scene.IModel) na entity adicionada.
+
+Qualquer decorador gráfico é automaticamente adicionado na cena e atualizado sempre que a entity é modificada. Um decorador pode ser adicionado a qualquer momento em uma entity e a cena irá ser automaticamente atualizada.
+
+### Exemplo de modelo customizado:
+
+	-- myCustomModel é um componente que prove IModel
+	local myCustomModelObj = co.new "myModule.MyCustomModel"
+	local myCustomModel = myCustomModelObj.model
+	
+	local entityObject = co.new "lab3d.dom.Entity"
+	local entity = entityObject.entity
+	
+	entity:addDecorator( myCustomModel )
+	
+	application.currentProject:addEntity( entity )
+	
+Isso irá trará o modelo customizado à cena, de forma associada ao entity decorado (e.g um picking nesse modelo retorna o entity, utilizando o servico global lab3d.scene.IPickIntersector). Veja mais em [Estendendo a camada gráfica][#graphics].
+
+### SceneManager
+
+O componente lab3d.scene.SceneManager é responsável por realizar a sincronização entre a camada de domínio e a camada gráfica. 
+
+#### Inicializando o SceneManager
+
+	local SceneManager = require "lab3d.scene.SceneManager"
+	SceneManager:initialize( scene )
+	
+A api em Lua permite uma inicialização bem simples como mostrada acima. Em C++ teriamos que instanciar um componente SceneManager e configurar seu receptáculo com a cena.
+
+Em Lua também, o ponteiro para acena passada para o SceneManager na inicialização fica sempre disponível através do field scene:
+
+	...
+	SceneManager:initialize( scene )
+	print( SceneManager.scene )
+	
+O scene manager utiliza a api de notificação de eventos de projeto e de entities (IProjectObserver e IEntityObserver) para manter as duas camadas atualizadas.
 
 ### Ouvindo mudanças em projetos
 
-#### Evento de projeto aberto
-#### Evento de projeto fechado
-#### Evento de adição/remoção de entidades
-#### Eventos seleção de entidades
+A notificação de eventos em projetos é feita através do serviço lab3d.dom.IProjectObserver. Contudo, existe um componente que prove um mecanismo de notificação por closures lua: lab3d.helper.ProjectObserver.
+
+#### Implementando um project observer em Coral:
+
+	component Observer
+	{
+		provides lab3d.dom.IProjectObserver;
+	};
+	
+#### Implementando um entity observer em lua:
+	
+	local t = {}
+	
+	function t:onProjectOpened( newProject )
+		
+	end
+	
+	function t:onProjectClosed( project )
+		
+	end
+	
+	function t:onEntitiesAdded( project, entities )
+		
+	end
+	
+	function t:onEntitiesRemoved( project, entities )
+		
+	end
+	
+	function t:onEntitySelectionChanged( project, previous, current )
+		
+	end
+	
+	-- registra a tabela t para um entidade especifica
+	local ProjectObserver = require "lab3d.helper.ProjectObserver"
+	ProjectObserver:addObserver( t )
+	
+Novamente a implementação em Lua a é opcional, permitindo a implementação apenas dos closures na qual se deseja ouvir.
+
 
 ## A camada gráfica
 
@@ -117,8 +207,6 @@ O componente da cena, Scene, prove o serviço IScene para gerenciamento de uma ce
 	local sceneService = sceneComponent.scene
 	sceneService.camera = myCameraService
 	
-Para que a cena renderize corretamente, é preciso configurar o componente Scene provendo também um serviço de contexto gráfico. A cena sempre renderiza para um determinado contexto ativo (por exemplo, o contexto OpenGL corrente), que é representado pelo serviço qt.IGLContext. Tal serviço é parte do projeto-dependencia coral-qt (git://github.com/libcoral/coral-qt.git) e é através dele que o contexto gráfico ativo é compartilhado. O provedor do contexto gráfico em uma aplicação comum é o canvas gráfico. Esse elemento da interface é provido pelo componente qt.GLWidget, que provê o serviço qt.IGLContext.
-
 ### Configurando o contexto gráfico:
 	
 #### Lua:
@@ -130,11 +218,6 @@ Para que a cena renderize corretamente, é preciso configurar o componente Scene 
 	-- Configura o serviço da renderização (qt.IPainter)
 	canvasComponent.painter = sceneComponent.painter
 	
-Como se pode observar no final do último exemplo, o componente de interface de usuário qt.GLWidget também é configurado com um outro serviço: qt.IPainter. Esse serviço é utilizado pelo canvas sempre que uma nova renderização for necessária. O componente lab3d.scene.Scene provê este serviço.
-
-Tendo configurado o contexto gráfico na cena (qt.IGLContext) e o renderizador no canvas (qt.IPainter), a cena já está pronta para exibir modelos gráficos na interface do usuário.
-
-Posteriormente, na seção de [Manipuladores][#manipuladores], veremos como configurar o componente canvas para tratar interação do usuário (e.x: mouse e teclado) utilizando o serviço qt.IInputListener e lab3d.manipulator.IManipulator.
 
 ### Adicionando modelos à cena
 
@@ -147,8 +230,6 @@ Abaixo há a declaração CSL deste serviço:
 		coOsg.NodePtr getNode();
 		lab3d.dom.BoundingBox getBounds();
 	};
-
-A declaração assim mostra que um IModel prove apenas uma forma de se obter um nó compativel com [OpenSceneGraph][http://www.openscenegraph.org/projects/osg] (coOsg.NodePtr é um <i>typedef</i> para osg::Node*). Fica a cargo de cada implementação a estratégia de construção ou carregamento do(s) modelo(s) representados pelo nó gráfico obtido pelo médoto getNode().
 
 Este framework, no entanto, já provê uma implementação <i>default</i> para IModel através do componente lab3d.scene.Model. Este componente utiliza <i>loaders</i> nativos do OpenSceneGraph para construir um nó válido. Isso permite o uso de modelos no formato .IVE de forma simples, como mostrado abaixo:
 
@@ -163,20 +244,15 @@ O trecho acima utiliza apenas a camada gráfica de forma desassociada com a parte
 
 Por este motivo <b>a camada gráfica nunca deve ser manipulada diretamente de forma desassociada</b>. O framework provê mecanismos para que seja possível manipular <b>apenas a camada de négocio</b>
 	
-### Estendendo a camada gráfica
+### [Estendendo a camada gráfica](!graphics)
 
 Para estender a camada gráfica é necessario apenas prover uma implementação do serviço lab3d.scene.IModel.
 
 Um exemplo C++ pode ser visto na implementação do componente que provê acesso a modelos no formato .IVE (lab3d.scene.Model), em src/lab3d/scene/Model.cpp.
 
-# SceneManager
-
-# Componentes utilitarios (lab3d.helper)
-
-
-Quando uma entidade é decorada com um decorador especial,
-do tipo lab3d.scene.IModel, 
-
-
+Como explicado antes, se estas estensões de IModel forem adicionadas como decoradores de em uma instancia de IEntity, ela automaticamente será associada a ela e será renderizada tendo como origem a posição da entity. Na verdade, a transformação geométrica provida pela IEntity (posição, escala, rotação) afetará todos os decoradores gráficos (IModel) da entity.
 
 #[Utilizando e estendendo Manipuladores](!manipuladores) 
+
+Para estender um manipulador basta implementar o service IManipulator e utilizar a implementação de IManipulatorManager para registrá-lo. Isso irá disponibilizá-lo globalmente na aplicação bem como expor seus elementos de interface (IManipulator:resourceIcon) na barra de ferramentas de manipuladores.
+
