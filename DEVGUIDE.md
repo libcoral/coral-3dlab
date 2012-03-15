@@ -3,6 +3,13 @@ CORAL 3D LAB DEVELOPER GUIDE
 
 #Índice:
 
+# Introdução
+
+Este guia apresentará primeiramente uma visão geral sobre a hierarquia de módulos, introduzindo o conceito de arquitetura em camadas. Em seguida uma apresenta-se uma introdução à camada de negócios e como utilizá-la. Esta seção mostra como adicionar e manipular entidades de domínio (lab3d.dom.IEntity) e como escutar mudanças em seu estado. Nela também é introduzido o conceito de projeto (lab3d.dom.IProject) e como criá-los, carregá-los, salvá-los, e como escutar seus eventos.
+Após introduzir a camada de domínio e como manipulá-la, este guia apresenta a camada gráfica e como estendê-la. Nesta seção apresentamos também alguns módulos chave do framework, responsáveis por escutar por mudanças na camada de domínio e fornecer um mecanismo automático de sincronização entre esta camada e a camada gráfica (lab3d.scene.SceneManager). Isso permite, como será visto, que toda a modelagem seja feita com o foco apenas na camada de negócios, tornando a cena apenas um reflexo ou visão desse modelo.
+
+Por fim, são apresentados alguns componentes auxiliares (módulos lab3d.helper), uma visão geral do funcionamento do visualizador (lab3d.Viewer) e o que são e como criar novos manipuladores (lab3d.manipulator.IManipulator).
+
 #[Entendendo a hierarquia de módulos do Coral 3D lab](!hierarquia):
 
 ## Namespace raiz 'lab3d':
@@ -16,6 +23,71 @@ O módulo lab3d.dom contém todos os serviços e componentes da camara de dominio d
 
 Embora seja possível utilizar apenas a camada gráfica (como será visto), <b>a camada gráfica nunca deve ser manipulada diretamente de forma desassociada da camada de domínio</b>. 
 O framework provê mecanismos para que seja possível manipular <b>apenas a camada de négocio</b> (e.x: entidades), de tal forma que as mudanças nessa camada reflitam automaticamentea camada gráfica. Isso permite enxergar e modelar melhor a camada de negócios e flexibilizar de maneira simples a forma como ela é representada graficamente.
+
+# Manipulando a camada de domínio
+
+## Entidades
+
+ Intro...
+ 
+### Decorando entidades
+
+Os objetos de negócio lab3d.dom.IEntity possuem suporte a decoração genérica. Isso significa que é possível decorá-los com
+qualquer tipo de serviço e, a qualquer momento, recuperar tal decorator. Por exemplo:
+
+- Lua:
+	local myEntityComponent = co.new "lab3d.dom.Entity"
+	local myEntityService = myEntityComponent.entity
+	
+	local mySpecialService = co.new( "myModule.SpecialServiceComponent" ).service
+	
+	-- Adiciona um decorador na entidade
+	myEntityService:addDecorator( mySpecialService )
+	
+	...
+	
+	-- Lista os decoradores da entity para um determinado tipo
+	local mySpecialDecorators = myEntityService:getDecoratorsForType( co.Type["myModule.ISpecialService"] )
+	for i, v in ipairs( mySpecialDecorators ) do
+		print( mySpecialDecorators.fullName )
+	end
+	
+- C++:
+	co::IObject* myEntityComponent = co.newInstance( "lab3d.dom.Entity" )
+	lab3d::dom::IEntity* myEntityService = myEntityComponent->getService<lab3d::dom::IEntity>()
+	
+	myModule::ISpecialService* mySpecialService = co.newInstance( "myModule.SpecialServiceComponent" )->getService<myModule::ISpecialService>();
+	
+	// Adiciona um decorador na entidade
+	myEntityService->addDecorator( mySpecialService );
+	
+	...
+	
+	// Lista os decoradores da entity para um determinado tipo
+	co::RefVector<myModule::ISpecialService> mySpecialDecorators; 
+	myEntityService->getDecorators<myModule::ISpecialService>( mySpecialDecorators );
+	for( int i=0; i < mySpecialDecorators.size(); ++i )
+	{
+		printSpecialDecorator( mySpecialDecorator[i] );
+	}
+	
+	
+### Ouvindo mudanças
+ IEntityObserver, EntityObserver (lua closures)
+ 
+## Trabalhando com Projetos
+
+
+##O <i>entrypoint</i> da Applicação
+
+### Adicionando ou removendo entidades
+
+### Ouvindo mudanças em projetos
+
+#### Evento de projeto aberto
+#### Evento de projeto fechado
+#### Evento de adição/remoção de entidades
+#### Eventos seleção de entidades
 
 ## A camada gráfica
 
@@ -96,79 +168,13 @@ Para estender a camada gráfica é necessario apenas prover uma implementação do s
 
 Um exemplo C++ pode ser visto na implementação do componente que provê acesso a modelos no formato .IVE (lab3d.scene.Model), em src/lab3d/scene/Model.cpp.
 
-# Manipulando a camada de domínio
-
-## Entidades
-
-### Decorando entidades
-
-Os objetos de negócio lab3d.dom.IEntity possuem suporte a decoração genérica. Isso significa que é possível decorá-los com
-qualquer tipo de serviço e, a qualquer momento, recuperar tal decorator. Por exemplo:
-
-- Lua:
-	local myEntityComponent = co.new "lab3d.dom.Entity"
-	local myEntityService = myEntityComponent.entity
-	
-	local mySpecialService = co.new( "myModule.SpecialServiceComponent" ).service
-	
-	-- Adiciona um decorador na entidade
-	myEntityService:addDecorator( mySpecialService )
-	
-	...
-	
-	-- Lista os decoradores da entity para um determinado tipo
-	local mySpecialDecorators = myEntityService:getDecoratorsForType( co.Type["myModule.ISpecialService"] )
-	for i, v in ipairs( mySpecialDecorators ) do
-		print( mySpecialDecorators.fullName )
-	end
-	
-- C++:
-	co::IObject* myEntityComponent = co.newInstance( "lab3d.dom.Entity" )
-	lab3d::dom::IEntity* myEntityService = myEntityComponent->getService<lab3d::dom::IEntity>()
-	
-	myModule::ISpecialService* mySpecialService = co.newInstance( "myModule.SpecialServiceComponent" )->getService<myModule::ISpecialService>();
-	
-	// Adiciona um decorador na entidade
-	myEntityService->addDecorator( mySpecialService );
-	
-	...
-	
-	// Lista os decoradores da entity para um determinado tipo
-	co::RefVector<myModule::ISpecialService> mySpecialDecorators; 
-	myEntityService->getDecorators<myModule::ISpecialService>( mySpecialDecorators );
-	for( int i=0; i < mySpecialDecorators.size(); ++i )
-	{
-		printSpecialDecorator( mySpecialDecorator[i] );
-	}
-	
-	
-### Ouvindo mudanças
-
-## Trabalhando com Projetos
-
-### Adicionando ou removendo entidades
-
-### Ouvindo mudanças em projetos
-
-#### Evento de projeto aberto
-#### Evento de projeto fechado
-#### Evento de adição/remoção de entidades
-#### Eventos seleção de entidades
-
 # SceneManager
 
 # Componentes utilitarios (lab3d.helper)
 
 
-
 Quando uma entidade é decorada com um decorador especial,
 do tipo lab3d.scene.IModel, 
-
-##O <i>entrypoint</i> da Applicação
-
-##Trabalhando com Projetos
-
-##Trabalhando com componentes
 
 
 
