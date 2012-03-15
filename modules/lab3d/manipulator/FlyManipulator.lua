@@ -7,7 +7,7 @@
 local qt = require "qt"
 local glm = require "glm"
 
-local SceneManager = require "lab3d.SceneManager"
+local SceneManager = require "lab3d.scene.SceneManager"
 
 local FlyManipulator =  co.Component( "lab3d.manipulator.FlyManipulator" )
 

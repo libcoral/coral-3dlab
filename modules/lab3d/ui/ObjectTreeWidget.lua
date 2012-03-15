@@ -16,7 +16,7 @@
 --]]---------------------------------------------------------------------------
 
 local qt = require "qt"
-local SceneManager = require "lab3d.SceneManager"
+local SceneManager = require "lab3d.scene.SceneManager"
 local observeFields = require "lab3d.helper.ObserveFields"
 local ObjectTreeModel = require "lab3d.ui.ObjectTreeModel"
 local ProjectObserver = require "lab3d.helper.ProjectObserver"

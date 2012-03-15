@@ -12,7 +12,7 @@ local GLCanvas = require "lab3d.ui.GLCanvasWidget"
 local ObjectTreeWidget = require "lab3d.ui.ObjectTreeWidget"
 
 local Camera = require "lab3d.scene.Camera"
-local SceneManager = require "lab3d.SceneManager"
+local SceneManager = require "lab3d.scene.SceneManager"
 
 local M = {}
 
