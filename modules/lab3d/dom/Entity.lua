@@ -5,7 +5,7 @@
 	points to a specific data container	type. \see lab3d.domai.IEntity.
 --]]---------------------------------------------------------------------------
 
-local glm = require "glm"
+local eigen = require "eigen"
 
 local function notifyNameChanged( self, newName )
 	local obs = self.observers
@@ -54,9 +54,9 @@ local Entity =  co.Component( "lab3d.dom.Entity" )
 -- Entity constructor
 function Entity:__init()
 	self.name = self.name or ""
-	self.scale = self.scale or glm.Vec3( 1, 1, 1 )
-	self.position = self.position or glm.Vec3()
-	self.orientation = self.orientation or glm.Quat()
+	self.scale = self.scale or eigen.Vec3( 1, 1, 1 )
+	self.position = self.position or eigen.Vec3()
+	self.orientation = self.orientation or eigen.Quat()
 	self.bounds = self.bounds or co.new "lab3d.dom.BoundingBox"
 	self.filename = ""
 	self.decorators = self.decorators or {}

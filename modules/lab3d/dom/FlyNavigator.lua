@@ -1,8 +1,8 @@
-local glm = require "glm"
+local eigen = require "eigen"
 
-local WORLD_UP_DIRECTION = glm.Vec3( 0, 0, 1 )
-local ANGULAR_VELOCITY_OVER_X_AXIS 	= 6 * glm.PI -- rad/s
-local ANGULAR_VELOCITY_OVER_Y_AXIS 	= 6 * glm.PI -- rad/s
+local WORLD_UP_DIRECTION = eigen.Vec3( 0, 0, 1 )
+local ANGULAR_VELOCITY_OVER_X_AXIS 	= 6 * eigen.PI -- rad/s
+local ANGULAR_VELOCITY_OVER_Y_AXIS 	= 6 * eigen.PI -- rad/s
 local ANGULAR_TOLERANCE				= 1e-3
 
 --[[---------------------------------------------------------------------------
@@ -16,20 +16,20 @@ function locals.getWorldTranslationVector( self )
 	return self.translationVector * orientation
 end
 
-local tempDeltaVector = glm.Vec3()
+local tempDeltaVector = eigen.Vec3()
 function locals.calculateNewPosition( self, dt )
-	if glm.length( self.translationVector ) == 0 then
+	if eigen.length( self.translationVector ) == 0 then
 		return
 	end
 
 	local worldTranslation = locals.getWorldTranslationVector( self )
-	glm.mulVecScalar( worldTranslation, dt * self.translationVelocity, tempDeltaVector )
+	eigen.mulVecScalar( worldTranslation, dt * self.translationVelocity, tempDeltaVector )
 	self.view.position = self.view.position + tempDeltaVector
 end
 
 -- accumulates the angular variation over the given axis into given quaternion orientation 'currentOrientation'
 function locals.accumulateOrientation( currentOrientation, angularVariation, axis )
-	return glm.rotateQuat( currentOrientation, angularVariation * glm.rad2deg, axis, currentOrientation )
+	return eigen.rotateQuat( currentOrientation, angularVariation * eigen.rad2deg, axis, currentOrientation )
 end
 
 function locals.calculateNewOrientation( self, dt )
@@ -55,8 +55,8 @@ function locals.calculateNewOrientation( self, dt )
 		local cameraUp = self.view.up
 	
 		-- measures total angle between camera up and world up
-		local currentAngle = math.acos( glm.dotVec( cameraUp, worldUp ) )
-		if math.abs( currentAngle ) > glm.PI_2 then
+		local currentAngle = math.acos( eigen.dotVec( cameraUp, worldUp ) )
+		if math.abs( currentAngle ) > eigen.PI_2 then
 			-- angle would exceed maximum vertical angle,
 			-- so we restore original camera orientation
 			self.view.orientation = originalOrientation
@@ -86,7 +86,7 @@ local FlyNavigator =  co.Component( "lab3d.dom.FlyNavigator" )
 
 function FlyNavigator:__init()
 	self.inertialFactor = self.inertialFactor or 0.3
-	self.translationVector = glm.Vec3( 0, 0, 0 )
+	self.translationVector = eigen.Vec3( 0, 0, 0 )
 	self.angleOverXDir = 0
 	self.angleOverYDir = 0
 	self.translationVelocity = 10

@@ -4,7 +4,7 @@
 --]]---------------------------------------------------------------------------
 
 local qt = require "qt"
-local glm = require "glm"
+local eigen = require "eigen"
 
 -- User Interface Modules
 local MainWindow = require "lab3d.ui.MainWindow"

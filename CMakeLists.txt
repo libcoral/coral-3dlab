@@ -31,17 +31,17 @@ SET( CORAL_PATH
 ################################################################################
 
 #GLM
-FIND_PATH( CORAL_GLM_INCLUDE_DIR glm/glm.hpp
+FIND_PATH( CORAL_EIGEN_INCLUDE_DIR Eigen/Dense
   PATH_SUFFIXES 
-  ../include/
-  ../coral-glm/include/
+  ../include/eigen
+  ../coral-eigen/include/eigen
   PATHS
  ${ENV_CORAL_PATH}
  ${CORAL_ROOT}
   NO_DEFAULT_PATH
 )
 
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} ${CORAL_INCLUDE_DIRS} ${CORAL_GLM_INCLUDE_DIR} )
+INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR} ${CORAL_INCLUDE_DIRS} ${CORAL_EIGEN_INCLUDE_DIR} )
 
 # Request OpenGL support
 FIND_PACKAGE( OpenGL REQUIRED )
@@ -81,7 +81,7 @@ ENDMACRO( ADD_INSTALL_MODULE )
 INSTALL( DIRECTORY ${MODULE_DIRS} DESTINATION "modules/" PATTERN "_debug" EXCLUDE )
 
 ADD_INSTALL_MODULE( "coOsg" )
-ADD_INSTALL_MODULE( "glm" )
+ADD_INSTALL_MODULE( "eigen" )
 ADD_INSTALL_MODULE( "qt" )
 
 #coral base modules

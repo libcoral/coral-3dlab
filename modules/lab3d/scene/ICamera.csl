@@ -1,5 +1,5 @@
-import glm.Vec3;
-import glm.Quat;
+import eigen.Vec3;
+import eigen.Quat;
 import lab3d.dom.IView;
 
 /*!

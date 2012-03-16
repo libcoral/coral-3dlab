@@ -1,4 +1,4 @@
-Type "glm.Vec3"
+Type "eigen.Vec3"
 {
 	x = "double",
 	y = "double",
@@ -6,7 +6,7 @@ Type "glm.Vec3"
 	
 }
 
-Type "glm.Quat"
+Type "eigen.Quat"
 {
 	x = "double",
 	y = "double",
@@ -16,9 +16,9 @@ Type "glm.Quat"
 
 Type "lab3d.dom.BoundingBox"
 {
-	min = "glm.Vec3",
-	max = "glm.Vec3",
-	center = "glm.Vec3"	
+	min = "eigen.Vec3",
+	max = "eigen.Vec3",
+	center = "eigen.Vec3"	
 }
 
 Type "co.IService"
@@ -38,9 +38,9 @@ Type "lab3d.scene.Model"
 Type "lab3d.dom.IEntity"
 {
 	name = "string",
-	scale = "glm.Vec3",
-	position = "glm.Vec3",
-	orientation = "glm.Quat",
+	scale = "eigen.Vec3",
+	position = "eigen.Vec3",
+	orientation = "eigen.Quat",
 	bounds = "lab3d.dom.BoundingBox",
 	decorators = "co.IService[]"
 }
@@ -52,8 +52,8 @@ Type "lab3d.dom.Entity"
 
 Type "lab3d.dom.IView"
 {
-	position = "glm.Vec3",
-	orientation = "glm.Quat"
+	position = "eigen.Vec3",
+	orientation = "eigen.Quat"
 }
 
 Type "lab3d.dom.View"

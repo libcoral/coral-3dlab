@@ -5,7 +5,7 @@
 --]]---------------------------------------------------------------------------
 
 local qt = require "qt"
-local glm = require "glm"
+local eigen = require "eigen"
 
 local SceneManager = require "lab3d.scene.SceneManager"
 
@@ -45,7 +45,7 @@ function locals.setPaused( self, value )
 end
 
 function locals.getTranslationVector( self )
-	local result = glm.Vec3( 0, 0, 0 )
+	local result = eigen.Vec3( 0, 0, 0 )
 		
 	if not ( self.front or self.back or self.left or self.right ) then
 		return result
@@ -64,7 +64,7 @@ function locals.getTranslationVector( self )
 	    result.x = -1
 	end
 	
-	glm.normalize( result, result )
+	eigen.normalize( result, result )
 
 	return result
 end
@@ -206,7 +206,7 @@ function FlyManipulator:mouseDoubleClicked( x, y, button, modifiers )
 	--TODO: perform navigation task using IViewAnimation
 end
 
-local MAXIMUM_ANGLE_INCREMENT = glm.PI
+local MAXIMUM_ANGLE_INCREMENT = eigen.PI
 function FlyManipulator:mouseMoved( x, y, button, modifiers )
 	if self.paused then
 		return
@@ -229,14 +229,14 @@ function FlyManipulator:mouseMoved( x, y, button, modifiers )
 	-- gets normalized coordinates
 	-- since we reset cursor position to 0,0, (x,y) coordinates represents the 
 	-- pixel offset of mouse from center. dx and dy are normalized offsets
-	local dx, dy = glm.screenToClip( x, y, width, height )
+	local dx, dy = eigen.screenToClip( x, y, width, height )
 	
 	-- uses normalized interval as a linear angle domain [-PI/2 ,PI/2 ] on both directions
 	-- angle over Y is built from screen X linear coordinates 'ny' (limited to circle within -MAXIMUM_ANGLE_INCREMENT to MAXIMUM_ANGLE_INCREMENT)
-	local angleOverXDir = locals.clamp( dy * glm.PI_2, -MAXIMUM_ANGLE_INCREMENT, MAXIMUM_ANGLE_INCREMENT )
+	local angleOverXDir = locals.clamp( dy * eigen.PI_2, -MAXIMUM_ANGLE_INCREMENT, MAXIMUM_ANGLE_INCREMENT )
 		
 	-- angle over X is built from screen Y linear coordinates 'nx' (limited to circle within -MAXIMUM_ANGLE_INCREMENT to MAXIMUM_ANGLE_INCREMENT)
-    local angleOverYDir = locals.clamp( dx * glm.PI_2, -MAXIMUM_ANGLE_INCREMENT, MAXIMUM_ANGLE_INCREMENT )
+    local angleOverYDir = locals.clamp( dx * eigen.PI_2, -MAXIMUM_ANGLE_INCREMENT, MAXIMUM_ANGLE_INCREMENT )
     
     self.navigator:addPitchOffset( angleOverYDir )
     self.navigator:addYawOffset( angleOverXDir )

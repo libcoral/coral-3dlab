@@ -1,4 +1,4 @@
-import glm.Vec3;
+import eigen.Vec3;
 
 interface IFlyNavigator extends INavigator
 {

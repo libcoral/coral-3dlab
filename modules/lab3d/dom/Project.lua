@@ -1,4 +1,4 @@
-local glm = require "glm"
+local eigen = require "eigen"
 local View = require "lab3d.dom.View"
 local helper = require "siv.helper.CalciumHelper"
 
@@ -9,7 +9,7 @@ function Project:__init()
 	self.name = self.name or ""
 	self.application = co.system.services:getService( co.Type["lab3d.IApplication"] )
 	
-	local viewObj = View{ position = glm.Vec3( 0, -100, 0 ) }
+	local viewObj = View{ position = eigen.Vec3( 0, -100, 0 ) }
 	self.currentView = viewObj.view; -- default camera view
 end
 

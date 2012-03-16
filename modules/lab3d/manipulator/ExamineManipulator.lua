@@ -9,7 +9,7 @@
 --]]---------------------------------------------------------------------------
 
 local qt = require "qt"
-local glm = require "glm"
+local eigen = require "eigen"
 
 local SceneManager = require "lab3d.scene.SceneManager"
 local ProjectObserver = require "lab3d.helper.ProjectObserver"
@@ -107,7 +107,7 @@ function ExamineManipulator:mousePressed( x, y, button, modifiers )
 	-- since lua handles all number as double, we need to round center to integer
 	local width = self.canvas.width
 	local height = self.canvas.height
-	local nx, ny = glm.screenToClip( x, ( height - y ), width, height )
+	local nx, ny = eigen.screenToClip( x, ( height - y ), width, height )
 
 	self.navigator:beginRotation( nx, ny )
 end
@@ -115,7 +115,7 @@ end
 function ExamineManipulator:mouseMoved( x, y, button, modifiers )
 	local width = self.canvas.width
 	local height = self.canvas.height
- 	local nx, ny = glm.screenToClip( x, ( height - y ), width, height )
+ 	local nx, ny = eigen.screenToClip( x, ( height - y ), width, height )
 
     self.navigator:updateRotation( nx, ny )
 end

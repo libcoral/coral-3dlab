@@ -1,7 +1,7 @@
 #include "HighlightModel_Base.h"
 #include <lab3d/dom/BoundingBox.h>
 
-#include "glmOsgConvert.h"
+#include "eigenOsgConvert.h"
 
 #include <osg/Geode>
 #include <osg/Matrix>
@@ -50,19 +50,19 @@ public:
     void recalculateBoxFor( lab3d::dom::IEntity* entity )
     {
         lab3d::dom::BoundingBox bbox = entity->getBounds();
-        glm::Vec3 min( bbox.min );
-        glm::Vec3 max( bbox.max );
+        eigen::Vec3 min( bbox.min );
+        eigen::Vec3 max( bbox.max );
         _bboxTransformMatrix.setTrans( vecConvert( entity->getPosition() ) );
         
         _bboxVertices->clear();
-        _bboxVertices->push_back( osg::Vec3( min.x, min.y, min.z ) );
-        _bboxVertices->push_back( osg::Vec3( max.x, min.y, min.z ) );
-        _bboxVertices->push_back( osg::Vec3( min.x, max.y, min.z ) );
-        _bboxVertices->push_back( osg::Vec3( max.x, max.y, min.z ) );
-        _bboxVertices->push_back( osg::Vec3( min.x, min.y, max.z ) );
-        _bboxVertices->push_back( osg::Vec3( max.x, min.y, max.z ) );
-        _bboxVertices->push_back( osg::Vec3( min.x, max.y, max.z ) );
-        _bboxVertices->push_back( osg::Vec3( max.x, max.y, max.z ) );
+        _bboxVertices->push_back( osg::Vec3( min.x(), min.y(), min.z() ) );
+        _bboxVertices->push_back( osg::Vec3( max.x(), min.y(), min.z() ) );
+        _bboxVertices->push_back( osg::Vec3( min.x(), max.y(), min.z() ) );
+        _bboxVertices->push_back( osg::Vec3( max.x(), max.y(), min.z() ) );
+        _bboxVertices->push_back( osg::Vec3( min.x(), min.y(), max.z() ) );
+        _bboxVertices->push_back( osg::Vec3( max.x(), min.y(), max.z() ) );
+        _bboxVertices->push_back( osg::Vec3( min.x(), max.y(), max.z() ) );
+        _bboxVertices->push_back( osg::Vec3( max.x(), max.y(), max.z() ) );
         _bboxGeometry->setVertexArray( _bboxVertices );
     }
     

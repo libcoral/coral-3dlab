@@ -1,4 +1,4 @@
-local glm = require "glm"
+local eigen = require "eigen"
 
 -------------------------------------------------------------------------------
 -- Local module functions
@@ -9,7 +9,7 @@ local locals = {}
 locals.MINIMUM_DISTANCE_TO_CENTER = 0.1
 
 function locals.calculatePointOnSphere( x, y, result )
-    glm.setXYZ( result, x, y, 0 )
+    eigen.setXYZ( result, x, y, 0 )
 
     local m = x * x + y * y
     if m < 1.0 then
@@ -18,7 +18,7 @@ function locals.calculatePointOnSphere( x, y, result )
     else
         -- if the point does not lie on the sphere, push it back to the sphere border.
         m = math.sqrt( m );
-		glm.mulVecScalar( result, 1.0 / m, result )
+		eigen.mulVecScalar( result, 1.0 / m, result )
     end
 end
 
@@ -29,12 +29,12 @@ local ExamineNavigator =  co.Component( "lab3d.dom.ExamineNavigator" )
 
 
 function ExamineNavigator:__init()
-	self.startVector 	= glm.Vec3( 0, 0, 0 )
-	self.rotationCenter	= glm.Vec3( 0, 0, 0 )
-	self.endVector 		= glm.Vec3( 0, 0, 0 )
-	self.auxVector 		= glm.Vec3( 0, 0, 0 )
-	self.start 			= glm.Quat()
-	self.auxQuaternion 	= glm.Quat()
+	self.startVector 	= eigen.Vec3( 0, 0, 0 )
+	self.rotationCenter	= eigen.Vec3( 0, 0, 0 )
+	self.endVector 		= eigen.Vec3( 0, 0, 0 )
+	self.auxVector 		= eigen.Vec3( 0, 0, 0 )
+	self.start 			= eigen.Quat()
+	self.auxQuaternion 	= eigen.Quat()
 end
 
 function ExamineNavigator:setView( view )
@@ -57,17 +57,17 @@ function ExamineNavigator:updateRotation( nx, ny )
 	-- uses polar coordinates to update rotation vector
 	locals.calculatePointOnSphere( nx, ny, self.endVector )
 
-	glm.rotationFromToQuat( self.startVector, self.endVector, self.auxQuaternion )
+	eigen.rotationFromToQuat( self.startVector, self.endVector, self.auxQuaternion )
 
 	self.auxQuaternion = self.auxQuaternion * self.start
 	self.view.orientation = self.auxQuaternion
 
 	local distanceToCenter = self:getDistanceToCenter()
-	local viewRotation = glm.conjugate( self.auxQuaternion )
-	glm.setXYZ( self.auxVector, 0, 0, distanceToCenter )
+	local viewRotation = eigen.conjugate( self.auxQuaternion )
+	eigen.setXYZ( self.auxVector, 0, 0, distanceToCenter )
 
 	local rotatedViewPos = viewRotation * self.auxVector
-	glm.addVec( rotatedViewPos, self.rotationCenter, rotatedViewPos )
+	eigen.addVec( rotatedViewPos, self.rotationCenter, rotatedViewPos )
 	self.view.position = rotatedViewPos
 end
 
@@ -82,14 +82,14 @@ function ExamineNavigator:abortRotation()
 end
 
 function ExamineNavigator:getDistanceToCenter()
-	return glm.length( glm.subVec( self.view.position, self.rotationCenter, self.auxVector ) )
+	return eigen.length( eigen.subVec( self.view.position, self.rotationCenter, self.auxVector ) )
 end
 
 function ExamineNavigator:zoom( factor )
 	local approachFactor = math.max( 0, 1 + factor )
 	
 	local translation = ( self.rotationCenter - self.view.position )
-	local translationDirection = glm.normalize( translation )
+	local translationDirection = eigen.normalize( translation )
 	
 	local currentDistance = self:getDistanceToCenter()
 	local newDistance = math.max( locals.MINIMUM_DISTANCE_TO_CENTER, currentDistance * approachFactor )

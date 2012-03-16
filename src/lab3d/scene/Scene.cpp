@@ -1,7 +1,7 @@
 #include "Scene.h"
 #include "OSGUserData.h"
 
-#include "glmOsgConvert.h"
+#include "eigenOsgConvert.h"
 #include "GraphicsContext.h"
 
 #include <lab3d/dom/IView.h>
@@ -35,7 +35,6 @@
 #include <sstream>
 
 #include <string.h>
-#include <glm/glm.hpp>
 
 #include <co/Coral.h>
 #include <co/ISystem.h>
@@ -65,7 +64,6 @@ Scene::Scene() : _autoCalculateNearFar( true )
 	_graphicsContext = new GraphicsContext();
     
 	_activeCamera = 0;
-    
     // register pick intersector service
     co::getSystem()->getServices()->addService( co::typeOf<lab3d::scene::IPickIntersector>::get(), this->getService<lab3d::scene::IPickIntersector>() );
 }

@@ -3,7 +3,7 @@
 #include <lab3d/dom/IEntity.h>
 
 #include "OSGUserData.h"
-#include "glmOsgConvert.h"
+#include "eigenOsgConvert.h"
 
 #include <co/RefVector.h>
 
@@ -98,7 +98,7 @@ public:
         return _childModels.size();
     }
 
-	void setOrientation( const glm::Quat& orientation )
+	void setOrientation( const eigen::Quat& orientation )
 	{
         osg::Vec3d scale;
         osg::Vec3d translation;
@@ -108,12 +108,12 @@ public:
         m.decompose( translation, quat, scale, so );
               
         m.makeScale( scale );
-        m.postMultRotate( quatConvert( glm::gtc::quaternion::conjugate( orientation ) ) );
+        m.postMultRotate( quatConvert( orientation.conjugate() ) );
         m.postMultTranslate( translation );
         _transform->setMatrix( m );
 	}
 
-	void setTranslation( const glm::Vec3& position )
+	void setTranslation( const eigen::Vec3& position )
 	{
         osg::Vec3d scale;
         osg::Vec3d translation;
@@ -128,7 +128,7 @@ public:
         _transform->setMatrix( m );
 	}
                     
-    void setScale( const glm::Vec3& scale )
+    void setScale( const eigen::Vec3& scale )
     {
         osg::Vec3d s;
         osg::Vec3d translation;

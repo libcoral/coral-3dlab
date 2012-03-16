@@ -3,7 +3,7 @@
 	Provides lab3d.scene.ICamera interface service.
 --]]---------------------------------------------------------------------------
 
-local glm = require "glm"
+local eigen = require "eigen"
 
 -------------------------------------------------------------------------------
 -- Component declaration

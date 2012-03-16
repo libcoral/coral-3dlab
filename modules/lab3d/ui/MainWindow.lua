@@ -4,7 +4,7 @@
 --]]---------------------------------------------------------------------------
 
 local qt = require "qt"
-local glm = require "glm"
+local eigen = require "eigen"
 
 -- local variables table
 local L = {}

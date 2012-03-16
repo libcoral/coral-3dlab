@@ -3,8 +3,8 @@
 	the correspondent OpenSceneGraph transform node for that group.
 */
 
-import glm.Vec3;
-import glm.Quat;
+import eigen.Vec3;
+import eigen.Quat;
 
 interface ITransformModel extends IModel
 {

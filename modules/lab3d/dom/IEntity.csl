@@ -1,5 +1,5 @@
-import glm.Vec3;
-import glm.Quat;
+import eigen.Vec3;
+import eigen.Quat;
 
 /*! 
 	\brief Interface for domain object.

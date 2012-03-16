@@ -1,5 +1,5 @@
 #include "Model_Base.h"
-#include "glmOsgConvert.h"
+#include "eigenOsgConvert.h"
 
 #include <lab3d/dom/BoundingBox.h>
 

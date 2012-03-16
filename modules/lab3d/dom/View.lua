@@ -1,12 +1,12 @@
-local glm = require "glm"
+local eigen = require "eigen"
 
 -- public module functions
 local M = {}
 
 -- identity axis
-local identityUp = glm.Vec3( 0, 1, 0 )
-local identityRight = glm.Vec3( 1, 0, 0 )
-local identityDirection = glm.Vec3( 0, 0, -1 )
+local identityUp = eigen.Vec3( 0, 1, 0 )
+local identityRight = eigen.Vec3( 1, 0, 0 )
+local identityDirection = eigen.Vec3( 0, 0, -1 )
 
 -- local module functions
 local locals = {}
@@ -16,11 +16,11 @@ local locals = {}
 -- pointing to the given destination point, always keeping up vector aligned with world up direction.
 function locals.calculatePose( self, position, distanceOffset )
 	local translationVector = position - self.position
-	local distance = glm.length( translationVector )
-	glm.normalize( translationVector, translationVector )
-	glm.mulVecScalar( translationVector, distance - distanceOffset, translationVector )
+	local distance = eigen.length( translationVector )
+	eigen.normalize( translationVector, translationVector )
+	eigen.mulVecScalar( translationVector, distance - distanceOffset, translationVector )
 
-	local finalOrientation = glm.fromMat4( glm.lookAt( self.position, position, glm.Vec3( 0, 0, 1 ) ) )
+	local finalOrientation = eigen.fromMat4( eigen.lookAt( self.position, position, eigen.Vec3( 0, 0, 1 ) ) )
 	
 	local pose = co.new "lab3d.dom.Pose"
 	pose.position = ( self.position + translationVector )
@@ -35,20 +35,20 @@ local View =  co.Component( "lab3d.dom.View" )
 
 
 function View:__init()
-	local rot_90_over_x = glm.rotateQuat( glm.Quat(), -90.0, glm.Vec3( 1, 0, 0 ) )
+	local rot_90_over_x = eigen.rotateQuat( eigen.Quat(), -90.0, eigen.Vec3( 1, 0, 0 ) )
 	self.orientation = self.orientation or rot_90_over_x
-	self.position = self.position or glm.Vec3()
+	self.position = self.position or eigen.Vec3()
 end
 
 function View:calculateNavigationToPoint( point )
-	local distanceToObject = glm.length( point - self.position )
+	local distanceToObject = eigen.length( point - self.position )
 	return locals.calculatePose( self, point, distanceToObject * 0.666 )
 end
 
 function View:calculateNavigationToObject( object )
 	local objBounds = object.bounds
 	local center = objBounds.center
-	local boundRadius = glm.length( center - objBounds.max ) 
+	local boundRadius = eigen.length( center - objBounds.max ) 
 	return locals.calculatePose( self, center, boundRadius )
 end
 
@@ -81,11 +81,11 @@ function View:getOrientation()
 end
 
 function View:getZeroRollOrientation()
-	local m = glm.Mat4()
-	glm.lookAt( self.position, self.position + self:getDirection(), glm.Vec3( 0, 0, 1 ), m )
+	local m = eigen.Mat4()
+	eigen.lookAt( self.position, self.position + self:getDirection(), eigen.Vec3( 0, 0, 1 ), m )
 	
-	local zeroRollQuat = glm.Quat()
-	glm.fromMat4( m, zeroRollQuat )
+	local zeroRollQuat = eigen.Quat()
+	eigen.fromMat4( m, zeroRollQuat )
 	
 	return zeroRollQuat
 end
