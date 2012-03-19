@@ -1,6 +1,6 @@
 local eigen = require "eigen"
 local View = require "lab3d.dom.View"
-local helper = require "siv.helper.CalciumHelper"
+local helper = require "lab3d.helper.CalciumHelper"
 
 local Project =  co.Component( "lab3d.dom.Project" )
 
@@ -8,7 +8,7 @@ function Project:__init()
 	self.entities = {}
 	self.name = self.name or ""
 	self.application = co.system.services:getService( co.Type["lab3d.IApplication"] )
-	
+
 	local viewObj = View{ position = eigen.Vec3( 0, -100, 0 ) }
 	self.currentView = viewObj.view; -- default camera view
 end
@@ -62,10 +62,10 @@ function Project:removeEntity( entity )
 	local obs = self.entities
 	local size = #obs
 	for i = 1, size do
-		if obs[i] == entity then 
+		if obs[i] == entity then
 			obs[i] = obs[size]
 			obs[size] = nil
-			
+
 			self.application.space:addChange( self.object.project )
 			self.application.space:notifyChanges()
 			return true
@@ -78,7 +78,7 @@ function Project:findEntity( entityName )
 	local obs = self.entities
 	local size = #obs
 	for i = 1, size do
-		if obs[i].name == entityName then 
+		if obs[i].name == entityName then
 			return obs[i]
 		end
 	end

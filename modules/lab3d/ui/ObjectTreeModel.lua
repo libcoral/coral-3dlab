@@ -44,7 +44,7 @@ function ObjectTreeModel:getData( index, role )
 	elseif role == "ForegroundRole" then
 		data = self.objectTreeData.instance[index].color
 	end
-	
+
 	return data
 end
 
@@ -58,7 +58,7 @@ function ObjectTreeModel:getHorizontalHeaderData( section, role )
 	if section == 0 and role == "DisplayRole" then
 		local projectName = self.objectTreeData.instance.rootName
 		if not projectName or projectName == "" then
-			projectName = "<Novo Projeto>"
+			projectName = "<New Project>"
 		end
 		return projectName
 	end

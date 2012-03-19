@@ -21,7 +21,7 @@ local M = {}
 	resource to be accessed relatively to the module path on disk, using the
 	set alias.
 	Ex: qt.setSearchPaths( "myAlias", "myModule.core" ) will expand "myAlias:/"
-		to the path on disk of module "myModule.core".		
+		to the path on disk of module "myModule.core".
 --]]---------------------------------------------------------------------------
 qt.setSearchPaths( "lab3d", "lab3d" )
 
@@ -42,13 +42,9 @@ end
 -- This lua closure search all components that provides "IManipulator" service
 -- within manipulator module and loads it, adding it to the UI.
 local function loadManipulators( self, manipulatorModule )
-	local ns = co.system.types.rootNS
-    for w in string.gmatch( manipulatorModule, "%.?(%w+)%.?" ) do
-		ns = ns:getChildNamespace( w )
-	end
-	
+	local ns = co.system.types:findNamespace( manipulatorModule )
 	local childTypes = ns.types
-	
+
 	local manipulatorManager = self.manipulatorManager
 	local imanipulatorType = co.Type[manipulatorModule .. ".IManipulator"]
 	if childTypes then
@@ -67,32 +63,32 @@ end
 function M:initialize()
 	local sceneObj = co.new "lab3d.scene.Scene"
 	self.currentScene = sceneObj.scene
-	
+
 	-- setup camera
 	local cameraObj = Camera()
 	self.currentScene.camera = cameraObj.camera
-	
+
 	SceneManager:initialize( self.currentScene )
-	
+
 	-- create manipulator manager
 	local manipulatorManagerObj = co.new "lab3d.manipulator.ManipulatorManager"
 	self.manipulatorManager =  manipulatorManagerObj.manager
-	
+
 	-- set input listener facet of manipulator manager into canvas
 	local canvasWidget, graphicsContext = GLCanvas( sceneObj.painter, manipulatorManagerObj.input )
 	sceneObj.graphicsContext = graphicsContext
-	
-	self.mainWindow = MainWindow( "Coral 3d Lab" )
+
+	self.mainWindow = MainWindow( "Coral 3D Lab" )
 	self.mainWindow:setCentralWidget( canvasWidget )
-	
+
 	local dockTreeWidget = ObjectTreeWidget( self.mainWindow  )
 	self.mainWindow:addDockWidget( qt.LeftDockWidgetArea, dockTreeWidget )
-	
+
 	-- export main window instance into a global access point
 	qt.mainWindow = self.mainWindow
-	
+
 	loadManipulators( self, "lab3d.manipulator" )
-	
+
 	self.manipulatorManager:setCurrent( "Selection Manipulator" )
 
 	co.system.services:getService( co.Type["lab3d.IApplication"] ):newBlankProject()

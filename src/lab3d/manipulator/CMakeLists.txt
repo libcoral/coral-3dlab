@@ -15,8 +15,6 @@ SET_TARGET_PROPERTIES( manipulator PROPERTIES
 	FOLDER "lab3d"
 )
 
-TARGET_LINK_LIBRARIES( manipulator ${CORAL_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES} )
-
 CORAL_MODULE_TARGET( "lab3d.manipulator" manipulator )
 
 INSTALL( DIRECTORY ${CMAKE_BINARY_DIR}/modules/lab3d/manipulator DESTINATION modules PATTERN "_debug" EXCLUDE )
