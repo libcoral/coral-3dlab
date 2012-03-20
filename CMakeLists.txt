@@ -33,8 +33,8 @@ SET( CORAL_PATH
 #GLM
 FIND_PATH( CORAL_EIGEN_INCLUDE_DIR Eigen/Dense
   PATH_SUFFIXES 
-  ../include/eigen
-  ../coral-eigen/include/eigen
+  ../include/
+  ../coral-eigen/include/
   PATHS
  ${ENV_CORAL_PATH}
  ${CORAL_ROOT}

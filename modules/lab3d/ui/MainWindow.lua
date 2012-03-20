@@ -9,7 +9,7 @@ local eigen = require "eigen"
 -- local variables table
 local L = {}
 
-L.fileFilterString = "OpenSceneGraph File (*.ive);;"
+L.fileFilterString = "OpenSceneGraph File (*.ive *.osg);;"
 L.projectFilterString = "Lua Project File (*.lua);;"
 
 function L.save( project, filename )

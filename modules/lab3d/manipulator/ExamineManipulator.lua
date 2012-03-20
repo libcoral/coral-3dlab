@@ -134,7 +134,10 @@ function ExamineManipulator:mouseReleased( x, y, button, modifiers )
 end
 
 function ExamineManipulator:mouseWheel( x, y, delta, modifiers )
-	self.navigator:zoom( delta * 0.0083 )
+	-- delta is in eights of degree and tipically each wheel step is 15 degrees
+	-- so each degree is 0.0083 of step.
+	local degrees = delta * 0.0083
+	self.navigator:zoom( degrees * 0.02 ) -- aproach 2% by degree 
 end
 
 -------------------------------------------------------------------------------
