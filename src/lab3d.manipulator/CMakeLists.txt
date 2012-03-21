@@ -1,5 +1,5 @@
 ################################################################################
-# Module lab3d
+# Module lab3d.manipulator
 ################################################################################
 
-CORAL_BUILD_CSL_MODULE( "lab3d" )
+CORAL_BUILD_CSL_MODULE( "lab3d.manipulator" )

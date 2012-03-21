@@ -1,23 +1,17 @@
 ################################################################################
-# Build the Module
+# Module lab3d.dom
 ################################################################################
 
 CORAL_GENERATE_MODULE( _MODULE_SOURCES lab3d.dom qt.ISystem qt.ITimerCallback )
 
-INCLUDE_DIRECTORIES( "${CMAKE_CURRENT_BINARY_DIR}/generated" )
+include_directories( "${CMAKE_CURRENT_BINARY_DIR}/generated" )
 
-FILE( GLOB _SOURCE_FILES *.cpp )
-FILE( GLOB _HEADER_FILES *.h )
+file( GLOB _SOURCE_FILES *.cpp )
+file( GLOB _HEADER_FILES *.h )
 
-ADD_LIBRARY( dom MODULE ${_HEADER_FILES} ${_SOURCE_FILES} ${_MODULE_SOURCES} )
-SET_TARGET_PROPERTIES( dom PROPERTIES
-	PROJECT_LABEL "dom"
-	FOLDER "lab3d"
-)
+add_library( lab3d.dom MODULE ${_HEADER_FILES} ${_SOURCE_FILES} ${_MODULE_SOURCES} )
 
-CORAL_MODULE_TARGET( "lab3d.dom" dom )
-
-INSTALL( DIRECTORY ${CMAKE_BINARY_DIR}/modules/lab3d/dom DESTINATION modules PATTERN "_debug" EXCLUDE )
+CORAL_MODULE_TARGET( "lab3d.dom" lab3d.dom )
 
 ################################################################################
 # Source Groups
