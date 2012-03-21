@@ -40,7 +40,7 @@ end
 
 function SceneManager:updateHighlightModel( entity )
 	if entity ~= self.application.currentProject.selectedEntity then return end
-	self.highlightModel.entity = entity
+	self.highlightModelObj.entity = entity
 end
 
 function SceneManager:onDecoratorAdded( entity, decorator )
@@ -72,14 +72,14 @@ function SceneManager:onPoseChanged( entity, position, orientation )
 	if not group then return end
 	group:setTranslation( position )
 	group:setOrientation( orientation )
-	updateHighlightModel( entity )
+	self:updateHighlightModel( entity )
 end
 
 function SceneManager:onScaleChanged( entity, scale )
 	local group = self.entityTransforms[entity]
 	if not group then return end
 	group:setScale( scale )
-	updateHighlightModel( entity )
+	self:updateHighlightModel( entity )
 end
 
 function SceneManager:onProjectOpened( newProject )

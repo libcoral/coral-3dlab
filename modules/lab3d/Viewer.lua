@@ -10,6 +10,7 @@ local eigen = require "eigen"
 local MainWindow = require "lab3d.ui.MainWindow"
 local GLCanvas = require "lab3d.ui.GLCanvasWidget"
 local ObjectTreeWidget = require "lab3d.ui.ObjectTreeWidget"
+local LuaConsoleWidget = require "lab3d.ui.LuaConsoleWidget"
 
 local Camera = require "lab3d.scene.Camera"
 local SceneManager = require "lab3d.scene.SceneManager"
@@ -83,6 +84,9 @@ function M:initialize()
 
 	local dockTreeWidget = ObjectTreeWidget( self.mainWindow  )
 	self.mainWindow:addDockWidget( qt.LeftDockWidgetArea, dockTreeWidget )
+	
+	local luaConsoleWidget = LuaConsoleWidget()
+	self.mainWindow:addDockWidget( qt.BottomDockWidgetArea, luaConsoleWidget )
 
 	-- export main window instance into a global access point
 	qt.mainWindow = self.mainWindow
