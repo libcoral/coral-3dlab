@@ -103,13 +103,13 @@ function L.createTreeContextMenu( actionExcludeSelected )
 end
 
 function L.on_showContextMenu( sender, x, y )
-	local selectedEntity = L.application.currentProject
+	local selectedEntity = L.application.currentProject.selectedEntity
 	L.actionExcludeSelected.enabled = ( selectedEntity ~= nil )
 	if not selectedEntity then
 		sender:clearSelection()
 		L.actionExcludeSelected.text = "(No object selected)"
 	else
-		L.actionExcludeSelected.text = "Remove '" .. L.application.currentProject.selectedEntity.name .. "'"
+		L.actionExcludeSelected.text = "Remove '" .. selectedEntity.name .. "'"
 	end
 	L.contextMenu:exec()
 end
