@@ -3,7 +3,7 @@
 ################################################################################
 
 cmake_minimum_required( VERSION 2.8.5 )
-include( ExternalProject )
+project( 3DLAB_DEPENDENCIES )
 
 # Settings
 set( CORAL_BRANCH "develop" )
@@ -16,6 +16,7 @@ endif()
 
 set( CORAL_ROOT "${INSTALL_PREFIX}/coral" )
 
+include( ExternalProject )
 include( CMakeParseArguments )
 
 function( CORAL_BUILD name config )
@@ -24,6 +25,8 @@ function( CORAL_BUILD name config )
 		BINARY_DIR "${PREFIX}/src/${name}-${config}"
 		DOWNLOAD_COMMAND ""
 		CMAKE_ARGS -DCORAL_ROOT=${CORAL_ROOT} -DCMAKE_BUILD_TYPE=${config} -DCMAKE_INSTALL_PREFIX=${CORAL_ROOT}
+		BUILD_COMMAND ${CMAKE_COMMAND} --build . --config ${config} --target install
+		INSTALL_COMMAND ""
 		${ARGN}
 	)
 endfunction()
@@ -34,11 +37,11 @@ function( CORAL_REQUIRE name )
 	if( NOT name STREQUAL "coral" )
 		set( ghname "coral-${name}" )
 	endif()
-	set( deps "${name}-Source" )
+	set( deps "${name}-GetSource" )
 	foreach( dep ${CORAL_REQUIRE_DEPENDS} )
 		list( APPEND deps "${dep}-Debug" "${dep}-Release" )
 	endforeach()
-	ExternalProject_Add( "${name}-Source"
+	ExternalProject_Add( "${name}-GetSource"
 		SOURCE_DIR "${PREFIX}/src/${name}"
 		GIT_REPOSITORY git://github.com/libcoral/${ghname}.git
 		GIT_TAG ${CORAL_BRANCH}
@@ -46,7 +49,6 @@ function( CORAL_REQUIRE name )
 		BUILD_COMMAND ""
 		INSTALL_COMMAND ""
 	)
-	message( STATUS "${name} depends on ${deps}" )
 	CORAL_BUILD( ${name} Debug DEPENDS ${deps} )
 	CORAL_BUILD( ${name} Release DEPENDS ${deps} )
 endfunction()
