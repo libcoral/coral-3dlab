@@ -16,6 +16,9 @@ interface IScene
 	//! clear all models from the scene
 	void clear();
 	
+	// Tries to adjust near and far automatically
+	bool autoAdjustNear;
+	
 	//! The camera used to render the scene
 	ICamera camera;
 };

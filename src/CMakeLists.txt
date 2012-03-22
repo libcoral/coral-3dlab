@@ -16,6 +16,7 @@ add_subdirectory( lab3d )
 add_subdirectory( lab3d.dom )
 add_subdirectory( lab3d.scene )
 add_subdirectory( lab3d.manipulator )
+add_subdirectory( minDistanceQuery )
 
 ################################################################################
 # Run Target

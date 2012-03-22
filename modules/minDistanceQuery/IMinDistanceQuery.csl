@@ -1,0 +1,27 @@
+/*
+	IMinDistanceQuery: calculates the minimum distance from all objects in 
+	a world to a given eye position using a scene drawer (through service IDrawer).
+	
+	The IDrawer service is used to perform a render of the user scene from which the minimum 
+	distance must be retrieved. The render performed by IDrawer must, as result, generate fragments 
+	into the OpenGL framebuffer, just as the scene would get to be visualized in the canvas. The 
+	retrieved minimum distance calculate will take place over those fragments generated after a call 
+	to IDrawer::draw().
+*/
+interface IMinDistanceQuery
+{
+	/*
+		Recalculates the minimum distance from the given eye position (eyeX, eyeY, eyeZ)
+		to each object in the drawed scene. The zNear and zFar parameters defines the projection
+	 	frustum but also defines the interval in which the minimum distance is normalized in.
+	 	\see getMinDistance().
+	 */
+	void update( in double eyeX, in double eyeY, in double eyeZ, in double zNear, in double zFar );
+	
+	/*!
+		Retrieves the normalized distance from the current eye position to the closest object in the world.
+		The distance is normalized from 0 to 1 between current zNear and zFar values, passed as argument to update()
+		method.
+	 */
+    double getMinDistance();
+};

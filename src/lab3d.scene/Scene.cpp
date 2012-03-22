@@ -88,6 +88,8 @@ void Scene::initialize()
     _osgCamera = osgViewer::Viewer::getCamera();
 	_osgCamera->setGraphicsContext( _graphicsContext.get() );
     _osgCamera->setClearColor( DEFAULT_CLEAR_COLOR );
+    
+    setAutoAdjustNear( _autoCalculateNearFar );
    
    	_rootNode = new osg::Group();
     setSceneData( _rootNode.get() );
@@ -125,6 +127,23 @@ void Scene::setViewport( co::int32 x, co::int32 y, co::int32 width, co::int32 he
 void Scene::clear( float r, float g, float b, float a ) 
 {
     _osgCamera->setClearColor( osg::Vec4( r, g, b, a ) );
+}
+    
+void Scene::setAutoAdjustNear( bool value )
+{
+    _autoCalculateNearFar = value;
+    
+    if( !_osgCamera.get() )
+        return;
+    
+    if( value )
+    {
+        _osgCamera->setComputeNearFarMode( osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES );
+    }
+    else
+    {
+        _osgCamera->setComputeNearFarMode( osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR );
+    }
 }
     
 void Scene::intersect( double x, double y, std::vector<lab3d::scene::PickIntersection>& intersections )

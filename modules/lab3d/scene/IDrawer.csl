@@ -1,0 +1,11 @@
+interface IDrawer
+{
+	//! Sets up the view port using x, y with and height just as in glViewport().
+	void setViewport( in int32 x, in int32 y, in int32 width, in int32 height );
+	
+	//! Clears the color buffer using r, g, b and a color components.
+	void clear( in float r, in float g, in float b, in float a );
+	
+	//! Draws the scene.
+	void draw();
+};

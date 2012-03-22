@@ -1,6 +1,7 @@
 component Scene
 {
 	provides IScene scene;
+	provides IDrawer drawer; // exposes drawing callbacks to other components (e.g: GLMinDistanceQuery)
 	provides qt.IPainter painter;
 	provides IPickIntersector intersector;
 	receives qt.IGLContext graphicsContext;
