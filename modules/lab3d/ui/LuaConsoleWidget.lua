@@ -32,7 +32,7 @@ end
 
 --]]---------------------------------------------------------------------------
 function L:onProjectOpened( newProject )
-	local env = { project = newProject, eigen = eigen }
+	local env = { project = newProject, eigen = eigen, Vec3 = eigen.Vec3, Quat = eigen.Quat, Mat4 = eigen.Mat4 }
 	L.env = env
 	ConsoleControl.setConsoleEnv( env )
 end
