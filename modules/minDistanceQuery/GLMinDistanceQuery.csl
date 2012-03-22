@@ -1,5 +1,0 @@
-component GLMinDistanceQuery
-{
-	provides IMinDistanceQuery distanceQuery;
-	receives lab3d.scene.IDrawer drawer;
-};

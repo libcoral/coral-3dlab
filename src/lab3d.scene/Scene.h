@@ -55,11 +55,16 @@ public:
 	virtual void removeModel( lab3d::scene::IModel* model );
     virtual void update();
     virtual void clear();
-    virtual void setAutoAdjustNear( bool value );
-    virtual bool getAutoAdjustNear() { return _autoCalculateNearFar; }
 
 	virtual lab3d::scene::ICamera* getCamera();
 	virtual void setCamera( lab3d::scene::ICamera* camera );
+    
+    virtual void setAutoAdjustNearFar( bool value ) 
+    { 
+        _autoCalculateNearFar = value; 
+    }
+    
+    virtual bool getAutoAdjustNearFar() { return _autoCalculateNearFar; }
     
     virtual qt::IGLContext* getGraphicsContextService();
     virtual void setGraphicsContextService( qt::IGLContext*  context );

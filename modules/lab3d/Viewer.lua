@@ -11,7 +11,6 @@ local MainWindow = require "lab3d.ui.MainWindow"
 local GLCanvas = require "lab3d.ui.GLCanvasWidget"
 local ObjectTreeWidget = require "lab3d.ui.ObjectTreeWidget"
 local LuaConsoleWidget = require "lab3d.ui.LuaConsoleWidget"
-local MultiScaleManager = require "lab3d.multiscale.MultiScaleManager"
 
 local Camera = require "lab3d.scene.Camera"
 local SceneManager = require "lab3d.scene.SceneManager"
@@ -94,9 +93,6 @@ function M:initialize()
 	qt.mainWindow = self.mainWindow
 
 	loadManipulators( self, "lab3d.manipulator" )
-	
-	-- try to load multiscale
-	MultiScaleManager:initialize( sceneObj.drawer, self.currentScene ) 
 
 	self.manipulatorManager:setCurrent( "Selection Manipulator" )
 
