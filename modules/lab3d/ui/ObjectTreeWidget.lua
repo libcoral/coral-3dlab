@@ -93,7 +93,7 @@ function L:entityNameChanged( entity, newName )
 end
 
 --[[---------------------------------------------------------------------------
-	Local auxiliary and signal/slots clorsures
+	Local auxiliary and signal/slots closures
 --]]---------------------------------------------------------------------------
 function L.createTreeContextMenu( actionExcludeSelected )
 	L.contextMenu = qt.new "QMenu"
@@ -292,7 +292,7 @@ return function( mainWindow )
 		L.dockConsoleWidget.windowTitle = "Project Tree"
 		L.dockConsoleWidget:setWidget( treeViewWidget )
 
-		L.createTreeContextMenu( mainWindow.actionExcludeSelected )
+		L.createTreeContextMenu( mainWindow.action_ExcludeSelected )
 
 		L.application = co.system.services:getService( co.Type["lab3d.IApplication"] )
 	end

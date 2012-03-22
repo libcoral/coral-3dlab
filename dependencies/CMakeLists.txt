@@ -6,7 +6,7 @@ cmake_minimum_required( VERSION 2.8.5 )
 project( 3DLAB_DEPENDENCIES )
 
 # Settings
-set( CORAL_BRANCH "develop" )
+set( CORAL_BRANCH "origin/develop" )
 set( PREFIX "${CMAKE_CURRENT_BINARY_DIR}" )
 
 set_property( DIRECTORY PROPERTY EP_PREFIX "${PREFIX}" )

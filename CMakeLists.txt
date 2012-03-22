@@ -20,9 +20,10 @@ endif()
 set( CMAKE_MODULE_PATH "${CORAL_ROOT}/cmake" ${CMAKE_MODULE_PATH} )
 find_package( Coral REQUIRED )
 
-set( CORAL_PATH ${CORAL_PATH}
+set( CORAL_PATH
 	"${CMAKE_BINARY_DIR}/modules"
 	"${CMAKE_SOURCE_DIR}/modules"
+	${CORAL_PATH}
 )
 
 include_directories( ${CORAL_INCLUDE_DIRS} )
@@ -36,7 +37,7 @@ set( CPACK_PACKAGE_VENDOR				"Tecgraf/PUC-Rio" )
 set( CPACK_PACKAGE_VERSION_MAJOR		"0" )
 set( CPACK_PACKAGE_VERSION_MINOR		"1" )
 set( CPACK_PACKAGE_VERSION_PATCH		"0" )
-set( CPACK_PACKAGE_DESCRIPTION_SUMMARY	"Sample 3D viewer built on the Coral framework" )
+set( CPACK_PACKAGE_DESCRIPTION_SUMMARY	"Sample 3D viewer built on top of the Coral framework" )
 
 include( CPack )
 

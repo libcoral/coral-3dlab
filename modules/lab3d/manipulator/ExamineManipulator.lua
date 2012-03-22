@@ -36,31 +36,31 @@ function ExamineManipulator:__init()
 	self.navigator = navigatorObj.navigator
 
 	self.enabled = false
-	
+
 	locals.reset( self )
 	self.name = self.name or "Examine Manipulator"
 	self.canvas = qt.mainWindow:getCentralWidget()
-	
+
 	-- registers self table as project observer, using lua api
 	ProjectObserver:addObserver( self )
 end
 
-function ExamineManipulator:getName() 
+function ExamineManipulator:getName()
 	return self.name
 end
 
-function ExamineManipulator:setName( name ) 
+function ExamineManipulator:setName( name )
 	self.name = name
 end
 
 function ExamineManipulator:activate()
 	locals.reset( self )
-	
+
 	local application = co.system.services:getService( co.Type["lab3d.IApplication"] )
-	
+
 	local selectedEntity = application.currentProject.selectedEntity
 	assert( selectedEntity )
-	
+
 	local view = self.navigator.view
 	view:setPose( view:calculateNavigationToObject( selectedEntity ) )
 	self.navigator.rotationCenter = selectedEntity.bounds.center
@@ -103,25 +103,29 @@ function ExamineManipulator:setEnabled( value )
 end
 
 function ExamineManipulator:mousePressed( x, y, button, modifiers )
-	-- calculates screen center
-	-- since lua handles all number as double, we need to round center to integer
-	local width = self.canvas.width
-	local height = self.canvas.height
-	local nx, ny = eigen.screenToClip( x, ( height - y ), width, height )
-
-	self.navigator:beginRotation( nx, ny )
+	if button == qt.LeftButton then
+		local w, h = self.canvas.width, self.canvas.height
+		local nx, ny = eigen.screenToClip( x, ( h - y ), w, h )
+		self.navigator:beginRotation( nx, ny )
+	else
+		self.lastY = y
+	end
 end
 
-function ExamineManipulator:mouseMoved( x, y, button, modifiers )
-	local width = self.canvas.width
-	local height = self.canvas.height
- 	local nx, ny = eigen.screenToClip( x, ( height - y ), width, height )
-
-    self.navigator:updateRotation( nx, ny )
+function ExamineManipulator:mouseMoved( x, y, buttons, modifiers )
+	local w, h = self.canvas.width, self.canvas.height
+	if bit32.btest( buttons, qt.LeftButton ) then
+		local nx, ny = eigen.screenToClip( x, ( h - y ), w, h )
+	    self.navigator:updateRotation( nx, ny )
+	end
+	if bit32.btest( buttons, qt.RightButton ) then
+		self.navigator:zoom( ( y - self.lastY ) / h * -2 )
+		self.lastY = y
+	end
 end
 
-function ExamineManipulator:mouseDoubleClicked( x, y, button, modifiers ) 
-	--local intersectionPoint = locals.pickPoint( self, x, y )
+function ExamineManipulator:mouseDoubleClicked( x, y, button, modifiers )
+--	local intersectionPoint = locals.pickPoint( self, x, y )
 --	if not intersectionPoint then
 --		return
 --	end
@@ -130,27 +134,28 @@ function ExamineManipulator:mouseDoubleClicked( x, y, button, modifiers )
 end
 
 function ExamineManipulator:mouseReleased( x, y, button, modifiers )
-	self.navigator:endRotation()
+	if button == qt.LeftButton then
+		self.navigator:endRotation()
+	end
 end
 
 function ExamineManipulator:mouseWheel( x, y, delta, modifiers )
 	-- delta is in eights of degree and tipically each wheel step is 15 degrees
 	-- so each degree is 0.0083 of step.
 	local degrees = delta * 0.0083
-	self.navigator:zoom( degrees * 0.02 ) -- aproach 2% by degree 
+	self.navigator:zoom( degrees * 0.02 ) -- aproach 2% by degree
 end
 
 -------------------------------------------------------------------------------
 -- Unused IInputlistener methods
 -------------------------------------------------------------------------------
-function ExamineManipulator:keyPressed( key ) 
+function ExamineManipulator:keyPressed( key )
     if key == "Key_Escape" then
         self.navigator:abortRotation()
     end
 end
 
 function ExamineManipulator:keyReleased( key ) end
-
 
 function ExamineManipulator:onEntitySelectionChanged( project, previous, current )
 	self.enabled = (current ~= nil)

@@ -38,7 +38,6 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuHelp"/>
@@ -55,11 +54,10 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action_AddModel"/>
-   <addaction name="actionExcludeSelected"/>
+   <addaction name="action_ExcludeSelected"/>
    <addaction name="action_OpenProject"/>
    <addaction name="action_SaveProject"/>
    <addaction name="separator"/>
-   <addaction name="actionAbout"/>
   </widget>
   <widget class="QToolBar" name="manipulatorToolbar">
    <property name="windowTitle">
@@ -90,15 +88,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
-   </property>
-  </action>
-  <action name="actionAbout">
-   <property name="icon">
-    <iconset>
-     <normaloff>resources/about.png</normaloff>resources/about.png</iconset>
-   </property>
-   <property name="text">
-    <string>About...</string>
    </property>
   </action>
   <action name="action_OpenProject">
@@ -137,7 +126,7 @@
     <string>Ctrl+Shift+S</string>
    </property>
   </action>
-  <action name="actionExcludeSelected">
+  <action name="action_ExcludeSelected">
    <property name="icon">
     <iconset>
      <normaloff>resources/exclude.png</normaloff>resources/exclude.png</iconset>
