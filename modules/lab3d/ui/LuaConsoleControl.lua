@@ -1,46 +1,42 @@
-local M = {}
-local commHistory = {}
-local historyAt = 0
-local env = _ENV
-local insert = table.insert
 local pcall = pcall
 local loadstring = loadstring
 local tostring = tostring
 local type = type
 local loadin = loadin
 
+local M = {}
+local env = _ENV
+local history = {}
+local historyAt = 0
+
 function M.clearHistory()
-	commHistory = {}
+	history = {}
 end
 
 function M.executeNew( command )
-	-- tries to find an '=' symbol at the begining of the string
-	-- and replaces it by 'return'
-	local cmd = string.gsub( command, "^%s*(=)", "return ")
-	insert( commHistory, cmd )
-	historyAt = #commHistory + 1
+	history[#history + 1] = command
+	historyAt = #history + 1
 
-	ret = { pcall( load( cmd, "Console user input", 't', env ) ) }
+	command = command:gsub( "^%s*(=)", "return ")
+	local res = { pcall( load( command, command, 't', env ) ) }
 
-	local str = ""
-	local prefix = ""
-	if not ret[1] then
-		str = "[Erro]: "
+	local str
+	if not res[1] then
+		str = "[Error]: "
 	else
-		str = "[Ok]"
-		prefix = ": valor(es) retornados: "
+		str = "[OK]: "
 	end
 
-	if #ret > 1 then
-		str = str .. prefix .. tostring( ret[2] )
-		for i = 3, #ret do
-			str = str .. ", " .. tostring( ret[i] )
+	if #res > 1 then
+		str = str .. "returned value(s): " .. tostring( res[2] )
+		for i = 3, #res do
+			str = str .. ", " .. tostring( res[i] )
 		end
 	else
-		str = str .. ": Nenhum valor foi retornado"
+		str = str .. "no returned value"
 	end
 
-	return ret[1], str
+	return res[1], str
 end
 
 function M.setConsoleEnv( consoleEnv )
@@ -50,91 +46,91 @@ function M.setConsoleEnv( consoleEnv )
 		env = {}
 	end
 	setmetatable( env, { __index = _G } )
-
 end
 
-local function extractMethod( method )
-	local signature = method.name .. "("
-	for i, v in ipairs( method.parameters ) do
-		local parameter = ""
-		if v.isIn and v.isOut then
-			parameter = parameter .. " inout "
-		elseif v.isIn then
-			parameter = parameter .. " in "
-		else
-			parameter = parameter .. " out "
+local function getParamQualifier( isIn, isOut )
+	return isIn and ( isOut and " inout " or " in " ) or " out "
+end
+
+local memberFormatters = {
+	MK_PORT = function( port )
+		return ( field.isFacet and "provides " or "receives " )
+			.. field.name .. " : " .. field.type.fullName
+	end,
+	MK_FIELD = function( field )
+		return field.name .. " : " .. field.type.fullName
+			.. ( field.isReadOnly and "(readonly)" or "" )
+	end,
+	MK_METHOD = function( method )
+		local str = "void"
+		if method.returnType then
+			str = method.returnType.fullName
 		end
-
-		parameter = parameter .. v.type.name .. " " .. v.name
-		if i ~= #method.parameters then
-			parameter = parameter .. ","
-		else
-			parameter = parameter .. " "
+		str = str .. " " .. method.name .. "("
+		for i, v in ipairs( method.parameters ) do
+			str = str .. getParamQualifier( v.isIn, v.isOut )
+				.. v.type.fullName .. " " .. v.name
+				.. ( i ~= #method.parameters and "," or " " )
 		end
-		signature = signature .. parameter .. " "		
-	end
-	if method.returnType then
-		return method.returnType.name .. " " .. signature .. ")"
-	end
+		return str .. ")"
+	end,
+}
 
-	return "void " .. signature .. ")"
-end
-
-local function extractMember( member )
-	return member.name
-end
-
-local function dumpInfo( targetTable, instance, fieldName, description, formatClosure )
-	local fields = instance[fieldName]
-
-	if not fields then return end
-
-	for i, v in ipairs( fields ) do
-		targetTable[ formatClosure( v ) ] = description
+local function addMemberList( lines, members )
+	for i, m in ipairs( members ) do
+		lines[#lines+1] = "  " .. memberFormatters[m.kind]( m )
 	end
 end
 
-function M.openContext( fullCommand )
+function M.getMemberInfo( command, requested )
+	local varName = command:match( "^%s*=?%s*([%w_.]-)[.:]?$" )
 	local object = env
-	for w in string.gmatch( fullCommand, "=?([%w-_]*)%.?" ) do
+	for w in varName:gmatch( "([%w_]*)" ) do
 		if w and w ~= "" then
-			if not object then return end
 			object = object[w]
+			if not object then return end
 		end
 	end
 
-	if not object then return end
+	local lines
+	local tp = type( object )
 
-	local objectType = type( object )
-	if objectType == "table" then
-		return object
-
-	elseif objectType == "userdata" then
-		local contextTable = {}
-
-		-- check if its a component
-		local objType = co.Type[ co.typeOf( object ) ]
-		if objType then
-			dumpInfo( contextTable, objType, "fields", "[Field]", extractMember )
-			dumpInfo( contextTable, objType, "facets", "[Facet]", extractMember )
-			dumpInfo( contextTable, objType, "receptacles", "[Receptacle]", extractMember )
-			dumpInfo( contextTable, objType, "methods", "[Method]", extractMethod )
+	if tp == "table" and requested == "fields" then
+		lines = { "Fields in table '" .. varName .. "':" }
+		for k, v in pairs( object ) do
+			lines[#lines+1] = "  [" .. tostring( k ) .. "] = " .. tostring( v )
 		end
+	elseif tp == "userdata" then
+		-- check if its a Coral type
+		tp = co.typeOf( object )
+		if not tp then return end
+		tp = co.Type[tp]
+		if requested == "fields" then
+			if tp.kind == "TK_COMPONENT" then
+				lines = { "Ports in " .. varName .. " (" .. tp.fullName .. "):" }
+				addMemberList( lines, tp.ports )
+			else
+				lines = { "Fields in " .. varName .. " (" .. tp.fullName .. "):" }
+				addMemberList( lines, tp.fields )
+			end
+		else
+			lines = { "Methods in " .. varName .. " (" .. tp.fullName .. "):" }
+			addMemberList( lines, tp.methods )
+		end
+	end
 
-		return contextTable
-	end	
-	return nil
+	if lines then return table.concat( lines, "\n" ) end
 end
 
-function M.previousComm()
+function M.previousCmd()
 	historyAt = historyAt > 1 and historyAt - 1 or 1
-	return commHistory[historyAt]
+	return history[historyAt]
 end
 
-function M.nextComm()
-	local historySize = #commHistory
+function M.nextCmd()
+	local historySize = #history
 	historyAt = historyAt < historySize and historyAt + 1 or historySize
-	return commHistory[historyAt]
+	return history[historyAt]
 end
 
 return M

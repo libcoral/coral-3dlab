@@ -93,7 +93,7 @@ function L:entityNameChanged( entity, newName )
 end
 
 --[[---------------------------------------------------------------------------
-	Local auxiliary and signal/slots clorsures
+	Local auxiliary and signal/slots closures
 --]]---------------------------------------------------------------------------
 function L.createTreeContextMenu( actionExcludeSelected )
 	L.contextMenu = qt.new "QMenu"
@@ -103,13 +103,13 @@ function L.createTreeContextMenu( actionExcludeSelected )
 end
 
 function L.on_showContextMenu( sender, x, y )
-	local selectedEntity = L.application.currentProject
+	local selectedEntity = L.application.currentProject.selectedEntity
 	L.actionExcludeSelected.enabled = ( selectedEntity ~= nil )
 	if not selectedEntity then
 		sender:clearSelection()
 		L.actionExcludeSelected.text = "(No object selected)"
 	else
-		L.actionExcludeSelected.text = "Remove '" .. L.application.currentProject.selectedEntity.name .. "'"
+		L.actionExcludeSelected.text = "Remove '" .. selectedEntity.name .. "'"
 	end
 	L.contextMenu:exec()
 end
@@ -292,7 +292,7 @@ return function( mainWindow )
 		L.dockConsoleWidget.windowTitle = "Project Tree"
 		L.dockConsoleWidget:setWidget( treeViewWidget )
 
-		L.createTreeContextMenu( mainWindow.actionExcludeSelected )
+		L.createTreeContextMenu( mainWindow.action_ExcludeSelected )
 
 		L.application = co.system.services:getService( co.Type["lab3d.IApplication"] )
 	end

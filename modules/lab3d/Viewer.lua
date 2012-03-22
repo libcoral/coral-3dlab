@@ -85,8 +85,9 @@ function M:initialize()
 
 	local dockTreeWidget = ObjectTreeWidget( self.mainWindow  )
 	self.mainWindow:addDockWidget( qt.LeftDockWidgetArea, dockTreeWidget )
-	
+
 	local luaConsoleWidget = LuaConsoleWidget()
+	luaConsoleWidget.visible = false
 	self.mainWindow:addDockWidget( qt.BottomDockWidgetArea, luaConsoleWidget )
 
 	-- export main window instance into a global access point
@@ -111,4 +112,3 @@ return function()
 	-- creates a new table with metatable set to M (creates a new Viewer instance)
 	return setmetatable( {}, { __index = M } )
 end
-

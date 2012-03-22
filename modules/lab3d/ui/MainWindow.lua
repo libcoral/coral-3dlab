@@ -9,7 +9,7 @@ local eigen = require "eigen"
 -- local variables table
 local L = {}
 
-L.fileFilterString = "OpenSceneGraph File (*.ive *.osg);;"
+L.fileFilterString = "OpenSceneGraph File (*.ive *.osg *.osgb *.osgt *.3ds *.dxf *.fbx *.obj *.ply)"
 L.projectFilterString = "Lua Project File (*.lua);;"
 
 function L.save( project, filename )
@@ -22,9 +22,9 @@ function L.confirmationBox_finished( sender, returnedCode )
 end
 
 function L.createConfirmationMsgBox()
-	L.confirmationDlg = qt.new( "QMessageBox" )
-	L.confirmationDlg.icon = qt.MessageBox.Information
-	L.confirmationDlg.standardButtons = qt.MessageBox.Yes + qt.MessageBox.No + qt.MessageBox.Cancel
+	L.confirmationDlg = qt.new "QMessageBox"
+	L.confirmationDlg.windowTitle = "Unsaved Changes"
+	L.confirmationDlg.standardButtons = qt.MessageBox.Cancel + qt.MessageBox.Discard + qt.MessageBox.Save
 	L.confirmationDlg:connect( "finished(int)", L.confirmationBox_finished )
 end
 
@@ -36,12 +36,12 @@ function L.askForSaveCurrentProject( sender )
 	local currentProject = L.application.currentProject
 	local projectDirty = L.application:projectHasChanges( currentProject )
 	if projectDirty then
-		L.confirmationDlg.text = "The project contains unsaved changes. Save before closing?"
+		L.confirmationDlg.text = "Save project before closing?"
 		L.confirmationDlg:invoke( "exec()" )
 		if L.confirmationDlgReturnCode == qt.MessageBox.Cancel then
 			return false
 		end
-		if L.confirmationDlgReturnCode == qt.MessageBox.Yes then
+		if L.confirmationDlgReturnCode == qt.MessageBox.Save then
 			return L.on_action_SaveProject_triggered( sender )
 		end
 	end
@@ -55,16 +55,19 @@ function L.on_action_AddModel_triggered( sender )
 	-- check whether the user has cancelled file open dialog
 	if #files == 0 then return end
 
+	local entity
 	for i = 1, #files do
 		local model = co.new( "lab3d.scene.Model" ).model
 		model.filename = files[i]
-		local entity = co.new( "lab3d.dom.Entity" ).entity
+		entity = co.new( "lab3d.dom.Entity" ).entity
 
 		-- create a simple default name from file
-		local nameFromFile = string.match( model.filename, "[%w_%.-_\\/]*[\\/]([%w@#-_+%.]*)$" )
-		entity.name = nameFromFile .. "_" .. (#L.application.currentProject.entities + 1)
+		entity.name = files[i]:match( "[%w_%.-_\\/]*[\\/]([%w@#-_+%.]*)$" )
 		entity:addDecorator( model )
 		L.application.currentProject:addEntity( entity )
+	end
+	if entity then
+		L.application.currentProject:setEntitySelected( entity )
 	end
 end
 
@@ -93,7 +96,7 @@ function L.on_action_SaveProject_triggered( sender )
 	return true
 end
 
-function L.on_actionExcludeSelected_triggered()
+function L.on_action_ExcludeSelected_triggered()
 	local selectedEntity = L.application.currentProject.selectedEntity
 	if not selectedEntity then return end
 
