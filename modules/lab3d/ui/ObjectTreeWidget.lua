@@ -224,7 +224,7 @@ function L:onProjectClosed( project )
 	self.entities = nil
 end
 
--- Callbacks for observing IWorld
+-- Callbacks for observing IProject
 function L:onEntitiesAdded( service, addedObjects )
 	for i = 1,#addedObjects do
 		assert( addedObjects[i] )
