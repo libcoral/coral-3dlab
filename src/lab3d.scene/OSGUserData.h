@@ -10,7 +10,7 @@ class OSGUserData : public osg::Referenced
 {
 public:
 	OSGUserData( lab3d::dom::IEntity* entity );
-	~OSGUserData();
+	virtual ~OSGUserData();
 
 	void setEntity( lab3d::dom::IEntity* entity ) { _entity = entity; }
 	lab3d::dom::IEntity* getEntity() { return _entity.get(); }

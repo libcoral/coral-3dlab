@@ -1,21 +1,21 @@
 // Graphical scene service.
 interface IScene
 {
-	//! never add a model directly to the list, always use addModel
+	// List of models in the scene.
 	readonly IModel[] models;
 
-	//! Adds a new model to the scene.
-	void addModel( in IModel model );
-	
-	//! Removes an model from the scene
-	void removeModel( in IModel model );
-	
-	//! Updates all scene state and redraws all objects.
-	void update();
-	
-	//! clear all models from the scene
-	void clear();
-	
-	//! The camera used to render the scene
+	// The camera used to render the scene
 	ICamera camera;
+
+	// Adds a new model to the scene.
+	void addModel( in IModel model );
+
+	// Removes an model from the scene
+	void removeModel( in IModel model );
+
+	// Clear all models from the scene
+	void clear();
+
+	// Updates all scene state and redraws all objects.
+	void update();
 };
