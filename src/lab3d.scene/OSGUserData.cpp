@@ -8,4 +8,3 @@ OSGUserData::~OSGUserData()
 {
 	// empty
 }
-
