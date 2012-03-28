@@ -62,7 +62,9 @@ function ExamineManipulator:activate()
 	assert( selectedEntity )
 
 	local view = self.navigator.view
-	view:setPose( view:calculateNavigationToObject( selectedEntity ) )
+	local position, orientation = view:calculateNavigationToObject( selectedEntity );
+	view.position = position
+	view.orientation = orientation
 	self.navigator.rotationCenter = selectedEntity.bounds.center
 end
 

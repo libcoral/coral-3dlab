@@ -46,7 +46,6 @@ function ExamineNavigator:getView()
 end
 
 function ExamineNavigator:beginRotation( nx, ny )
-	self.originalPose = self.view:getPose()
 	self.start = self.view.orientation
 	
 	-- uses polar coordinates to calculate initial vector

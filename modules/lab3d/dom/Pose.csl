@@ -1,9 +1,0 @@
-import eigen.Vec3;
-import eigen.Quat;
-
-struct Pose
-{
-	//! View Attributes
-	Vec3 position;
-	Quat orientation;
-};

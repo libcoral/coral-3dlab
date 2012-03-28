@@ -21,11 +21,8 @@ function locals.calculatePose( self, position, distanceOffset )
 	eigen.mulVecScalar( translationVector, distance - distanceOffset, translationVector )
 
 	local finalOrientation = eigen.fromMat4( eigen.lookAt( self.position, position, eigen.Vec3( 0, 0, 1 ) ) )
-	
-	local pose = co.new "lab3d.dom.Pose"
-	pose.position = ( self.position + translationVector )
-	pose.orientation = finalOrientation
-	return pose
+
+	return ( self.position + translationVector ), finalOrientation
 end
 
 -------------------------------------------------------------------------------
@@ -50,18 +47,6 @@ function View:calculateNavigationToObject( object )
 	local center = objBounds.center
 	local boundRadius = eigen.length( center - objBounds.max ) 
 	return locals.calculatePose( self, center, boundRadius )
-end
-
-function View:getPose()
-	local pose = co.new "lab3d.dom.Pose"
-	pose.position = self.position
-	pose.orientation = self.orientation
-	return pose
-end
-
-function View:setPose( pose )
-	self.position = pose.position
-	self.orientation = pose.orientation
 end
 
 function View:setPosition( position )

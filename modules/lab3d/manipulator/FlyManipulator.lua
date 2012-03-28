@@ -12,7 +12,7 @@ local SceneManager = require "lab3d.scene.SceneManager"
 local FlyManipulator =  co.Component( "lab3d.manipulator.FlyManipulator" )
 
 local locals = {}
-
+locals.PI_2 = math.pi * 0.5
 -------------------------------------------------------------------------------
 -- Local module functions
 -------------------------------------------------------------------------------
@@ -206,7 +206,7 @@ function FlyManipulator:mouseDoubleClicked( x, y, button, modifiers )
 	--TODO: perform navigation task using IViewAnimation
 end
 
-local MAXIMUM_ANGLE_INCREMENT = eigen.PI
+local MAXIMUM_ANGLE_INCREMENT = math.pi
 function FlyManipulator:mouseMoved( x, y, button, modifiers )
 	if self.paused then
 		return
@@ -233,10 +233,10 @@ function FlyManipulator:mouseMoved( x, y, button, modifiers )
 	
 	-- uses normalized interval as a linear angle domain [-PI/2 ,PI/2 ] on both directions
 	-- angle over Y is built from screen X linear coordinates 'ny' (limited to circle within -MAXIMUM_ANGLE_INCREMENT to MAXIMUM_ANGLE_INCREMENT)
-	local angleOverXDir = locals.clamp( dy * eigen.PI_2, -MAXIMUM_ANGLE_INCREMENT, MAXIMUM_ANGLE_INCREMENT )
+	local angleOverXDir = locals.clamp( dy * locals.PI_2, -MAXIMUM_ANGLE_INCREMENT, MAXIMUM_ANGLE_INCREMENT )
 		
 	-- angle over X is built from screen Y linear coordinates 'nx' (limited to circle within -MAXIMUM_ANGLE_INCREMENT to MAXIMUM_ANGLE_INCREMENT)
-    local angleOverYDir = locals.clamp( dx * eigen.PI_2, -MAXIMUM_ANGLE_INCREMENT, MAXIMUM_ANGLE_INCREMENT )
+    local angleOverYDir = locals.clamp( dx * locals.PI_2, -MAXIMUM_ANGLE_INCREMENT, MAXIMUM_ANGLE_INCREMENT )
     
     self.navigator:addPitchOffset( angleOverYDir )
     self.navigator:addYawOffset( angleOverXDir )

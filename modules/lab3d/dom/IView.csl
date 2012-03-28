@@ -9,14 +9,14 @@ interface IView
 		is at a 2/3 of the lenght of that vector in the vector forward
 		direction.
 	 */
-	void calculateNavigationToPoint( in Vec3 point, out Pose result );
+	void calculateNavigationToPoint( in Vec3 point, out Vec3 position, out Quat orientation );
 
 	/*
 		Calculates a pose that is aligned with the given objects bounds center
 		and is at a distance that allows the visualization of the whole object 
 		bounds.
 	 */
-	void calculateNavigationToObject( in IEntity object, out Pose result );
+	void calculateNavigationToObject( in IEntity object, out Vec3 position, out Quat orientation );
 
 	/*! 
 		ZeroRollOrientation is same as view original orientation but without a
@@ -26,12 +26,6 @@ interface IView
 	 */	
 	readonly Quat zeroRollOrientation;
 
-	//! Sets current position orientation from the given pose.
-	void setPose( in Pose pose );
-
-	//! Gets current position and orientation as a pose.
-	void getPose( out Pose pose );
-	
 	Vec3 position;
 	Quat orientation;
 	readonly Vec3 up;
