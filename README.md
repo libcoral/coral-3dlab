@@ -23,7 +23,7 @@ E os seguintes frameworks devem estar no libpath do sistema:
  *	[Qt libraries](http://qt-project.org/) - framework de GUI.
  *	[OpenSceneGraph](http://www.openscenegraph.org/) - middleware gráfico OpenGL.
  	 *	Recomenda-se baixar os [pacotes pré-compilados do OSG](http://openscenegraph.alphapixel.com/osg/downloads/free-openscenegraph-binary-downloads).
- 	 * No Windows é obrigatório ter as libs do OSG em debug caso você queira executar a aplicação em debug (limitação do MSVC).
+ 	 * No Windows é preciso ter as libs do OSG em debug para executar a aplicação em debug (limitação do MSVC).
 
 ## Dependências Internas (semi-automáticas) ##
 
@@ -34,7 +34,7 @@ Este projeto depende do framework Coral e diversos módulos. Todas as dependência
 
 O script pode ser executado novamente sempre que for necessário atualizar as dependências do projeto.
 
-*Dica para usuários Windows:* as variáveis do MSVC devem estar disponíveis quando o script for executado. Recomenda-se executar o script via o "Visual Studio Command Prompt", ou chamar o `vcvarsall.bat`.
+**Dica no Windows:** as variáveis do MSVC devem estar disponíveis quando o script for executado. Recomenda-se executar o script via o "Visual Studio Command Prompt", ou chamar `vcvarsall.bat`.
 
 ## Compilação ##
 
