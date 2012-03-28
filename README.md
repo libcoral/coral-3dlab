@@ -2,8 +2,7 @@
 
 Exemplo de visualizador 3D construído sobre o framework Coral.
 
-Testado no Linux (GCC 4.5) e OSX (Xcode 4.3).
-Espero que ninguém queira usar Windows tão cedo :-)
+Testado no Linux (GCC 4.5), OSX (Xcode 4.3) e Windows (MSVC 2010).
 
 ## Funcionalidades Básicas ##
 
@@ -24,6 +23,7 @@ E os seguintes frameworks devem estar no libpath do sistema:
  *	[Qt libraries](http://qt-project.org/) - framework de GUI.
  *	[OpenSceneGraph](http://www.openscenegraph.org/) - middleware gráfico OpenGL.
  	 *	Recomenda-se baixar os [pacotes pré-compilados do OSG](http://openscenegraph.alphapixel.com/osg/downloads/free-openscenegraph-binary-downloads).
+ 	 * No Windows é obrigatório ter as libs do OSG em debug caso você queira executar a aplicação em debug (limitação do MSVC).
 
 ## Dependências Internas (semi-automáticas) ##
 
@@ -33,6 +33,8 @@ Este projeto depende do framework Coral e diversos módulos. Todas as dependência
 	cmake -P ../dependencies/build.cmake
 
 O script pode ser executado novamente sempre que for necessário atualizar as dependências do projeto.
+
+*Dica para usuários Windows:* as variáveis do MSVC devem estar disponíveis quando o script for executado. Recomenda-se executar o script via o "Visual Studio Command Prompt", ou chamar o `vcvarsall.bat`.
 
 ## Compilação ##
 
