@@ -81,10 +81,9 @@ public:
 
 	void resize( co::int32 width, co::int32 height )
 	{
-		_graphicsContext->resized( 0, 0, width, height );
-		_osgCamera->setViewport( 0, 0, _activeCamera->getViewportWidth(), _activeCamera->getViewportHeight() );
-
 		CORAL_DLOG(INFO) << "Canvas resized to " << width << " x " << height;
+
+		_graphicsContext->resized( 0, 0, width, height );
 
 		if( !_activeCamera )
 		{
@@ -103,6 +102,10 @@ public:
 			return;
 
 		copyCameraStateToOSG( _activeCamera.get(), _osgCamera.get() );
+
+		_osgCamera->setViewport( 0, 0,
+			_activeCamera->getViewportWidth(), _activeCamera->getViewportHeight() );
+
 		frame();
 	}
 
@@ -114,10 +117,10 @@ public:
 		const osg::Camera* osgCamera = getCameraContainingPosition( x, y, local_x, local_y );
 		if( !osgCamera ) return;
 		
-		osgUtil::LineSegmentIntersector::CoordinateFrame cf = 
-		osgCamera->getViewport() ? osgUtil::Intersector::WINDOW : osgUtil::Intersector::PROJECTION;
+		osgUtil::LineSegmentIntersector::CoordinateFrame cf = ( osgCamera->getViewport() ?
+				osgUtil::Intersector::WINDOW : osgUtil::Intersector::PROJECTION );
 		
-		osg::ref_ptr< osgUtil::LineSegmentIntersector > picker = new osgUtil::LineSegmentIntersector(cf, local_x, local_y);
+		osg::ref_ptr< osgUtil::LineSegmentIntersector > picker = new osgUtil::LineSegmentIntersector( cf, local_x, local_y);
 		osgUtil::IntersectionVisitor iv( picker.get() );
 		const_cast<osg::Camera*>( osgCamera )->accept( iv );
 		

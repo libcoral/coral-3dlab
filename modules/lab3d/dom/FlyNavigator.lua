@@ -1,8 +1,8 @@
 local eigen = require "eigen"
 
 local WORLD_UP_DIRECTION = eigen.Vec3( 0, 0, 1 )
-local ANGULAR_VELOCITY_OVER_X_AXIS 	= 6 * eigen.PI -- rad/s
-local ANGULAR_VELOCITY_OVER_Y_AXIS 	= 6 * eigen.PI -- rad/s
+local ANGULAR_VELOCITY_OVER_X_AXIS 	= 6 * math.pi -- rad/s
+local ANGULAR_VELOCITY_OVER_Y_AXIS 	= 6 * math.pi -- rad/s
 local ANGULAR_TOLERANCE				= 1e-3
 
 --[[---------------------------------------------------------------------------
@@ -29,7 +29,7 @@ end
 
 -- accumulates the angular variation over the given axis into given quaternion orientation 'currentOrientation'
 function locals.accumulateOrientation( currentOrientation, angularVariation, axis )
-	return eigen.rotateQuat( currentOrientation, angularVariation * eigen.rad2deg, axis, currentOrientation )
+	return eigen.rotateQuat( currentOrientation, math.deg( angularVariation ), axis, currentOrientation )
 end
 
 function locals.calculateNewOrientation( self, dt )
@@ -39,7 +39,7 @@ function locals.calculateNewOrientation( self, dt )
 	-- update orientation
 	local cameraRight = self.view.right
 	local originalOrientation = self.view.orientation
-	
+
 	-- performs X axis calculation if theres a significant angle over X axis
 	if math.abs( self.angleOverXDir ) > ANGULAR_TOLERANCE then
 		local angularDx = self.angleOverXDir * dt * ANGULAR_VELOCITY_OVER_X_AXIS
@@ -53,10 +53,10 @@ function locals.calculateNewOrientation( self, dt )
 		-- checks whether camera vertical angle has reached maximum angle
 		-- (we don't want camera loops along x axis)
 		local cameraUp = self.view.up
-	
+
 		-- measures total angle between camera up and world up
 		local currentAngle = math.acos( eigen.dotVec( cameraUp, worldUp ) )
-		if math.abs( currentAngle ) > eigen.PI_2 then
+		if 2 * math.abs( currentAngle ) > math.pi then
 			-- angle would exceed maximum vertical angle,
 			-- so we restore original camera orientation
 			self.view.orientation = originalOrientation
@@ -115,7 +115,7 @@ end
 function FlyNavigator:evolve( dt )
 	-- update position
 	locals.calculateNewPosition( self, dt )
-	
+
 	-- update orientation
 	locals.calculateNewOrientation( self, dt )
 end
