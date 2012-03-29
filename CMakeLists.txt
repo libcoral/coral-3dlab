@@ -12,8 +12,31 @@ project( 3DLAB )
 if( IS_DIRECTORY "${CMAKE_BINARY_DIR}/dependencies/coral" )
 	set( CORAL_ROOT "${CMAKE_BINARY_DIR}/dependencies/coral" )
 	message( STATUS "Using internal Coral SDK" )
-elseif( NOT CORAL_ROOT )
-	file( TO_CMAKE_PATH "$ENV{CORAL_ROOT}" CORAL_ROOT )
+else()
+	find_path( CORAL_EIGEN_INCLUDE_DIR Eigen/Geometry
+		PATH_SUFFIXES 
+		../include/
+		../coral-eigen/include/
+		PATHS
+		${ENV_CORAL_PATH}
+		${CORAL_ROOT}
+		NO_DEFAULT_PATH
+	)
+	if( NOT CORAL_ROOT )
+		file( TO_CMAKE_PATH "$ENV{CORAL_ROOT}" CORAL_ROOT )
+	endif()
+endif()
+
+if( NOT IS_DIRECTORY "${CMAKE_BINARY_DIR}/dependencies/coral-eigen" )
+	find_path( CORAL_EIGEN_INCLUDE_DIR Eigen/Geometry
+		PATH_SUFFIXES 
+		../include/
+		../coral-eigen/include/
+		PATHS
+		${ENV_CORAL_PATH}
+		${CORAL_ROOT}
+		NO_DEFAULT_PATH
+	)
 endif()
 
 if( NOT IS_DIRECTORY "${CMAKE_BINARY_DIR}/dependencies/coral-eigen" )
