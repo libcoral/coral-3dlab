@@ -16,6 +16,18 @@ elseif( NOT CORAL_ROOT )
 	file( TO_CMAKE_PATH "$ENV{CORAL_ROOT}" CORAL_ROOT )
 endif()
 
+if( NOT IS_DIRECTORY "${CMAKE_BINARY_DIR}/dependencies/coral-eigen" )
+	find_path( CORAL_EIGEN_INCLUDE_DIR Eigen/Geometry
+		PATH_SUFFIXES 
+		../include/
+		../coral-eigen/include/
+		PATHS
+		${ENV_CORAL_PATH}
+		${CORAL_ROOT}
+		NO_DEFAULT_PATH
+	)
+endif()
+
 # Load Coral's CMake package
 set( CMAKE_MODULE_PATH "${CORAL_ROOT}/cmake" ${CMAKE_MODULE_PATH} )
 find_package( Coral REQUIRED )
@@ -26,7 +38,7 @@ set( CORAL_PATH
 	${CORAL_PATH}
 )
 
-include_directories( ${CORAL_INCLUDE_DIRS} )
+include_directories( ${CORAL_INCLUDE_DIRS} ${CORAL_EIGEN_INCLUDE_DIR} )
 
 ################################################################################
 # Packaging
