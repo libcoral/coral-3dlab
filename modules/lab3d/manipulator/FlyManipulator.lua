@@ -12,7 +12,7 @@ local SceneManager = require "lab3d.scene.SceneManager"
 local FlyManipulator =  co.Component( "lab3d.manipulator.FlyManipulator" )
 
 local locals = {}
-locals.PI_2 = math.pi * 0.5
+
 -------------------------------------------------------------------------------
 -- Local module functions
 -------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ function locals.setPaused( self, value )
 		-- this manipulator alters the canvas cursor because it is only really active
 		-- when a button is pressed (ESC pauses the manipulator and restores cursor)
 		self.canvas:setCursor( qt.BlankCursor )
-				
+
 		-- since lua handles all number as double, we need to round center to integer
 		local cw = math.floor( self.canvas.width * 0.5 )
 		local ch = math.floor( self.canvas.height * 0.5 )
@@ -46,11 +46,11 @@ end
 
 function locals.getTranslationVector( self )
 	local result = eigen.Vec3( 0, 0, 0 )
-		
+
 	if not ( self.front or self.back or self.left or self.right ) then
 		return result
 	end
-	
+
 	if self.front then
 	    result.z = -1
 	end
@@ -63,7 +63,7 @@ function locals.getTranslationVector( self )
 	if self.left then
 	    result.x = -1
 	end
-	
+
 	eigen.normalize( result, result )
 
 	return result
@@ -79,14 +79,14 @@ end
 function FlyManipulator:__init()
 	local navigatorObj = co.new "lab3d.dom.FlyNavigator"
 	self.navigator = navigatorObj.navigator
-	
+
 	self.canvas = qt.mainWindow:getCentralWidget()
-	
+
 	self.listeners = {}
 	self.started = true
 	self.finished = false
 	self.stopped = false
-	
+
 	locals.reset( self )
 	self.name = self.name or "Fly Manipulator"
 	self.translationVelocity = 10
@@ -94,18 +94,18 @@ function FlyManipulator:__init()
 	self.animationOnCourse = false
 end
 
-function FlyManipulator:getName() 
+function FlyManipulator:getName()
 	return self.name
 end
 
-function FlyManipulator:setName( name ) 
+function FlyManipulator:setName( name )
 	self.name = name
 end
 
 function FlyManipulator:activate()
 	locals.reset( self )
 	self.canvas.mouseTracking = true
-	
+
 	-- fix up
 	self.navigator.view.orientation = self.navigator.view.zeroRollOrientation
 end
@@ -150,7 +150,7 @@ function FlyManipulator:keyPressed( key )
 	if key == "Key_Escape" then
 		locals.setPaused( self, true )
 	end
-	
+
 	if self.animationOnCourse then return end
 
 	if key == "Key_W" then
@@ -171,7 +171,7 @@ end
 
 function FlyManipulator:keyReleased( key )
 	if self.animationOnCourse then return end
-	
+
 	if key == "Key_W" then
 		self.front = false
 	end
@@ -184,11 +184,11 @@ function FlyManipulator:keyReleased( key )
 	if key == "Key_D" then
 		self.right = false
 	end
-	
+
 	self.navigator:setTranslationVector( locals.getTranslationVector( self ) )
 end
 
-function FlyManipulator:mousePressed( x, y, button, modifiers )	
+function FlyManipulator:mousePressed( x, y, button, modifiers )
 	-- when right mouse button is pressed, remove manipulator from 'paused' state
 	if button == qt.RightButton then
 		locals.setPaused( self, not self.paused )
@@ -197,7 +197,7 @@ end
 
 function FlyManipulator:mouseDoubleClicked( x, y, button, modifiers )
 	if self.animationOnCourse then return end
-	
+
 	if button ~= qt.LeftButton then
 		return
 	end
@@ -211,11 +211,11 @@ function FlyManipulator:mouseMoved( x, y, button, modifiers )
 	if self.paused then
 		return
 	end
-	
+
 	local width = self.canvas.width
 	local height = self.canvas.height
-	
-	
+
+
 	-- since lua handles all number as double, we need to round center to integer
 	local cw = math.floor( width * 0.5 )
 	local ch = math.floor( height * 0.5 )
@@ -223,31 +223,31 @@ function FlyManipulator:mouseMoved( x, y, button, modifiers )
 	-- sets cursor position to canva's center
 	local localX, localY = self.canvas:mapToGlobal( cw, ch )
    	self.canvas:setCursorPosition( localX, localY )
-   	
+
    	if self.animationOnCourse then return end
-	
+
 	-- gets normalized coordinates
-	-- since we reset cursor position to 0,0, (x,y) coordinates represents the 
+	-- since we reset cursor position to 0,0, (x,y) coordinates represents the
 	-- pixel offset of mouse from center. dx and dy are normalized offsets
 	local dx, dy = eigen.screenToClip( x, y, width, height )
-	
+
 	-- uses normalized interval as a linear angle domain [-PI/2 ,PI/2 ] on both directions
 	-- angle over Y is built from screen X linear coordinates 'ny' (limited to circle within -MAXIMUM_ANGLE_INCREMENT to MAXIMUM_ANGLE_INCREMENT)
-	local angleOverXDir = locals.clamp( dy * locals.PI_2, -MAXIMUM_ANGLE_INCREMENT, MAXIMUM_ANGLE_INCREMENT )
-		
+	local angleOverXDir = locals.clamp( dy * math.pi * 0.5, -MAXIMUM_ANGLE_INCREMENT, MAXIMUM_ANGLE_INCREMENT )
+
 	-- angle over X is built from screen Y linear coordinates 'nx' (limited to circle within -MAXIMUM_ANGLE_INCREMENT to MAXIMUM_ANGLE_INCREMENT)
-    local angleOverYDir = locals.clamp( dx * locals.PI_2, -MAXIMUM_ANGLE_INCREMENT, MAXIMUM_ANGLE_INCREMENT )
-    
+    local angleOverYDir = locals.clamp( dx * math.pi * 0.5, -MAXIMUM_ANGLE_INCREMENT, MAXIMUM_ANGLE_INCREMENT )
+
     self.navigator:addPitchOffset( angleOverYDir )
     self.navigator:addYawOffset( angleOverXDir )
 end
 
 function FlyManipulator:mouseWheel( x, y, delta, modifiers )
 	if self.animationOnCourse then return end
-	
+
 	local numDegrees = delta / 8
     local numSteps = numDegrees / 15
-	
+
 	self.translationVelocity = math.min( 10000, math.max( 0.5, self.translationVelocity * ( 1 + numSteps ) ) )
 	self.navigator.translationVelocity = self.translationVelocity
 end

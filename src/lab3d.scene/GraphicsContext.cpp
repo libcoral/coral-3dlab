@@ -64,17 +64,13 @@ bool GraphicsContext::makeCurrentImplementation()
 	bool isValid = valid();
 	if( isValid )
 		_glContext->makeCurrent();
-
 	return isValid;
 }
 
 bool GraphicsContext::makeContextCurrentImplementation( osg::GraphicsContext* readContext )
 {
-	bool isValid = valid();
-	if( isValid )
-		_glContext->makeCurrent();
-
-	return isValid;
+	assert( readContext == this );
+	return makeCurrentImplementation();
 }
 
 bool GraphicsContext::releaseContextImplementation()
@@ -84,11 +80,11 @@ bool GraphicsContext::releaseContextImplementation()
 
 void GraphicsContext::bindPBufferToTextureImplementation( GLenum buffer )
 {
-	// empty
+	// NYI
+	assert( false );
 }
 
 void GraphicsContext::swapBuffersImplementation()
 {
-//	if( valid() )
-//		_glContext->swapBuffers();
+	// ignored
 }
