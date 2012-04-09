@@ -49,8 +49,10 @@ install(
 	PATTERN "*_debug*" EXCLUDE
 )
 
+find_program( CORAL_EXECUTABLE_PATH coral PATHS "${CORAL_ROOT}" NO_DEFAULT_PATH )
+
 # Re-use the Coral Launcher renamed as '3dlab'
-install( PROGRAMS "${CORAL_ROOT}/coral" DESTINATION . RENAME "3dlab" )
+install( PROGRAMS "${CORAL_EXECUTABLE_PATH}" DESTINATION . RENAME "3dlab" )
 
 # Add our coral.properties config file
 install( FILES "coral.properties" DESTINATION . )
