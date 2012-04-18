@@ -50,7 +50,11 @@ install(
 )
 
 # Re-use the Coral Launcher renamed as '3dlab'
-install( PROGRAMS "${CORAL_ROOT}/coral" DESTINATION . RENAME "3dlab" )
+install(
+	PROGRAMS "${CORAL_ROOT}/coral${CMAKE_EXECUTABLE_SUFFIX}"
+	DESTINATION .
+	RENAME "3dlab${CMAKE_EXECUTABLE_SUFFIX}"
+)
 
 # Add our coral.properties config file
 install( FILES "coral.properties" DESTINATION . )
