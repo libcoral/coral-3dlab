@@ -55,21 +55,21 @@ local function openProject( self, projectObj )
 		ObserveFields:removeFieldObserver( self.space, self.currentProject, self )
 		-- to track all changes (track whether the project is dirty - has unsaved changes)
 		self.space:removeServiceObserver( self.currentProject, self.object.app )
-		
+
 		self.dirtyProjects[self.currentProject] = nil
 		self.projectFiles[self.currentProject] = nil
 	end
-	
+
 	self.space = helper:setupCaSpace( self.model )
 
 	self.projectObj = projectObj
 	self.currentProject = self.projectObj.project
-	self.space:setRootObject( self.projectObj )
+	self.space:initialize( self.projectObj )
 	ObserveFields:addFieldObserver( self.space, self.currentProject, self )
 	self.space:addServiceObserver( self.currentProject, self.object.app )
-	
+
 	self.dirtyProjects[self.currentProject] = false
-	
+
 	notifyProjectOpened( self )
 
 	-- force a selection notification
@@ -93,7 +93,7 @@ end
 function Application:saveProject( project, filename )
 	self.archiveObj.file.name = filename
 	self.archiveObj.archive:save( self.projectObj )
-	
+
 	self.dirtyProjects[project] = false
 	self.projectFiles[project] = filename
 end
@@ -125,7 +125,7 @@ function Application:removeProjectObserver( observer )
 	local obs = self.openWorldObservers
 	local size = #obs
 	for i = 1, size do
-		if obs[i] == observer then 
+		if obs[i] == observer then
 			obs[i] = obs[size]
 			obs[size] = nil
 			return
