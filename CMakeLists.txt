@@ -14,12 +14,13 @@ if( IS_DIRECTORY "${CMAKE_BINARY_DIR}/dependencies/coral" )
 	message( STATUS "Using internal Coral SDK" )
 else()
 	find_path( CORAL_EIGEN_INCLUDE_DIR Eigen/Geometry
-		PATH_SUFFIXES
-		../include/
-		../coral-eigen/include/
 		PATHS
-		${ENV_CORAL_PATH}
-		${CORAL_ROOT}
+			${ENV_CORAL_PATH}
+			${CORAL_ROOT}
+			${CMAKE_SOURCE_DIR}
+		PATH_SUFFIXES
+			../include/
+			../coral-eigen/include/
 		NO_DEFAULT_PATH
 	)
 endif()
@@ -46,7 +47,7 @@ include_directories( ${CORAL_INCLUDE_DIRS} ${CORAL_EIGEN_INCLUDE_DIR} )
 set( CPACK_PACKAGE_NAME					"Coral 3D Lab" )
 set( CPACK_PACKAGE_VENDOR				"Tecgraf/PUC-Rio" )
 set( CPACK_PACKAGE_VERSION_MAJOR		"0" )
-set( CPACK_PACKAGE_VERSION_MINOR		"1" )
+set( CPACK_PACKAGE_VERSION_MINOR		"2" )
 set( CPACK_PACKAGE_VERSION_PATCH		"0" )
 set( CPACK_PACKAGE_DESCRIPTION_SUMMARY	"Sample 3D viewer built on top of the Coral framework" )
 

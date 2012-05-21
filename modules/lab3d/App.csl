@@ -1,0 +1,5 @@
+@lua.Scripted( "lab3d.App" )
+component App
+{
+	provides lua.ILauncher launcher;
+};

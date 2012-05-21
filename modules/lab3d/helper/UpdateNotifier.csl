@@ -1,6 +1,0 @@
-// global update notifier that provides lua closure-based update callbacks.
-@lua.Scripted( "lab3d.helper.UpdateNotifier" ) 
-component UpdateNotifier
-{
-	provides lab3d.dom.IUpdateCallback update;
-};

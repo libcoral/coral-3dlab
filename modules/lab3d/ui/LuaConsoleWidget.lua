@@ -1,7 +1,7 @@
 local qt = require "qt"
+local lab3d = require "lab3d"
 local eigen = require "eigen"
 local ConsoleControl = require "lab3d.ui.LuaConsoleControl"
-local ProjectObserver = require "lab3d.helper.ProjectObserver"
 
 local L = {}
 
@@ -31,19 +31,6 @@ end
 --[[---------------------------------------------------------------------------
 
 --]]---------------------------------------------------------------------------
-function L:onProjectOpened( newProject )
-	local env = { project = newProject, eigen = eigen, Vec3 = eigen.Vec3, Quat = eigen.Quat, Mat4 = eigen.Mat4 }
-	L.env = env
-	ConsoleControl.setConsoleEnv( env )
-end
-
-function L:onProjectClosed( project )
-	ConsoleControl.setConsoleEnv( nil )
-end
-
-function L:onEntitySelectionChanged( project, previous, current )
-	L.env.selectedEntity = current
-end
 
 return function()
 	if not L.dockConsoleWidget then
@@ -55,7 +42,13 @@ return function()
 		L.dockConsoleWidget.windowTitle = "Lua Console"
 		L.dockConsoleWidget:setWidget( L.console )
 
-		ProjectObserver:addObserver( L )
+		ConsoleControl.setConsoleEnv{
+			lab3d = lab3d,
+			eigen = eigen,
+			Vec3 = eigen.Vec3,
+			Quat = eigen.Quat,
+			Mat4 = eigen.Mat4
+		}
 	end
 
 	return L.dockConsoleWidget

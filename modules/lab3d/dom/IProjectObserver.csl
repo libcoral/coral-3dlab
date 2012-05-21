@@ -1,8 +1,0 @@
-interface IProjectObserver
-{
-	void onProjectOpened( in IProject newProject );
-	void onProjectClosed( in IProject project );
-	void onEntitiesAdded( in IProject project, in IEntity[] entities );
-	void onEntitiesRemoved( in IProject project, in IEntity[] entities );
-	void onEntitySelectionChanged( in IProject project, in IEntity previous, in IEntity current );
-};

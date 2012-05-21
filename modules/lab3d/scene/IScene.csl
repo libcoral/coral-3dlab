@@ -5,7 +5,7 @@ interface IScene
 	readonly IModel[] models;
 
 	// The camera used to render the scene
-	ICamera camera;
+	lab3d.dom.ICamera camera;
 
 	// Adds a new model to the scene.
 	void addModel( in IModel model );

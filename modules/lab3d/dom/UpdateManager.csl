@@ -1,5 +1,0 @@
-component UpdateManager
-{
-	provides IUpdateManager updateManager;
-	provides qt.ITimerCallback timer;
-};

@@ -16,12 +16,10 @@
 --]]---------------------------------------------------------------------------
 
 local qt = require "qt"
-local SceneManager = require "lab3d.scene.SceneManager"
-local observeFields = require "lab3d.helper.ObserveFields"
 local ObjectTreeModel = require "lab3d.ui.ObjectTreeModel"
-local ProjectObserver = require "lab3d.helper.ProjectObserver"
 
 local L = {}
+
 -- icon files
 L.icons =
 {
@@ -61,11 +59,11 @@ function L:entityAdded( entity )
 	local newIndex = self:addElementToTreeView( -1, entity.name, entity )
 	self.entityIndices[entity] = newIndex
 
-	if self.application.currentProject.selectedEntity == entity then
+	--[[if self.application.currentProject.selectedEntity == entity then
 		-- remove any other selection
 		self.treeViewWidget:clearSelection()
 		self:setIndexSelection( newIndex, true )
-	end
+	end]]
 end
 
 function L:entityRemoved( entity )
@@ -103,7 +101,7 @@ function L.createTreeContextMenu( actionExcludeSelected )
 end
 
 function L.on_showContextMenu( sender, x, y )
-	local selectedEntity = L.application.currentProject.selectedEntity
+	local selectedEntity = nil -- L.application.currentProject.selectedEntity
 	L.actionExcludeSelected.enabled = ( selectedEntity ~= nil )
 	if not selectedEntity then
 		sender:clearSelection()
@@ -177,9 +175,9 @@ function ObjectTreeModel:itemClicked( view, index )
 
 	local entity = node.data
 
-	if L.application.currentProject.selectedEntity == entity then return end
+	--if L.application.currentProject.selectedEntity == entity then return end
 
-	L.application.currentProject:setEntitySelected( entity )
+	--L.application.currentProject:setEntitySelected( entity )
 end
 
 function ObjectTreeModel:itemDoubleClicked( view, index )
@@ -205,7 +203,7 @@ function L:onProjectOpened( newProject )
 
 	for i=1, #newProject.entities do
 		local entity = self.entities[i]
-		observeFields:addFieldObserver( self.application.space, entity, self )
+		--observeFields:addFieldObserver( self.application.space, entity, self )
 		self:entityAdded( entity )
 	end
 
@@ -217,7 +215,7 @@ function L:onProjectClosed( project )
 	-- Temp workaround to stop observing all the entities from the project being closed
 	local ents = project.entities
 	for i=1, #ents do
-		observeFields:removeFieldObserver( self.application.space, ents[i], self )
+		--observeFields:removeFieldObserver( self.application.space, ents[i], self )
 	end
 
 	self:entitySelectionChanged( nil )
@@ -229,7 +227,7 @@ function L:onEntitiesAdded( service, addedObjects )
 	for i = 1,#addedObjects do
 		assert( addedObjects[i] )
 		-- install an observing service for that entity, needed to track entity name changes
-		observeFields:addFieldObserver( self.application.space, addedObjects[i], self )
+		--observeFields:addFieldObserver( self.application.space, addedObjects[i], self )
 		self:entityAdded( addedObjects[i] )
 	end
 end
@@ -238,7 +236,7 @@ function L:onEntitiesRemoved( service, removedObjects )
 	for i = 1,#removedObjects do
 		assert( removedObjects[i] )
 		-- remove installed observer
-		observeFields:removeFieldObserver( self.application.space, removedObjects[i], self )
+		--observeFields:removeFieldObserver( self.application.space, removedObjects[i], self )
 		self:entityRemoved( removedObjects[i] )
 	end
 end
@@ -286,17 +284,14 @@ return function( mainWindow )
 		L.itemModel = itemModel
 		L.treeViewWidget = treeViewWidget
 		L.objectTreeData = objectTreeData
-		ProjectObserver:addObserver( L )
+		--ProjectObserver:addObserver( L )
 
 		L.dockConsoleWidget = qt.new( "QDockWidget" )
 		L.dockConsoleWidget.windowTitle = "Project Tree"
 		L.dockConsoleWidget:setWidget( treeViewWidget )
 
 		L.createTreeContextMenu( mainWindow.action_ExcludeSelected )
-
-		L.application = co.system.services:getService( co.Type["lab3d.IApplication"] )
 	end
 
 	return L.dockConsoleWidget
 end
-

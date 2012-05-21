@@ -1,5 +1,0 @@
-@lua.Scripted( "lab3d.manipulator.ExamineManipulator" ) 
-component ExamineManipulator
-{
-	provides IManipulator manipulator;
-};

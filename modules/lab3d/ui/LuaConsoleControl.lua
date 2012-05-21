@@ -84,6 +84,8 @@ end
 
 function M.getMemberInfo( command, requested )
 	local varName = command:match( "^%s*=?%s*([%w_.]-)[.:]?$" )
+	if not varName then return end
+
 	local object = env
 	for w in varName:gmatch( "([%w_]*)" ) do
 		if w and w ~= "" then

@@ -1,5 +1,0 @@
-@lua.Scripted( "lab3d.scene.SceneManager" ) 
-component SceneManager
-{
-	receives IScene scene;
-};

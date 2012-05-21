@@ -1,18 +1,29 @@
+/*
+	A 3D Lab project.
+ */
 interface IProject
 {
+	// Project name.
 	string name;
-	IEntity[] entities;
-	IEntity selectedEntity;
-	
-	// Current view point being used in the project. This is the main access point for changing current view-point.
-	// A new project must always start with a new default view (e.g: zero rotation at default position).
+
+	// Path to where this project's file is saved.
+	string filePath;
+
+	// Current camera view.
 	IView currentView;
-	
-	// Sets the selected entity and notifies all project observers.
-	void setEntitySelected( in IEntity entity );
-	
+
+	// List of project entities.
+	IEntity[] entities;
+
+	// Currently selected project entity.
+	IEntity selectedEntity;
+
+	// Adds an entity to the project.
 	void addEntity( in IEntity entity );
+
+	// Removes an entity from the project.
 	bool removeEntity( in IEntity entity );
-	
+
+	// Finds an entity by name.
 	IEntity findEntity( in string entityName );
 };

@@ -1,0 +1,49 @@
+/*
+	Interface for services that support generic decorators.
+ */
+interface IDecoratable
+{
+	// List of decorators.
+	co.IService[] decorators;
+
+	// Adds a decorator.
+	void addDecorator( in co.IService decorator );
+
+	// Removes a decorator.
+	void removeDecorator( in co.IService decorator );
+
+	/*
+		Finds the first decorator of a certain type.
+		Returns null if no decorator is found.
+	 */
+	co.IService find( in co.IInterface type );
+
+	/*
+		Gets the first decorator of a certain type.
+		Raises an exception if no decorator is found.
+	 */
+	co.IService get( in co.IInterface type ) raises co.MissingServiceException;
+
+	// Extracts all decorators of a certain type.
+	void getAllOf( in co.IInterface type, out co.IService[] decorators );
+
+	<c++
+		//! Type-safe overload for find().
+		template<typename T> inline T* find()
+		{
+			return static_cast<T*>( find( co::typeOf<T>::get() ) );
+		}
+
+		//! Type-safe overload for get().
+		template<typename T> inline T* get()
+		{
+			return static_cast<T*>( get( co::typeOf<T>::get() ) );
+		}
+
+		//! Type-safe overload for getAll().
+		template<typename T> inline void getAll( co::RefVector<T>& decorators )
+		{
+			getAll( co::typeOf<T>::get(), *reinterpret_cast<co::RefVector<co::IService>*>( &decorators ) );
+		}
+	c++>
+};

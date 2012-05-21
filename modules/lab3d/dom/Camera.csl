@@ -1,0 +1,4 @@
+component Camera
+{
+	provides ICamera camera;
+};

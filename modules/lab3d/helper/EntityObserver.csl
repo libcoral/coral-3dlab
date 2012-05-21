@@ -1,6 +1,0 @@
-@lua.Scripted( "lab3d.helper.EntityObserver" ) 
-// Provides lua based entity observer callbacks
-component EntityObserver
-{
-	provides lab3d.dom.IEntityObserver observer;
-};

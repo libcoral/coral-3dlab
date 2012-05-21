@@ -1,0 +1,4 @@
+component Workspace
+{
+	provides IWorkspace workspace;
+};

@@ -1,5 +1,5 @@
 /*
-	Transform model service: provides a transform group of models and 
+	Transform model service: provides a transform group of models and
 	the correspondent OpenSceneGraph transform node for that group.
 */
 
@@ -10,9 +10,9 @@ interface ITransformModel extends IModel
 {
 	void addChild( in IModel child );
 	void removeChild( in IModel child );
-	
+
 	int32 getNumChildren();
-	
+
 	void setTranslation( in Vec3 position );
 	void setOrientation( in Quat orientation );
 	void setScale( in Vec3 scale );

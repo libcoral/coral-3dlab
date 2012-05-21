@@ -1,5 +1,0 @@
-@lua.Scripted( "lab3d.dom.ExamineNavigator" ) 
-component ExamineNavigator
-{
-	provides IExamineNavigator navigator;
-};

@@ -1,5 +1,0 @@
-@lua.Scripted( "lab3d.scene.Camera" ) 
-component Camera
-{
-	provides ICamera camera;
-};

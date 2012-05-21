@@ -1,0 +1,23 @@
+/*
+	Simple perspective camera.
+ */
+interface ICamera
+{
+	// Camera pose.
+	IView view;
+
+	/******* Camera Projection ******/
+
+	// Vertical FoV (in degrees).
+	double fovy;
+
+	// Near plane distance.
+	double zNear;
+
+	// Far plane distance.
+	double zFar;
+
+	double aspect;
+	int32 viewportWidth;
+	int32 viewportHeight;
+};

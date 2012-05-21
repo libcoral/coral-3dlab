@@ -1,6 +1,0 @@
-interface IManipulatorManager
-{
-	void setCurrent( in string name );
-	IManipulator getManipulatorByName( in string name );
-	void addManipulator( in IManipulator manipulator );
-};

@@ -1,0 +1,11 @@
+/*
+	Main service for managing the application state.
+ */
+interface IWorkspace
+{
+	// Currently active project.
+	IProject activeProject;
+
+	// Currently selected entity (always within the activeProject)
+	IEntity selectedEntity;
+};

@@ -5,8 +5,8 @@
 #include "GraphicsContext.h"
 
 #include <lab3d/dom/IView.h>
+#include <lab3d/dom/ICamera.h>
 #include <lab3d/scene/IModel.h>
-#include <lab3d/scene/ICamera.h>
 #include <lab3d/scene/PickIntersection.h>
 
 #include <osg/Image>
@@ -104,7 +104,8 @@ public:
 		copyCameraStateToOSG( _activeCamera.get(), _osgCamera.get() );
 
 		_osgCamera->setViewport( 0, 0,
-			_activeCamera->getViewportWidth(), _activeCamera->getViewportHeight() );
+			_activeCamera->getViewportWidth(),
+			_activeCamera->getViewportHeight() );
 
 		frame();
 	}
@@ -157,12 +158,12 @@ public:
 
 	// --- lab3d.scene.IScene Methods --- //
 
-	lab3d::scene::ICamera* getCamera()
+	lab3d::dom::ICamera* getCamera()
 	{
 		return _activeCamera.get();
 	}
 
-	void setCamera( lab3d::scene::ICamera* camera )
+	void setCamera( lab3d::dom::ICamera* camera )
 	{
 		_activeCamera = camera;
 	}
@@ -177,16 +178,6 @@ public:
         _autoCalculateNearFar = value; 
     }
 
-	qt::IGLContext* getGraphicsContextService()
-	{
-		return _graphicsContext->getUserContext();
-	}
-
-	void setGraphicsContextService( qt::IGLContext*  context )
-	{
-		_graphicsContext->setUserContext( context );
-	}
-
 	co::Range<lab3d::scene::IModel* const> getModels()
 	{
 		return _models;
@@ -198,8 +189,6 @@ public:
 
 		osg::ref_ptr<osg::Node> node = model->getNode();
 		_rootNode->addChild( node );
-
-		update();
 	}
 
 	void removeModel( lab3d::scene::IModel* model )
@@ -220,7 +209,6 @@ public:
 			}
 			++it;
 		}
-		update();
 	}
 
 	void update()
@@ -243,7 +231,17 @@ public:
 		_rootNode->removeChildren( NUM_PERSISTENT_CHILDREN, _rootNode->getNumChildren() );
 	
 		_models.clear();
-		update();
+	}
+
+protected:
+	qt::IGLContext* getGlContextService()
+	{
+		return _graphicsContext->getUserContext();
+	}
+	
+	void setGlContextService( qt::IGLContext* context )
+	{
+		_graphicsContext->setUserContext( context );
 	}
 
 private:
@@ -265,30 +263,19 @@ private:
 		_rootNode->addChild( ls );
 	}
 
-	void setCameraDefaultSettings( lab3d::scene::ICamera* camera )
-	{
-		updateCameraViewport( camera, 1024, 768 );
-		camera->setFovy( 90 );
-		camera->setZNear( 100 );
-		camera->setZFar( 100000 );
-	}
-
-	void updateCameraViewport( lab3d::scene::ICamera* camera, double w, double h )
+	void updateCameraViewport( lab3d::dom::ICamera* camera, double w, double h )
 	{
 		camera->setViewportWidth( w );
 		camera->setViewportHeight( h );
 		camera->setAspect( w / h );
 	}
 
-	void copyCameraStateToOSG( lab3d::scene::ICamera* from, osg::Camera* to )
+	void copyCameraStateToOSG( lab3d::dom::ICamera* from, osg::Camera* to )
 	{
 		to->setProjectionMatrixAsPerspective( from->getFovy(), from->getAspect(), from->getZNear(), from->getZFar() );
-		
-		lab3d::dom::IView* view = _activeCamera->getView();
-		osg::Vec3d eye = vecConvert( view->getPosition() );
-		osg::Vec3d at = vecConvert( view->getPosition() + view->getDirection() );
-		osg::Vec3d up = vecConvert( view->getUp() );
-		to->setViewMatrixAsLookAt( eye, at, up );
+		eigen::Mat4 viewMatrix;
+		_activeCamera->getView()->getViewMatrix( viewMatrix );
+		to->setViewMatrix( osg::Matrixd( viewMatrix.data() ) );
 	}
 
 private:
@@ -300,7 +287,7 @@ private:
     osg::ref_ptr<osg::Camera> _osgCamera;
     osg::ref_ptr<osg::Material> _overrideMaterial;
     osg::ref_ptr<GraphicsContext> _graphicsContext;
-    co::RefPtr<lab3d::scene::ICamera> _activeCamera;
+    co::RefPtr<lab3d::dom::ICamera> _activeCamera;
 };
 
 CORAL_EXPORT_COMPONENT( Scene, Scene );

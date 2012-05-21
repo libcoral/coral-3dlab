@@ -1,35 +1,28 @@
-import eigen.Vec3;
 import eigen.Quat;
+import eigen.Vec3;
+import eigen.Mat4;
 
 interface IView
-{	
+{
+	Vec3 position;
+	Quat orientation;
+
+	// Returns the OpenGL view matrix.
+	void getViewMatrix( out Mat4 matrix );
+
+	// Current orientation without a roll angle (i.e. with a right vector aligned with the ground).
+	void getZeroRollOrientation( out Quat zeroRollOrientation );
+
 	/*
 		Calculates a pose that is aligned (forward) with the vector formed by
 		this view position and the given \a point. The resulting pose position
-		is at a 2/3 of the lenght of that vector in the vector forward
-		direction.
+		is at 2/3 of the lenght of that vector in the forward direction.
 	 */
 	void calculateNavigationToPoint( in Vec3 point, out Vec3 position, out Quat orientation );
 
 	/*
-		Calculates a pose that is aligned with the given objects bounds center
-		and is at a distance that allows the visualization of the whole object 
-		bounds.
+		Calculates a camera pose aimed at the center of the given object,
+		at a distance that allows the whole object to be seen.
 	 */
 	void calculateNavigationToObject( in IEntity object, out Vec3 position, out Quat orientation );
-
-	/*! 
-		ZeroRollOrientation is same as view original orientation but without a
-		roll angle (up vector inclination). The zero roll orientation has its 
-		right dir vector contained within ground plane (XZ plane for a 
-		Y-upwards system).
-	 */	
-	readonly Quat zeroRollOrientation;
-
-	Vec3 position;
-	Quat orientation;
-	readonly Vec3 up;
-	readonly Vec3 right;
-	readonly Vec3 direction;
 };
-
