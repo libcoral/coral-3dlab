@@ -60,7 +60,7 @@ function FlyManipulator.activate()
 	navigator.view = view
 
 	-- remove any roll rotation
-	--view.orientation = view.zeroRollOrientation
+	view.orientation = view:getZeroRollOrientation()
 
 	canvas.mouseTracking = true
 	evolveTimer:start( 1000 / 60 )

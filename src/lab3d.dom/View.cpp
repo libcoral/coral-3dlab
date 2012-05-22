@@ -53,7 +53,18 @@ public:
 
 	void getZeroRollOrientation( eigen::Quat& zeroRollOrientation )
 	{
-		zeroRollOrientation = _orientation;
+		eigen::Quat fixRoll;
+		eigen::Vec3 forward = _orientation * VIEW_DIR;
+		if( forward.cross( VIEW_UP ).isApprox( eigen::Vec3::Zero() ) )
+		{
+			// different approach if the camera is looking 100% up or down
+			fixRoll.setFromTwoVectors( _orientation * VIEW_UP, VIEW_UP );
+		}
+		else
+		{
+			lookAt( forward, VIEW_UP, fixRoll );
+		}
+		zeroRollOrientation = _orientation * fixRoll;
 	}
 
 	void calculateNavigationToObject( lab3d::dom::IEntity* object, eigen::Vec3& position, eigen::Quat& orientation )
@@ -70,17 +81,14 @@ public:
 	}
 
 private:
-	void lookRotation( const eigen::Vec3& forward, const eigen::Vec3& up, eigen::Quat& rotation )
+	void lookAt( const eigen::Vec3& forward, const eigen::Vec3& up, eigen::Quat& rotation )
 	{
-#if 1
-		rotation.setFromTwoVectors( forward, VIEW_DIR );
-#else
-		eigen::Vec3 right = up.cross( forward );
-		eigen::Vec3 up2 = forward.cross( right );
-		Eigen::Matrix3d m;
-		m << right, up2, forward;
-		rotation = m;
-#endif
+		const eigen::Vec3& zaxis = forward;
+		eigen::Vec3 xaxis = up.cross( zaxis );
+		eigen::Vec3 yaxis = zaxis.cross( xaxis );
+		Eigen::Matrix3d axes;
+		axes << xaxis, yaxis, zaxis;
+		rotation = axes;
 	}
 
 	/*
@@ -93,7 +101,7 @@ private:
 		eigen::Vec3 dir = target - _position;
 		double distance = dir.norm();
 		dir *= ( 1.0 / distance );
-		lookRotation( dir, VIEW_UP, orientation );
+		lookAt( dir, VIEW_UP, orientation );
 		position = _position + dir * ( distance - offset );
 	}
 
