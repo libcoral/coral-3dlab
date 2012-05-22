@@ -18,7 +18,7 @@ function locals.calculatePointOnSphere( x, y, result )
 
     local m = x * x + y * y
     if m < 1.0 then
-        -- point (x, y) is above the unit sphere.
+        -- point (x, y) is inside the unit sphere.
         result.z = math.sqrt( 1.0 - m );
     else
         -- if the point does not lie on the sphere, push it back to the sphere border.
@@ -37,7 +37,6 @@ function ExamineNavigator:__init()
 	self.rotationCenter	= eigen.Vec3( 0, 0, 0 )
 	self.endVector 		= eigen.Vec3( 0, 0, 0 )
 	self.auxVector 		= eigen.Vec3( 0, 0, 0 )
-	self.start 			= eigen.Quat()
 	self.auxQuaternion 	= eigen.Quat()
 end
 
@@ -50,8 +49,7 @@ function ExamineNavigator:getView()
 end
 
 function ExamineNavigator:beginRotation( nx, ny )
-	self.start = self.view.orientation
-
+	self.startOrientation = self.view.orientation
 	-- uses polar coordinates to calculate initial vector
 	locals.calculatePointOnSphere( nx, ny, self.startVector )
 end
@@ -62,16 +60,19 @@ function ExamineNavigator:updateRotation( nx, ny )
 
 	eigen.rotationFromToQuat( self.startVector, self.endVector, self.auxQuaternion )
 
-	self.auxQuaternion = self.auxQuaternion * self.start
-	self.view.orientation = self.auxQuaternion
-
+	-- calculates the preview rotation: it is based on the model rotation (examination), so its
+	-- the inverse of camera rotation (we could also just invert start and end vec parameters in 
+	-- the line above, but it would be semantically wrong)
+	local currentOrientation = self.startOrientation * eigen.conjugate( self.auxQuaternion )
+	
 	local distanceToCenter = self:getDistanceToCenter()
-	local viewRotation = eigen.conjugate( self.auxQuaternion )
+	local viewRotation = currentOrientation
 	eigen.setXYZ( self.auxVector, 0, 0, distanceToCenter )
 
 	local rotatedViewPos = viewRotation * self.auxVector
 	eigen.addVec( rotatedViewPos, self.rotationCenter, rotatedViewPos )
 	self.view.position = rotatedViewPos
+	self.view.orientation = currentOrientation
 end
 
 function ExamineNavigator:endRotation()
