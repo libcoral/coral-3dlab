@@ -9,7 +9,7 @@ namespace dom {
 class Entity : public Entity_Base
 {
 public:
-	Entity() : _scale( 1, 1, 1 ),
+	Entity() : _visible( true), _scale( 1, 1, 1 ),
 		_position( 0, 0, 0 ),
 		_orientation( eigen::Quat::Identity() )
 	{
@@ -31,6 +31,16 @@ public:
 	void setName( const std::string& name )
 	{
 		_name = name;
+	}
+
+	void setVisible( bool visible )
+	{
+		_visible = visible;
+	}
+    
+	bool getVisible()
+	{
+		return _visible;
 	}
 
 	const eigen::Vec3& getScale()
@@ -122,6 +132,7 @@ public:
 	}
 
 private:
+	bool _visible;
 	std::string _name;
 	eigen::Vec3 _scale;
 	eigen::Vec3 _position;

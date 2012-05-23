@@ -25,8 +25,7 @@ public:
 	{
 		// empty destructor
 	}
-
-
+	
 	const std::string& getFilename()
 	{
 		return _filename;
@@ -37,6 +36,16 @@ public:
 		_filename = filename;
 	}
 
+	void setVisible( bool visible )
+	{
+		// Not applicable
+	}
+    
+	bool getVisible()
+	{
+		return true;
+	}
+	
 	const lab3d::dom::BoundingBox& getBounds()
 	{
 		return _highlightedEntity->getBounds();

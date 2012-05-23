@@ -5,6 +5,7 @@ import coOsg.NodePtr;
 */
 interface IModel
 {	
+	bool visible;
 	string filename;
 	coOsg.NodePtr getNode();
 	lab3d.dom.BoundingBox getBounds();

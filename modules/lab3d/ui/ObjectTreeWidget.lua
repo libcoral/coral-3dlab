@@ -16,282 +16,80 @@
 --]]---------------------------------------------------------------------------
 
 local qt = require "qt"
+local lab3d = require "lab3d"
 local ObjectTreeModel = require "lab3d.ui.ObjectTreeModel"
 
-local L = {}
-
--- icon files
-L.icons =
-{
-	group 			= qt.Icon( "coral:/ui/res/tree_roup.png" ),
-	element 		= qt.Icon( "coral:/ui/res/tree_element.png" )
-}
+local M = {}
 
 --[[---------------------------------------------------------------------------
-	Local auxiliary
+	Local auxiliary and signal/slots clorsures
 --]]---------------------------------------------------------------------------
--- adds an element into to current model and updates treeview state
-function L:addElementToTreeView( parentIndex, name, userData, isGroup )
-	local parentNode = self.objectTreeData.instance[parentIndex]
-	local position = #parentNode.children
-	self.itemModel:beginInsertRows( parentIndex, position, position )
-	local newNode = { name = name or "", data = userData, isGroup = isGroup or false }
-	local newIndex = self.objectTreeData.instance:add( newNode, parentIndex or -1 )
-	self.itemModel:endInsertRows()
-	return newIndex
-end
-
-function L:removeElementFromTreeView( elementIndex )
-	local node = self.objectTreeData.instance[elementIndex]
-	local parentIndex = node.parent
-	self.itemModel:beginRemoveRows( parentIndex, (node.row-1), (node.row-1) )
-	self.objectTreeData.instance:remove( elementIndex )
-	self.itemModel:endRemoveRows()
-end
-
-function L:setIndexSelection( index, value )
-	if not index then return end
-	self.treeViewWidget:clearSelection()
-	self.treeViewWidget:setItemSelection( index, value )
-end
-
-function L:entityAdded( entity )
-	local newIndex = self:addElementToTreeView( -1, entity.name, entity )
-	self.entityIndices[entity] = newIndex
-
-	--[[if self.application.currentProject.selectedEntity == entity then
-		-- remove any other selection
-		self.treeViewWidget:clearSelection()
-		self:setIndexSelection( newIndex, true )
-	end]]
-end
-
-function L:entityRemoved( entity )
-	local entityIndex = self.entityIndices[entity]
-	self:removeElementFromTreeView( entityIndex )
-	self.entityIndices[entity] = nil
-	self.treeViewWidget:clearSelection()
-end
-
-function L:entitySelectionChanged( current )
-	self.treeViewWidget:clearSelection()
-	if current then
-		local entityIndex = self.entityIndices[current]
-		if not entityIndex then return end
-		self:setIndexSelection( entityIndex, true )
-	end
-end
-
-function L:entityNameChanged( entity, newName )
-	local entityIndex = self.entityIndices[entity]
-
-	-- change object tree element
-	self.objectTreeData.instance[entityIndex].name = newName
-	self.itemModel:notifyDataChanged( entityIndex, entityIndex )
-end
-
---[[---------------------------------------------------------------------------
-	Local auxiliary and signal/slots closures
---]]---------------------------------------------------------------------------
-function L.createTreeContextMenu( actionExcludeSelected )
-	L.contextMenu = qt.new "QMenu"
+function M.createTreeContextMenu( actionExcludeSelected )
+	M.contextMenu = qt.new "QMenu"
 	local actionRemoveElement = qt.new "QAction"
-	L.actionExcludeSelected = actionExcludeSelected
-	L.contextMenu:addAction( actionExcludeSelected )
+	M.actionExcludeSelected = actionExcludeSelected
+	M.contextMenu:addAction( actionExcludeSelected )
 end
 
-function L.on_showContextMenu( sender, x, y )
-	local selectedEntity = nil -- L.application.currentProject.selectedEntity
-	L.actionExcludeSelected.enabled = ( selectedEntity ~= nil )
+function M.on_showContextMenu( sender, x, y )
+	local selectedEntity = M.user.selectedEntity
+	M.actionExcludeSelected.enabled = ( selectedEntity ~= nil )
 	if not selectedEntity then
-		sender:clearSelection()
-		L.actionExcludeSelected.text = "(No object selected)"
+		M.actionExcludeSelected.text = "(Nenhum Objeto Selecionado)"
 	else
-		L.actionExcludeSelected.text = "Remove '" .. selectedEntity.name .. "'"
+		M.actionExcludeSelected.text = "Remover '" .. selectedEntity.name .. "'"
 	end
-	L.contextMenu:exec()
-end
-
--------------------------------------------------------------------------------
--- Object Tree Data Structure
--------------------------------------------------------------------------------
-local ObjectTree = {}
-
--- Add an element
-function ObjectTree:add( element, parentIndex )
-	-- creates a node data
-	local node =
-	{
-		data = element.data,
-		name = element.name,
-		icon = element.icon or L.icons.element,
-		index = self.nextIndex,
-		parent = parentIndex,
-		children = {}
-	}
-	self[node.index] = node
-	self.nextIndex = self.nextIndex + 1
-
-	table.insert( self[parentIndex].children, node )
-
-	-- tracks elements row within parent list
-	node.row = #self[parentIndex].children
-
-	return node.index
-end
-
-function ObjectTree:remove( elementIndex )
-	local node = self[elementIndex]
-	local parentIndex = node.parent
-	local childrenList = self[parentIndex].children
-	table.remove( childrenList, node.row )
-	-- update remaining node rows
-	for i=node.row, #childrenList do
-		childrenList[i].row = childrenList[i].row - 1
-	end
-end
-
-function ObjectTree:isValidIndex( index )
-	return index >= 0
-end
-
-function ObjectTree:new()
-	ObjectTree.__index = ObjectTree
-	local self = setmetatable( {}, ObjectTree )
-
-	self.rootIndex = -1
-	self[self.rootIndex] = { children = {} }
-	self.nextIndex = 1
-
-	return self
+	M.contextMenu:exec()
 end
 
 -------------------------------------------------------------------------------
 -- ObjectTree qt Model
 -------------------------------------------------------------------------------
-function ObjectTreeModel:itemClicked( view, index )
-	local node = self.objectTreeData.instance[index]
-	if not node or not node.data then return end
-
-	local entity = node.data
-
-	--if L.application.currentProject.selectedEntity == entity then return end
-
-	--L.application.currentProject:setEntitySelected( entity )
+function M:onClickItem( view, itemEntity )
+	local project = lab3d.activeProject
+	if not project then return end
+	project.selectedEntity = itemEntity
 end
 
-function ObjectTreeModel:itemDoubleClicked( view, index )
-	local node = self.objectTreeData.instance[index]
-	if not node or not node.data then return end
+function M:onDoubleClickItem( view, itemEntity )
+	local project = lab3d.activeProject
+	if not project then return end
 
-	local entity = node.data
-
-	local view = SceneManager.scene.camera.view
-	view:setPose( view:calculateNavigationToObject( entity ) )
-end
-
---[[---------------------------------------------------------------------------
-	Project observer events
---]]---------------------------------------------------------------------------
-function L:onProjectOpened( newProject )
-	self.entities = newProject.entities
-
-	self.entityIndices = {}
-	self.objectTreeData.instance = ObjectTree:new()
-	self.objectTreeData.instance.rootName = ""
-	self.itemModel:reset()
-
-	for i=1, #newProject.entities do
-		local entity = self.entities[i]
-		--observeFields:addFieldObserver( self.application.space, entity, self )
-		self:entityAdded( entity )
-	end
-
-	-- set tree root name
-	self.objectTreeData.instance.rootName = newProject.name
-end
-
-function L:onProjectClosed( project )
-	-- Temp workaround to stop observing all the entities from the project being closed
-	local ents = project.entities
-	for i=1, #ents do
-		--observeFields:removeFieldObserver( self.application.space, ents[i], self )
-	end
-
-	self:entitySelectionChanged( nil )
-	self.entities = nil
-end
-
--- Callbacks for observing IProject
-function L:onEntitiesAdded( service, addedObjects )
-	for i = 1,#addedObjects do
-		assert( addedObjects[i] )
-		-- install an observing service for that entity, needed to track entity name changes
-		--observeFields:addFieldObserver( self.application.space, addedObjects[i], self )
-		self:entityAdded( addedObjects[i] )
-	end
-end
-
-function L:onEntitiesRemoved( service, removedObjects )
-	for i = 1,#removedObjects do
-		assert( removedObjects[i] )
-		-- remove installed observer
-		--observeFields:removeFieldObserver( self.application.space, removedObjects[i], self )
-		self:entityRemoved( removedObjects[i] )
-	end
-end
-
--- Callback for observing IProject
-function L:onEntitySelectionChanged( service, previous, current )
-	self:entitySelectionChanged( current )
-	L.actionExcludeSelected.enabled = (current ~= nil)
-end
-
--- Callback for observing IEntity
-function L:onNameChanged( service, previous, current )
-	self:entityNameChanged( service, current )
+	local view = project.currentView
+	view.position, view.orientation = view:calculateNavigationToObject( itemEntity )
 end
 
 --[[---------------------------------------------------------------------------
 -- Instantiation function
 --]]---------------------------------------------------------------------------
 return function( mainWindow )
-	if not L.dockConsoleWidget then
+	if not M.dockConsoleWidget then
 		-- configuire QTreeView
 		local treeViewWidget = qt.new( "QTreeView" )
 		treeViewWidget.objectName = "treeViewWidget"
-		treeViewWidget.contextMenuPolicy = qt.CustomContextMenu
-		treeViewWidget:connect( "customContextMenuRequested(QPoint)", L.on_showContextMenu )
-		treeViewWidget.alternatingRowColors = true
+		
+		-- configure QTreeView
 		treeViewWidget.wordWrap = true
-
-		--[[
-			Creates the hierarchical data structure to be used by the tree model.
-			The tree widget reflects the state of this data structure. An instance
-			pointer is needed for sharing: the instance pointer can be changed any
-			time (e.g: due to project close instance = ObjectTree:new()). The same
-			instance pointer is shared between WorldObserver and the ObjectTreeModel.
-		--]]
-		local objectTreeData = { instance = nil }
-
+		treeViewWidget.showDropIndicator = true
+		treeViewWidget.dragDropMode = qt.DragDrop
+		treeViewWidget.alternatingRowColors = true
+		treeViewWidget.editTriggers = qt.SelectedClicked
+		treeViewWidget.selectionMode = qt.SingleSelection
+		treeViewWidget.contextMenuPolicy = qt.CustomContextMenu
+		
+		treeViewWidget:connect( "customContextMenuRequested(QPoint)", M.on_showContextMenu )
+		
 		-- creates a new instance of ObjectTreeModel (see qt.IAbstractItemModel)
-		local treeDelegate = ObjectTreeModel{ objectTreeData = objectTreeData }
-		-- creates the model instance sets the delegate into the model
-		local itemModel = co.new( "qt.AbstractItemModel" ).itemModel
-		itemModel.delegate = treeDelegate.delegate
-		treeViewWidget:setModel( itemModel )
+		local treeModel, selectionModel = ObjectTreeModel( M )
+		treeViewWidget:setModel( treeModel )
+		treeViewWidget:setSelectionModel( selectionModel )
 
-		L.itemModel = itemModel
-		L.treeViewWidget = treeViewWidget
-		L.objectTreeData = objectTreeData
-		--ProjectObserver:addObserver( L )
+		M.dockConsoleWidget = qt.new( "QDockWidget" )
+		M.dockConsoleWidget.windowTitle = "Project Tree"
+		M.dockConsoleWidget:setWidget( treeViewWidget )
 
-		L.dockConsoleWidget = qt.new( "QDockWidget" )
-		L.dockConsoleWidget.windowTitle = "Project Tree"
-		L.dockConsoleWidget:setWidget( treeViewWidget )
-
-		L.createTreeContextMenu( mainWindow.action_ExcludeSelected )
+		M.createTreeContextMenu( mainWindow.action_ExcludeSelected )
 	end
 
-	return L.dockConsoleWidget
+	return M.dockConsoleWidget
 end

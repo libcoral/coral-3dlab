@@ -38,6 +38,7 @@ Type "lab3d.scene.Model"
 Type "lab3d.dom.IEntity"
 {
 	name = "string",
+	visible = "bool",
 	scale = "eigen.Vec3",
 	position = "eigen.Vec3",
 	orientation = "eigen.Quat",

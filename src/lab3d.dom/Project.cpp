@@ -78,6 +78,23 @@ public:
 		_entities.push_back( entity );
 	}
 
+	bool insertEntity( lab3d::dom::IEntity* beforeEntity, lab3d::dom::IEntity* toInsert )
+	{
+		// asserts that the entity to be insert is not already in this world
+		assert( findEntity( toInsert->getName() ) == NULL );
+
+		for( co::RefVector<lab3d::dom::IEntity>::iterator it = _entities.begin(); it != _entities.end(); ++it  ) 
+		{
+			if( it->get() == beforeEntity )
+			{
+				_entities.insert( it, toInsert );
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
 	bool removeEntity( lab3d::dom::IEntity* entity )
 	{
 		EntityList::iterator end = _entities.end();

@@ -27,7 +27,17 @@ public:
     {
         _filename = filename;
     }
+
+	void setVisible( bool visible )
+	{
+		_node->setNodeMask( visible ? 0xffffffff : 0x0 );
+	}
     
+	bool getVisible()
+	{
+		return _node->getNodeMask() == 0xffffffff;
+	}
+
     const std::string& getFilename() { return _filename; }
 
 	// ------ lab3d.scene.IModel Methods ------ //

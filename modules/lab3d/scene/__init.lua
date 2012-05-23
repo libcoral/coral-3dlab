@@ -49,9 +49,18 @@ local function onEntityRemoved( entity )
 	scene:removeModel( transform )
 end
 
+local function onSelectedEntityChanged( previous, current )
+	highlight.entity = current
+end
+
 ca.observe( "lab3d.dom.IProject", function( e )
 	if e.service ~= lab3d.activeProject then return end
 
+	local selection = e.changedFields.selectedEntity
+	if selection then
+		onSelectedEntityChanged( selection.previous, selection.current )
+	end
+	
 	local changedEntities = e.changedFields.entities
 	if not changedEntities then return end
 
@@ -73,6 +82,10 @@ ca.observe( "lab3d.dom.IEntity", function( e )
 	if changed.scale then
 		transform:setScale( changed.scale.current )
 	end
+	if changed.visible then
+		transform.visible = changed.visible.current
+	end
+	
 	if changed.position then
 		transform:setTranslation( changed.position.current )
 	end

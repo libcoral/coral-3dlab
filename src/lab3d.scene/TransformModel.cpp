@@ -43,6 +43,16 @@ public:
 		_filename = filename;
 	}
 
+	void setVisible( bool visible )
+	{
+		_node->setNodeMask( visible ? 0xffffffff : 0x0 );
+	}
+    
+	bool getVisible()
+	{
+		return _node->getNodeMask() == 0xffffffff;
+	}
+
 	const lab3d::dom::BoundingBox& getBounds()
 	{
         osg::BoundingBox bbox;

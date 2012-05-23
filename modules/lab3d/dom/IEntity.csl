@@ -8,6 +8,9 @@ interface IEntity extends IDecoratable
 {
 	// Entity name.
 	string name;
+	
+	// Entity visibility.
+	bool visible;
 
 	// Scale applied to the entity.
 	Vec3 scale;

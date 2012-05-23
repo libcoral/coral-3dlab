@@ -20,6 +20,9 @@ interface IProject
 
 	// Adds an entity to the project.
 	void addEntity( in IEntity entity );
+	
+	// Inserts an entity right before the given entity.
+	bool insertEntity( in IEntity entity, in IEntity beforeEntity );
 
 	// Removes an entity from the project.
 	bool removeEntity( in IEntity entity );
