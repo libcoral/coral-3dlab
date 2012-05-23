@@ -5,6 +5,7 @@
 
 #include <osgDB/ReadFile>
 #include <coOsg/NodePtr.h>
+#include <osg/ComputeBoundsVisitor>
 
 
 namespace lab3d {
@@ -52,9 +53,10 @@ public:
     
     virtual const lab3d::dom::BoundingBox& getBounds()
     {
-        osg::BoundingBox bbox;
-        bbox.expandBy( _node->getBound() );
-        
+     	osg::ComputeBoundsVisitor cbv;
+		cbv.apply( *_node );
+     
+		osg::BoundingBox bbox = cbv.getBoundingBox();
         _bbox.center = vecConvert( bbox.center() );
         _bbox.max = vecConvert( bbox._max );
         _bbox.min = vecConvert( bbox._min );

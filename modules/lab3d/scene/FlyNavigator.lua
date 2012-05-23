@@ -17,7 +17,7 @@ local ANGULAR_TOLERANCE				= 1e-3
 local locals = {}
 
 function locals.getWorldTranslationVector( self )
-	return self.translationVector * self.view.orientation
+	return self.view.orientation * self.translationVector 
 end
 
 local tempDeltaVector = Vec3()
@@ -33,7 +33,7 @@ end
 
 -- accumulates the angular variation over the given axis into given quaternion orientation 'currentOrientation'
 function locals.accumulateOrientation( currentOrientation, angularVariation, axis )
-	return eigen.rotateQuat( currentOrientation, math.deg( angularVariation ), axis, currentOrientation )
+	return eigen.rotateQuat( currentOrientation, -math.deg( angularVariation ), axis, currentOrientation )
 end
 
 function locals.calculateNewOrientation( self, dt )
@@ -43,7 +43,7 @@ function locals.calculateNewOrientation( self, dt )
 	-- update orientation
 	local originalOrientation = self.view.orientation
 	local cameraUp = WORLD_UP_DIRECTION * originalOrientation
-	local cameraRight = Vec3( 1, 0, 0 ) * originalOrientation
+	local cameraRight = Vec3( 1, 0, 0 )
 
 	-- performs X axis calculation if theres a significant angle over X axis
 	if math.abs( self.angleOverXDir ) > ANGULAR_TOLERANCE then

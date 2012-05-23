@@ -98,6 +98,7 @@ local function getTranslationVector()
 	if front or back or left or right then
 		res.z = ( front and -1 or 0 ) + ( back and 1 or 0 )
 		res.x = ( left and -1 or 0 ) + ( right and 1 or 0 )
+		if front == back and left == right then return res end -- (normalize zero vector yields bad numbers)
 		eigen.normalize( res, res )
 	end
 	return res
