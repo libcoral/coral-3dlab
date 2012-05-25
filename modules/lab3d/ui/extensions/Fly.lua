@@ -4,7 +4,6 @@
 --]]---------------------------------------------------------------------------
 
 local qt = require "qt"
-local Timer = require "qt.Timer"
 
 local lab3d = require "lab3d"
 local ui = require "lab3d.ui"
@@ -47,13 +46,14 @@ function FlyManipulator.install()
 	end )
 	ui.addToToolbar( "manipulator", action )
 	canvas = ui.mainWindow.canvas
+	lab3d.addUpdateCallback( function( dt )
+		if not paused then navigator:evolve( dt ) end
+	end )
 end
 
 -------------------------------------------------------------------------------
 -- Manipulator Lifecycle
 -------------------------------------------------------------------------------
-
-local evolveTimer = Timer( function( dt ) navigator:evolve( dt ) end )
 
 function FlyManipulator.activate()
 	local view = assert( lab3d.activeProject ).currentView
@@ -63,12 +63,10 @@ function FlyManipulator.activate()
 	view.orientation = view:getZeroRollOrientation()
 
 	canvas.mouseTracking = true
-	evolveTimer:start( 1000 / 60 )
 end
 
 function FlyManipulator.deactivate()
 	canvas.mouseTracking = false
-	evolveTimer:stop()
 end
 
 -------------------------------------------------------------------------------

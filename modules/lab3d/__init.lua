@@ -71,13 +71,22 @@ end
 -- the 'lab3d' module
 local M = { workspace = workspace, projectUniverse = projectUniverse }
 
-function M.step()
+local updateCallbacks = {}
+
+function M.addUpdateCallback( closure )
+	updateCallbacks[#updateCallbacks + 1] = closure
+end
+
+function M.update( dt )
 	if projectSpace then
 		projectSpace:notifyChanges()
 	end
 	workspaceSpace:notifyChanges()
 	if projectSpace then
 		projectSpace:notifyChanges()
+	end
+	for i = 1, #updateCallbacks do
+		updateCallbacks[i]( dt )
 	end
 end
 

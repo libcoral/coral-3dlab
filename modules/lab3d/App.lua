@@ -16,9 +16,5 @@ function App:main( args )
 	local ui = require "lab3d.ui"
 	scene.setGLContext( ui.init( scene.getPainter() ) )
 
-	local function loopCallback( dt )
-		lab3d.step()
-	end
-
-	return ui.run( loopCallback )
+	return ui.run( lab3d.update )
 end

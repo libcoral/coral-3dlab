@@ -132,14 +132,19 @@ function M.init( painter )
 end
 
 -- Runs the main loop until the application exits. Receives a closure to call at 60Hz.
+local updateTimer = nil
 function M.run( loopCallback )
 	assert( M.mainWindow ~= nil, "lab3d.ui.init() not called?" )
 
-	local idleTimer = Timer( loopCallback )
-	idleTimer:start( 1000 / 60 )
+	updateTimer = Timer( loopCallback )
+	updateTimer:start( 1000 / 60 )
 
 	M.mainWindow.visible = true
-	return qt.exec()
+	local res = qt.exec()
+
+	updateTimer = nil
+
+	return res
 end
 
 return M

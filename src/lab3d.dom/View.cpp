@@ -1,4 +1,5 @@
 #include "View_Base.h"
+#include <co/Log.h>
 #include <lab3d/dom/IEntity.h>
 #include <lab3d/dom/BoundingBox.h>
 
@@ -6,7 +7,8 @@ namespace lab3d {
 namespace dom {
 
 const eigen::Vec3 VIEW_UP( 0, 1, 0 );
-const eigen::Vec3 VIEW_DIR( 0, 0, -1 );
+const eigen::Vec3 VIEW_RIGHT( 1, 0, 0 );	
+const eigen::Vec3 VIEW_FORWARD( 0, 0, -1 );
 
 class View : public View_Base
 {
@@ -51,21 +53,13 @@ public:
 		view = t.matrix();
 	}
 
-	void getZeroRollOrientation( eigen::Quat& zeroRollOrientation )
+	void getZeroRollOrientation( eigen::Quat& orientation )
 	{
-		//eigen::Quat fixRoll;
-		//eigen::Vec3 forward = _orientation * VIEW_DIR;
-		//if( forward.cross( VIEW_UP ).isApprox( eigen::Vec3::Zero() ) )
-		//{
-		//	// different approach if the camera is looking 100% up or down
-		//	fixRoll.setFromTwoVectors( _orientation * VIEW_UP, VIEW_UP );
-		//}
-		//else
-		//{
-		//	lookAt( forward, VIEW_UP, fixRoll );
-		//}
-		//zeroRollOrientation = _orientation * fixRoll;
-		zeroRollOrientation = eigen::Quat::Identity();
+		// project our right axis onto the world's XZ plane
+		eigen::Vec3 right = _orientation * VIEW_RIGHT;
+		eigen::Quat fixRoll;
+		fixRoll.setFromTwoVectors( right, eigen::Vec3( right.x(), 0, right.z() ) );
+		orientation = _orientation * fixRoll;
 	}
 
 	void calculateNavigationToObject( lab3d::dom::IEntity* object, eigen::Vec3& position, eigen::Quat& orientation )
@@ -82,16 +76,6 @@ public:
 	}
 
 private:
-	void lookAt( const eigen::Vec3& forward, const eigen::Vec3& up, eigen::Quat& rotation )
-	{
-		const eigen::Vec3& zaxis = forward;
-		eigen::Vec3 xaxis = up.cross( zaxis );
-		eigen::Vec3 yaxis = xaxis.cross( zaxis );
-		Eigen::Matrix3d axes;
-		axes << xaxis, yaxis, zaxis;
-		rotation = eigen::Quat::Identity(); //Eigen::AngleAxisd( axes );
-	}
-
 	/*
 		Calculates a new pose (position and orientation) using the given distance offset from that point. 
 		The new orientation transforms a vector from identity view forward direction (0,0,-1) to a vector 
@@ -102,7 +86,7 @@ private:
 		eigen::Vec3 dir = target - _position;
 		double distance = dir.norm();
 		dir *= ( 1.0 / distance );
-		lookAt( dir, VIEW_UP, orientation );
+		orientation.setFromTwoVectors( VIEW_FORWARD, dir );
 		position = _position + dir * ( distance - offset );
 	}
 
