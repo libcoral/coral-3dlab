@@ -1,7 +1,7 @@
 local qt = require "qt"
 local ca = require "ca"
 local lab3d = require "lab3d"
-local AbstractItemModel = require "qt.AbstractItemModel"
+local AbstractItemModel = require "qt.AbstractItemModelDelegate"
 
 local ObjectTreeModel = AbstractItemModel( "sivapp.ui.ObjectTreeModel" )
 
