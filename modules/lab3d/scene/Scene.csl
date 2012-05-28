@@ -1,7 +1,16 @@
+
 component Scene
 {
 	provides IScene scene;
-	provides qt.IPainter painter;
+	provides IRenderer renderer;
+	receives IScreenProvider screens;
+	receives IGraphicsContext context;
 	provides IPickIntersector intersector;
-	receives qt.IGLContext glContext;
 };
+
+
+component QtGlue
+{
+	provides qt.IPainter painter;
+	receives IRenderer renderer;
+}

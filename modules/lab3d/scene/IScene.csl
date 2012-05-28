@@ -4,9 +4,6 @@ interface IScene
 	// List of models in the scene.
 	readonly IModel[] models;
 
-	// The camera used to render the scene
-	lab3d.dom.ICamera camera;
-
 	// Adds a new model to the scene.
 	void addModel( in IModel model );
 
@@ -15,7 +12,12 @@ interface IScene
 
 	// Clear all models from the scene
 	void clear();
-
-	// Updates all scene state and redraws all objects.
-	void update();
 };
+
+component Scene
+{
+	provides IScene scene;
+	provides IRenderer renderer;
+	receives IScreenProvider screens;
+	receives IGraphicsContext context;
+}
