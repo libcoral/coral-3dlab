@@ -56,10 +56,25 @@ public:
 	void getZeroRollOrientation( eigen::Quat& orientation )
 	{
 		// project our right axis onto the world's XZ plane
-		eigen::Vec3 right = _orientation * VIEW_RIGHT;
-		eigen::Quat fixRoll;
-		fixRoll.setFromTwoVectors( right, eigen::Vec3( right.x(), 0, right.z() ) );
-		orientation = _orientation * fixRoll;
+		eigen::Vec3 forward = VIEW_FORWARD;
+	    eigen::Vec3 newUp = VIEW_UP;
+	
+		eigen::Vec3 side = forward.cross( newUp );
+		side = side.normalized();
+		newUp = side.cross( forward );
+
+		Eigen::Affine3d rotation = Eigen::Affine3d::Identity();
+		rotation( 0, 0 ) = side.x();
+		rotation( 0, 1 ) = side.y();
+		rotation( 0, 2 ) = side.z();
+		rotation( 1, 0 ) = newUp.x();
+		rotation( 1, 1 ) = newUp.y();
+		rotation( 1, 2 ) = newUp.z();
+		rotation( 2, 0 ) = -forward.x();
+		rotation( 2, 1 ) = -forward.y(); 	
+		rotation( 2, 2 ) = -forward.z();
+
+		orientation = rotation.rotation();
 	}
 
 	void calculateNavigationToObject( lab3d::dom::IEntity* object, eigen::Vec3& position, eigen::Quat& orientation )

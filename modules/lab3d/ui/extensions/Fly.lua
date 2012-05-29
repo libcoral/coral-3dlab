@@ -163,8 +163,8 @@ function FlyManipulator.mouseMoved( x, y, button, modifiers )
 	local dx, dy = eigen.screenToClip( x, y, width, height )
 
 	-- Linearly map deltas from -PI to PI on both directions
-    navigator:addPitchOffset( clamp( dx * pi * 0.5, -pi, pi ) )
-    navigator:addYawOffset( clamp( dy * pi * 0.5, -pi, pi ) )
+    navigator:addPitchOffset( -clamp( dx * pi * 0.5, -pi, pi ) )
+    navigator:addYawOffset( -clamp( dy * pi * 0.5, -pi, pi ) )
 end
 
 function FlyManipulator.mouseWheel( x, y, delta, modifiers )
