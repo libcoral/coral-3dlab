@@ -4,7 +4,9 @@
 
 local eigen = require "eigen"
 local Vec3 = eigen.Vec3
+local Quat = eigen.Quat
 
+local CAMERA_X_AXIS = eigen.Vec3( 1, 0, 0 )
 local WORLD_UP_DIRECTION = eigen.Vec3( 0, 1, 0 )
 local ANGULAR_VELOCITY_OVER_X_AXIS 	= 6 * math.pi -- rad/s
 local ANGULAR_VELOCITY_OVER_Y_AXIS 	= 6 * math.pi -- rad/s
@@ -17,7 +19,7 @@ local ANGULAR_TOLERANCE				= 1e-3
 local locals = {}
 
 function locals.getWorldTranslationVector( self )
-	return self.view.orientation * self.translationVector 
+	return self.view.orientation * self.translationVector
 end
 
 local tempDeltaVector = Vec3()
@@ -27,60 +29,32 @@ function locals.calculateNewPosition( self, dt )
 	end
 
 	local worldTranslation = locals.getWorldTranslationVector( self )
-	eigen.mulVecScalar( worldTranslation, dt * self.translationVelocity, tempDeltaVector )
+	eigen.mulVecScalar( worldTranslation, self.translationVelocity * dt, tempDeltaVector )
 	self.view.position = self.view.position + tempDeltaVector
 end
 
--- accumulates the angular variation over the given axis into given quaternion orientation 'currentOrientation'
-function locals.accumulateOrientation( currentOrientation, angularVariation, axis )
-	return eigen.rotateQuat( currentOrientation, -math.deg( angularVariation ), axis, currentOrientation )
-end
-
 function locals.calculateNewOrientation( self, dt )
-	-- access real world up direction
-	local worldUp = WORLD_UP_DIRECTION
+	local currentOrientation = self.view.orientation
+    local up = eigen.conjugate( self.view.orientation ) * WORLD_UP_DIRECTION
+    if ( math.abs( self.angleOverYDir ) > ANGULAR_TOLERANCE ) 
+		or ( math.abs( self.angleOverXDir ) > ANGULAR_TOLERANCE ) then
+		
+		local currentDy = self.angleOverYDir * ANGULAR_VELOCITY_OVER_Y_AXIS
+		local yawRotation = eigen.setIdentityQuat( self.auxQuaternion )
+		yawRotation = eigen.rotateQuat( yawRotation, currentDy, up )
 
-	-- update orientation
-	local originalOrientation = self.view.orientation
-	local cameraUp = WORLD_UP_DIRECTION * originalOrientation
-	local cameraRight = Vec3( 1, 0, 0 )
-
-	-- performs X axis calculation if theres a significant angle over X axis
-	if math.abs( self.angleOverXDir ) > ANGULAR_TOLERANCE then
-		local angularDx = self.angleOverXDir * dt * ANGULAR_VELOCITY_OVER_X_AXIS
-
-		-- changes camera orientation
-		self.view.orientation = locals.accumulateOrientation( self.view.orientation, angularDx, cameraRight )
-
-		-- stops movement with a little inertia (if ANGULAR_SENSITIVITY is non zero)
-		self.angleOverXDir = self.angleOverXDir * ( 1 - self.inertialFactor ) * dt
-
-		-- checks whether camera vertical angle has reached maximum angle
-		-- (we don't want camera loops along x axis)
-
-		-- measures total angle between camera up and world up
-		local currentAngle = math.acos( eigen.dotVec( cameraUp, worldUp ) )
-		if 2 * math.abs( currentAngle ) > math.pi then
-			-- angle would exceed maximum vertical angle,
-			-- so we restore original camera orientation
-			self.view.orientation = originalOrientation
+		local currentDx = self.angleOverXDir * ANGULAR_VELOCITY_OVER_X_AXIS
+		local auxPitch = self.pitchAcumulator + currentDx
+        local pitchRotation = eigen.Quat()
+		if auxPitch <= 90.0 and auxPitch >= -90.0 then
+			pitchRotation = eigen.rotateQuat( pitchRotation, currentDx, CAMERA_X_AXIS );
+			self.pitchAcumulator = auxPitch
 		end
-	else
-		self.angleOverXDir = 0
-	end
-
-	-- performs UP axis rotation if theres a significant angle over UP axis
-	if math.abs( self.angleOverYDir ) > ANGULAR_TOLERANCE then
-		local angularDy = self.angleOverYDir * dt * ANGULAR_VELOCITY_OVER_Y_AXIS
-
-		-- changes camera orientation
-		self.view.orientation = locals.accumulateOrientation( self.view.orientation, angularDy, worldUp )
-
-		-- stops movement with a little inertia (if ANGULAR_SENSITIVITY is non zero)
+		self.angleOverXDir = self.angleOverXDir * ( 1 - self.inertialFactor ) * dt
 		self.angleOverYDir = self.angleOverYDir * ( 1 - self.inertialFactor ) * dt
-	else
-		self.angleOverYDir = 0
-	end
+		
+		self.view.orientation = currentOrientation * yawRotation * pitchRotation
+    end
 end
 
 --[[---------------------------------------------------------------------------
@@ -94,6 +68,8 @@ function FlyNavigator:__init()
 	self.translationVector = eigen.Vec3( 0, 0, 0 )
 	self.angleOverXDir = 0
 	self.angleOverYDir = 0
+	self.pitchAcumulator = 0
+	self.auxQuaternion = Quat()
 	self.translationVelocity = 10
 end
 
