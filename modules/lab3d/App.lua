@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------
 
 local App = co.Component( "lab3d.App" )
-
+	
 function App:main( args )
 	-- initialize the domain layer
 	local lab3d = require "lab3d"

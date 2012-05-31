@@ -2,15 +2,7 @@
 component Scene
 {
 	provides IScene scene;
-	provides IRenderer renderer;
-	receives IScreenProvider screens;
-	receives IGraphicsContext context;
 	provides IPickIntersector intersector;
+	provides blue.open.render.IRenderer renderer;
+	provides blue.open.render.IDrawingArea drawingArea;
 };
-
-
-component QtGlue
-{
-	provides qt.IPainter painter;
-	receives IRenderer renderer;
-}

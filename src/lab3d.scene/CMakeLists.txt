@@ -5,7 +5,11 @@
 find_package( OpenGL REQUIRED )
 find_package( OpenSceneGraph 2.0 REQUIRED osgGA osgDB osgUtil osgViewer )
 
-CORAL_GENERATE_MODULE( _MODULE_SOURCES lab3d.scene lab3d.dom.BoundingBox )
+CORAL_GENERATE_MODULE( _MODULE_SOURCES lab3d.scene 
+	lab3d.dom.BoundingBox 	
+	blue.open.render.Camera 
+	blue.open.render.IScreen 
+	)
 
 include_directories(
 	${OPENSCENEGRAPH_INCLUDE_DIRS}

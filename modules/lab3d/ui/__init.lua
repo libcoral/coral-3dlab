@@ -11,6 +11,8 @@ local lab3d = require "lab3d"
 -- allows resources in the lab3d module to be addressed like "lab3d:/x" in Qt
 qt.setSearchPaths( "lab3d", "lab3d" )
 
+local glWidget
+
 --------------------------------------------------------------------------------
 -- Canvas Input Listener
 --------------------------------------------------------------------------------
@@ -125,6 +127,9 @@ function M.init( painter )
 	local inputListener = CanvasInputListener().listener
 	local glWidget, glContext = createGLCanvas( painter, inputListener )
 
+	-- add an update callback for updating canvas
+	lab3d.addUpdateCallback( function() glWidget:invoke( "updateGL()" ) end )
+	
 	M.mainWindow = createMainWindow( glWidget )
 	installExtensions()
 

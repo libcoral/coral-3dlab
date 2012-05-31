@@ -1,7 +1,6 @@
 --------------------------------------------------------------------------------
 -- Module 'lab3d.scene' (provides 3D visualization)
 --------------------------------------------------------------------------------
-
 local pairs = pairs
 local ipairs = ipairs
 local ca = require "ca"
@@ -10,7 +9,11 @@ local lab3d = require "lab3d"
 -- create the Scene object
 local sceneObject = co.new "lab3d.scene.Scene"
 local scene = sceneObject.scene
-scene.camera = co.new( "lab3d.dom.Camera" ).camera
+
+-- configure qt glue
+local qtGlueObject = co.new "lab3d.ui.QtGlue"
+qtGlueObject.renderer = sceneObject.renderer
+qtGlueObject.drawingArea = sceneObject.drawingArea
 
 -- highlight box model for mark selected node in the scene
 local highlight = co.new "lab3d.scene.HighlightModel"
@@ -98,11 +101,6 @@ ca.observe( "lab3d.dom.IEntity", function( e )
 	end
 end )
 
--- redraw if anything changes
-ca.observe( lab3d.projectUniverse, function( e )
-	scene:update()
-end )
-
 --------------------------------------------------------------------------------
 -- Workspace Observer
 --------------------------------------------------------------------------------
@@ -122,7 +120,7 @@ function observeWorkspace.activeProject( e )
 		for i, entity in ipairs( newProject.entities ) do
 			onEntityAdded( entity )
 		end
-		scene.camera.view = newProject.currentView
+		-- perspectiveProviderObject.provider:setUserView( newProject.currentView:getViewMatrix() )
 	end
 end
 
@@ -140,15 +138,14 @@ end
 --------------------------------------------------------------------------------
 -- Module Functions
 --------------------------------------------------------------------------------
-
 local M = { scene = scene }
 
 function M.getPainter()
-	return sceneObject.painter
+	return qtGlueObject.painter
 end
 
 function M.setGLContext( glContext )
-	sceneObject.glContext = glContext
+	qtGlueObject.qtglcontext = glContext
 end
 
 return M

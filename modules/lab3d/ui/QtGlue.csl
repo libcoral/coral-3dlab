@@ -1,0 +1,14 @@
+import blue.open.render.IDrawingArea;
+import blue.open.render.IRenderer;
+
+import qt.IGLContext;
+import qt.IPainter;
+
+component QtGlue
+{
+	receives IRenderer renderer;
+	receives IGLContext qtglcontext;
+	receives IDrawingArea drawingArea;
+	
+	provides IPainter painter;
+};

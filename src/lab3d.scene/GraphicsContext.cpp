@@ -1,8 +1,9 @@
 #include "GraphicsContext.h"
-#include <qt/IGLContext.h>
 #include <osg/State>
 
-GraphicsContext::GraphicsContext() : _glContext( 0 )
+#include <cassert>
+
+GraphicsContext::GraphicsContext()
 {
 	_traits = new GraphicsContext::Traits;
 
@@ -28,20 +29,14 @@ GraphicsContext::GraphicsContext() : _glContext( 0 )
 	}
 }
 
-void GraphicsContext::setUserContext( qt::IGLContext* context )
-{
-	_glContext = context;
-}
-
 void GraphicsContext::update()
 {
-	if( valid() )
-		_glContext->update();
+	// empty
 }
 
 bool GraphicsContext::valid() const
 {
-	return _glContext != 0;
+	return true;
 }
 
 bool GraphicsContext::realizeImplementation()
@@ -61,15 +56,11 @@ void GraphicsContext::closeImplementation()
 
 bool GraphicsContext::makeCurrentImplementation()
 {
-	bool isValid = valid();
-	if( isValid )
-		_glContext->makeCurrent();
-	return isValid;
+	return true;
 }
 
 bool GraphicsContext::makeContextCurrentImplementation( osg::GraphicsContext* readContext )
 {
-	assert( readContext == this );
 	return makeCurrentImplementation();
 }
 
@@ -80,7 +71,7 @@ bool GraphicsContext::releaseContextImplementation()
 
 void GraphicsContext::bindPBufferToTextureImplementation( GLenum buffer )
 {
-	// NYI
+	// Not supported
 	assert( false );
 }
 

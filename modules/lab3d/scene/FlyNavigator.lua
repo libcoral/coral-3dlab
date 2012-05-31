@@ -41,13 +41,13 @@ function locals.calculateNewOrientation( self, dt )
 		
 		local currentDy = self.angleOverYDir * ANGULAR_VELOCITY_OVER_Y_AXIS
 		local yawRotation = eigen.setIdentityQuat( self.auxQuaternion )
-		yawRotation = eigen.rotateQuat( yawRotation, currentDy, up )
+		yawRotation = eigen.rotateQuat( yawRotation, currentDy * dt, up )
 
 		local currentDx = self.angleOverXDir * ANGULAR_VELOCITY_OVER_X_AXIS
 		local auxPitch = self.pitchAcumulator + currentDx
         local pitchRotation = eigen.Quat()
 		if auxPitch <= 90.0 and auxPitch >= -90.0 then
-			pitchRotation = eigen.rotateQuat( pitchRotation, currentDx, CAMERA_X_AXIS );
+			pitchRotation = eigen.rotateQuat( pitchRotation, currentDx * dt, CAMERA_X_AXIS );
 			self.pitchAcumulator = auxPitch
 		end
 		self.angleOverXDir = self.angleOverXDir * ( 1 - self.inertialFactor ) * dt

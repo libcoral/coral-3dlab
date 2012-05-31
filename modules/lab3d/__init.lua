@@ -7,6 +7,9 @@ local ca = require "ca"
 -- create the application workspace
 local workspace = co.new( "lab3d.dom.Workspace" ).workspace
 
+-- register current workspace into coral system
+co.system.services:addService( co.Type["lab3d.dom.IWorkspace"], workspace )
+
 --------------------------------------------------------------------------------
 -- Calcium Model/Space for the 3D Lab Workspace and Projects
 --------------------------------------------------------------------------------

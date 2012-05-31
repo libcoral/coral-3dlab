@@ -2,6 +2,7 @@
 # Subdirectories
 ################################################################################
 
+add_subdirectory( lab3d.ui )
 add_subdirectory( lab3d.dom )
 add_subdirectory( lab3d.scene )
 

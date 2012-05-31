@@ -5,9 +5,13 @@
 #include "GraphicsContext.h"
 
 #include <lab3d/dom/IView.h>
-#include <lab3d/dom/ICamera.h>
 #include <lab3d/scene/IModel.h>
 #include <lab3d/scene/PickIntersection.h>
+
+#include <blue/open/render/ICamera.h>
+#include <blue/open/render/IScreen.h>
+#include <blue/open/render/Viewport.h>
+
 
 #include <osg/Image>
 #include <osg/Light>
@@ -27,6 +31,8 @@
 
 #include <co/Log.h>
 #include <co/Coral.h>
+#include <co/Range.h>
+#include <co/RefPtr.h>
 #include <co/ISystem.h>
 #include <co/IInterface.h>
 #include <co/IServiceManager.h>
@@ -46,9 +52,6 @@ class Scene : public Scene_Base, public osgViewer::Viewer
 public:
 	Scene() : _autoCalculateNearFar( true )
 	{
-		_graphicsContext = new GraphicsContext();
-		_activeCamera = 0;
-
 		// register pick intersector service
 		co::getSystem()->getServices()->addService(
 				co::typeOf<lab3d::scene::IPickIntersector>::get(),
@@ -57,20 +60,18 @@ public:
 
 	virtual ~Scene()
 	{
-		_graphicsContext->setUserContext( 0 );
+		// empty
 	}
 
 	// --- qt.IPainter methods --- //
 
 	void initialize()
 	{
-		assert( _graphicsContext->getUserContext() );
-
 		CORAL_DLOG(INFO) << "Initializing the scene...";
 
 		// sets context in to camera
 		_osgCamera = osgViewer::Viewer::getCamera();
-		_osgCamera->setGraphicsContext( _graphicsContext.get() );
+		_osgCamera->setGraphicsContext( new GraphicsContext() );
 		_osgCamera->setClearColor( DEFAULT_CLEAR_COLOR );
 
 		_rootNode = new osg::Group();
@@ -79,35 +80,45 @@ public:
 		setupLight();
 	}
 
+	co::int32 getWidth()
+	{
+		return _screenWidth;
+	}
+
+	co::int32 getHeight()
+	{
+		return _screenHeight;
+	}
+
 	void resize( co::int32 width, co::int32 height )
 	{
 		CORAL_DLOG(INFO) << "Canvas resized to " << width << " x " << height;
 
-		_graphicsContext->resized( 0, 0, width, height );
-
-		if( !_activeCamera )
-		{
-			CORAL_DLOG(WARNING) << "No active camera";
-			return;
-		}
-
-		updateCameraViewport( _activeCamera.get(), width, height );
-		paint();
+		_screenWidth = width;
+		_screenHeight = height;
 	}
 
-	void paint()
+	void render( co::Range<blue::open::render::IScreen* const> screens )
 	{
-		lab3d::dom::IView* view = _activeCamera->getView();
-		if( !view )
-			return;
+		if( !_osgCamera.get() ) return;
 
-		copyCameraStateToOSG( _activeCamera.get(), _osgCamera.get() );
+		for( ; screens; screens.popFirst() )
+		{
+			blue::open::render::IScreen* screen = screens.getFirst();
+			
+			// mono rendering by now
+			blue::open::render::ICamera* cam = screen->getLeftEye(); 
+			const blue::open::render::Viewport& vp = cam->getViewport();	
+			_osgCamera->setViewport( vp.x * _screenWidth, 
+									vp.y * _screenHeight, 
+									vp.w * _screenWidth, 
+									vp.h * _screenHeight );
 
-		_osgCamera->setViewport( 0, 0,
-			_activeCamera->getViewportWidth(),
-			_activeCamera->getViewportHeight() );
+			_osgCamera->setProjectionMatrix( osg::Matrixd( cam->getProjection().data() ) );
+			_osgCamera->setViewMatrix( osg::Matrixd( cam->getView().data() ) );
 
-		frame();
+			frame();
+		}
 	}
 
 	// --- lab3d.scene.IPickIntersector --- //
@@ -156,18 +167,6 @@ public:
 		}
 	}
 
-	// --- lab3d.scene.IScene Methods --- //
-
-	lab3d::dom::ICamera* getCamera()
-	{
-		return _activeCamera.get();
-	}
-
-	void setCamera( lab3d::dom::ICamera* camera )
-	{
-		_activeCamera = camera;
-	}
-
 	bool getAutoAdjustNearFar()
 	{
 		return _autoCalculateNearFar;
@@ -211,15 +210,6 @@ public:
 		}
 	}
 
-	void update()
-	{
-		if( !_osgCamera.get() )
-			return; // scene not yet initialized
-
-		paint();
-		_graphicsContext->update();
-	}
-
 	void clear()
 	{
 		if( !_rootNode.get() || _rootNode->getNumChildren() == 0 )
@@ -231,17 +221,6 @@ public:
 		_rootNode->removeChildren( NUM_PERSISTENT_CHILDREN, _rootNode->getNumChildren() );
 	
 		_models.clear();
-	}
-
-protected:
-	qt::IGLContext* getGlContextService()
-	{
-		return _graphicsContext->getUserContext();
-	}
-	
-	void setGlContextService( qt::IGLContext* context )
-	{
-		_graphicsContext->setUserContext( context );
 	}
 
 private:
@@ -263,31 +242,17 @@ private:
 		_rootNode->addChild( ls );
 	}
 
-	void updateCameraViewport( lab3d::dom::ICamera* camera, double w, double h )
-	{
-		camera->setViewportWidth( w );
-		camera->setViewportHeight( h );
-		camera->setAspect( w / h );
-	}
-
-	void copyCameraStateToOSG( lab3d::dom::ICamera* from, osg::Camera* to )
-	{
-		to->setProjectionMatrixAsPerspective( from->getFovy(), from->getAspect(), from->getZNear(), from->getZFar() );
-		eigen::Mat4 viewMatrix;
-		_activeCamera->getView()->getViewMatrix( viewMatrix );
-		to->setViewMatrix( osg::Matrixd( viewMatrix.data() ) );
-	}
-
 private:
     typedef co::RefVector<lab3d::scene::IModel> ModelList;
 	ModelList _models;
     
+	// temporary screen size control
+	int _screenWidth;
+	int _screenHeight;
+
     bool _autoCalculateNearFar;
     osg::ref_ptr<osg::Group> _rootNode;
     osg::ref_ptr<osg::Camera> _osgCamera;
-    osg::ref_ptr<osg::Material> _overrideMaterial;
-    osg::ref_ptr<GraphicsContext> _graphicsContext;
-    co::RefPtr<lab3d::dom::ICamera> _activeCamera;
 };
 
 CORAL_EXPORT_COMPONENT( Scene, Scene );
