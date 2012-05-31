@@ -1,8 +1,0 @@
-import eigen.Vec3;
-
-struct PickIntersection
-{
-	Vec3 point;
-	Vec3 normal;
-	lab3d.dom.IEntity entity;
-};

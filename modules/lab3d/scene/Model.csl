@@ -1,4 +1,0 @@
-component Model
-{
-	provides IModel model;
-};

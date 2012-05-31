@@ -1,8 +1,0 @@
-
-component Scene
-{
-	provides IScene scene;
-	provides IPickIntersector intersector;
-	provides blue.open.render.IRenderer renderer;
-	provides blue.open.render.IDrawingArea drawingArea;
-};
